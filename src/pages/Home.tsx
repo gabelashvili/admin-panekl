@@ -88,6 +88,7 @@ const Home = () => {
   const interval = useRef<ReturnType<typeof setTimeout> | null>(null);   
   const audioRef = useRef<HTMLAudioElement>(null);
   const isAudioPlaying = useRef(false);
+  const lastAudioPlayTime = useRef<Date | null>(null);
   const { t } = useTranslation();
   
   const insertNewRequests = useCallback(() => {
@@ -96,8 +97,11 @@ const Home = () => {
     }
     interval.current = setTimeout(() => {
       try {
-        if(!isAudioPlaying.current) {
+        if((lastAudioPlayTime.current && new Date().getTime() - lastAudioPlayTime.current.getTime() > 5000) || !lastAudioPlayTime.current) {
+          console.log('aqaa');
+          
           audioRef.current?.play()
+          lastAudioPlayTime.current = new Date();
         }
       } catch (error) {
         console.error(error);

@@ -8,8 +8,9 @@ declare module "i18next" {
   // Extend CustomTypeOptions
   interface CustomTypeOptions {
     // custom namespace type, if you changed it
-    defaultNS: "en";
+    defaultNS: "translation";
     // custom resources type
+    fallbackLng: "ge";
     resources: {
       en: typeof en;
       ge: typeof ge;
