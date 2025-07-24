@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import DatePicker from "../components/form/date-picker";
 import dayjs from "dayjs";
 import isBetween from 'dayjs/plugin/isBetween';
+import { useTranslation } from "react-i18next";
 
 dayjs.extend(isBetween);
 
@@ -86,14 +87,18 @@ const Home = () => {
   const [newItems, setNewItems] = useState<typeof requests>([]);
   const interval = useRef<ReturnType<typeof setTimeout> | null>(null);   
   const audioRef = useRef<HTMLAudioElement>(null);
-
+  const isAudioPlaying = useRef(false);
+  const { t } = useTranslation();
+  
   const insertNewRequests = useCallback(() => {
     if(interval.current) {
       clearTimeout(interval.current);
     }
     interval.current = setTimeout(() => {
       try {
-        audioRef.current?.play();
+        if(!isAudioPlaying.current) {
+          audioRef.current?.play()
+        }
       } catch (error) {
         console.error(error);
       }
@@ -122,14 +127,20 @@ const Home = () => {
 
   return (
     <>
-      <audio controls autoPlay ref={audioRef} className="hidden" >
+      <audio controls autoPlay ref={audioRef} className="hidden" onPlay={() => {
+        console.log('Audio played');
+        isAudioPlaying.current = true;
+      }} onPause={() => {
+        console.log('Audio paused');
+        isAudioPlaying.current = false;
+      }}>
             <source src={'/ringtones/ringtone.wav'} type="audio/ogg" />
             Your browser does not support the audio element.
       </audio>
       <PageBreadcrumb pageTitle="" />
       <div className="">
         <ComponentCard
-          title="List"
+          title={t('home.title')}
           bodyClassName="sm:p-0"
           renderHeader={() => {
             return (
@@ -142,7 +153,7 @@ const Home = () => {
                 /> */}
                 <DatePicker
                   id="date-picker"
-                  placeholder="Select Date"
+                  placeholder={t('home.table.filters.selectDate')}
                   mode="range"
                   onChange={setDateRange}
                   inputClassName="w-64"

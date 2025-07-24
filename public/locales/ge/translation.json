@@ -1,0 +1,46 @@
+{
+    "common": {
+        "actions": "მოქმედებები",
+        "firstName": "სახელი",
+        "lastName": "გვარი",
+        "phoneNumber": "ტელეფონის ნომერი",
+        "backupPhoneNumber": "სარეზერვო ტელეფონის ნომერი",
+        "lang": {
+            "ka": "ქართული",
+            "en": "ინგლისური"
+        }
+    },
+    "home": {
+        "title": "მოთხოვნები",
+        "table": {
+            "requestId": "მოთხოვნის ID",
+            "childName": "ბავშვის სახელი",
+            "childPhoneNumber": "ბავშვის ტელეფონის ნომერი",
+            "parentName": "მშობლის სახელი",
+            "parentPhoneNumber": "მშობლის ტელეფონის ნომერი",
+            "requestSource": "მოთხოვნის წყარო",
+            "requestTime": "მოთხოვნის დრო",
+            "status": "სტატუსი",
+            "viewDetails": "დეტალების ნახვა",
+            "filters": {
+                "selectDate": "თარიღის არჩევა"
+            }
+        },
+        "requesetDetails": {
+            "title": "მოთხოვნის დეტალები",
+            "description": "მოთხოვნის დეტალები",
+            "childrenInfo": "ბავშვის ინფორმაცია",
+            "parentInfo": "მშობლის ინფორმაცია",
+            "location": "მდებარეობა",
+            "latitude": "latitude",
+            "longitude": "longitude"
+        },
+        "requestStatuses": {
+            "acknowledged": "მიღებული",
+            "approved": "დადასტურებული",
+            "completed": "დასრულებული",
+            "rejectedByParent": "უარყოფილი მშობლის მიერ",
+            "pending": "მიმდინარე"
+        }
+    }
+}

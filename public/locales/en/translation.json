@@ -1,0 +1,46 @@
+{
+    "common": {
+        "actions": "Actions",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "phoneNumber": "Phone Number",
+        "backupPhoneNumber": "Backup Phone Number",
+        "lang": {
+            "ka": "Georgian",
+            "en": "English"
+        }
+    },
+    "home": {
+        "title": "Requests",
+        "table": {
+            "requestId": "Request ID",
+            "childName": "Child Name",
+            "childPhoneNumber": "Child Phone Number",
+            "parentName": "Parent Name",
+            "parentPhoneNumber": "Parent Phone Number",
+            "requestSource": "Request Source",
+            "requestTime": "Request Time",
+            "status": "Status",
+            "viewDetails": "View Details",
+            "filters": {
+                "selectDate": "Select Date"
+            }
+        },
+        "requesetDetails": {
+            "title": "Request Details",
+            "description": "Request Details",
+            "childrenInfo": "Child Information",
+            "parentInfo": "Parent Information",
+            "location": "Location",
+            "latitude": "Latitude",
+            "longitude": "Longitude"
+        },
+        "requestStatuses": {
+            "acknowledged": "Acknowledged",
+            "approved": "Approved",
+            "completed": "Completed",
+            "rejectedByParent": "Rejected by Parent",
+            "pending": "Pending"
+        }
+    }
+}

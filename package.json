@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "translate": "i18next-conv -i public/locales/en/translation.json -o public/locales/ka/translation.json -n translation"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",
@@ -20,11 +21,15 @@
     "@react-jvectormap/core": "^1.0.4",
     "@react-jvectormap/world": "^1.1.2",
     "apexcharts": "^4.1.0",
+    "camelcase": "^8.0.0",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "flatpickr": "^4.6.13",
     "google-map-react": "^2.2.5",
     "i": "^0.3.7",
+    "i18next": "^25.3.2",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "i18next-http-backend": "^3.0.2",
     "lucide-react": "^0.525.0",
     "npm": "^11.4.2",
     "react": "^19.0.0",
@@ -35,6 +40,7 @@
     "react-dropzone": "^14.3.5",
     "react-headless-pagination": "^1.1.6",
     "react-helmet-async": "^2.0.5",
+    "react-i18next": "^15.6.1",
     "react-router": "^7.1.5",
     "swiper": "^11.2.3",
     "tailwind-merge": "^3.3.1"

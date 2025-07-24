@@ -12,6 +12,8 @@ import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button";
 import GoogleMapReact from "google-map-react";
+import { useTranslation } from "react-i18next";
+import camelCase from 'camelcase';
 
 interface ListProps {
   data: Array<{
@@ -57,6 +59,7 @@ const AnyReactComponent = ({ text }: { text: string }) => (
 );
 
 export default function List({ data, newItems }: ListProps) {
+  const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const [tableData, setTableData] = useState<ListProps["data"]>([]);
   const [selectedItem, setSelectedItem] = useState<ListProps["data"][0] | null>(
@@ -81,10 +84,10 @@ export default function List({ data, newItems }: ListProps) {
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Information
+              {t('home.requesetDetails.title')}
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              See full detail.
+              {t('home.requesetDetails.description')}
             </p>
           </div>
           <div className="space-y-6 w-full overflow-y-auto max-h-[60vh]">
@@ -92,13 +95,13 @@ export default function List({ data, newItems }: ListProps) {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    Children Information
+                    {t('home.requesetDetails.childrenInfo')}
                   </h4>
 
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        First Name
+                        {t('common.firstName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.childName.split(" ")[0]}
@@ -107,7 +110,7 @@ export default function List({ data, newItems }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Last Name
+                        {t('common.lastName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.childName.split(" ")[1]}
@@ -116,7 +119,7 @@ export default function List({ data, newItems }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Phone
+                        {t('common.phoneNumber')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.childPhoneNumber}
@@ -130,13 +133,13 @@ export default function List({ data, newItems }: ListProps) {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    Parent Info
+                    {t('home.requesetDetails.parentInfo')}
                   </h4>
 
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        First Name
+                        {t('common.firstName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentName.split(" ")[0]}
@@ -145,7 +148,7 @@ export default function List({ data, newItems }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Last Name
+                        {t('common.lastName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentName.split(" ")[1]}
@@ -154,7 +157,7 @@ export default function List({ data, newItems }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Phone
+                        {t('common.phoneNumber')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentPhoneNumber}
@@ -163,7 +166,7 @@ export default function List({ data, newItems }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Backup phone
+                        {t('common.backupPhoneNumber')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.backupPhoneNumber}
@@ -177,13 +180,13 @@ export default function List({ data, newItems }: ListProps) {
               <div className="">
                 <div>
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    Location
+                    {t('home.requesetDetails.location')}
                   </h4>
 
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Latitude
+                        {t('home.requesetDetails.latitude')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.location.latitude}
@@ -192,30 +195,13 @@ export default function List({ data, newItems }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Longitude
+                      {t('home.requesetDetails.longitude')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.location.longitude}
                       </p>
                     </div>
-
-                    <div>
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Phone
-                      </p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.parentName}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        Backup phone
-                      </p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.backupPhoneNumber}
-                      </p>
-                    </div>
+                 
                   </div>
 
                   <div className="w-full mt-6">
@@ -269,61 +255,61 @@ export default function List({ data, newItems }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Request ID
+                  {t('home.table.requestId')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Child Name
+                  {t('home.table.childName')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Child Phone Number
+                  {t('home.table.childPhoneNumber')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Parent Name
+                  {t('home.table.parentName')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Parent Phone Number
+                  {t('home.table.parentPhoneNumber')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Backup Phone Number
+                  {t('common.backupPhoneNumber')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Request Source
+                  {t('home.table.requestSource')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Request Time
+                  {t('home.table.requestTime')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Status
+                  {t('home.table.status')}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  Actions
+                  {t('common.actions')}
                 </TableCell>
               </TableRow>
             </TableHeader>
@@ -377,9 +363,7 @@ export default function List({ data, newItems }: ListProps) {
                           : "warning"
                       }
                     >
-                      {order.status === "Rejected by Parent"
-                        ? "Rejected"
-                        : order.status}
+                        {t(`home.requestStatuses.${camelCase(order.status)}` as any)}
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
@@ -389,7 +373,7 @@ export default function List({ data, newItems }: ListProps) {
                       size="sm"
                       onClick={() => setSelectedItem(order)}
                     >
-                      View Full
+                      {t('home.table.viewDetails')}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -443,9 +427,7 @@ export default function List({ data, newItems }: ListProps) {
                           : "warning"
                       }
                     >
-                      {order.status === "Rejected by Parent"
-                        ? "Rejected"
-                        : order.status}
+                      {t(`home.requestStatuses.${camelCase(order.status)}` as any)}
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
@@ -455,7 +437,7 @@ export default function List({ data, newItems }: ListProps) {
                       size="sm"
                       onClick={() => setSelectedItem(order)}
                     >
-                      View Full
+                      {t('home.table.viewDetails')}
                     </Button>
                   </TableCell>
                 </TableRow>
