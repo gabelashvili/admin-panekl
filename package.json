@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": " vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "translate": "i18next-conv -i public/locales/en/translation.json -o public/locales/ka/translation.json -n translation"
