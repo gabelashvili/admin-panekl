@@ -5,7 +5,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import Badge from "../ui/badge/Badge";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { useModal } from "../../hooks/useModal";
@@ -13,43 +12,12 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button";
 import GoogleMapReact from "google-map-react";
 import { useTranslation } from "react-i18next";
-import camelCase from 'camelcase';
+import { RequestResponseModel } from "../../store/server/requets/interfaces";
 
 interface ListProps {
-  data: Array<{
-    requestId: string;
-    childName: string;
-    childPhoneNumber: string;
-    parentName: string;
-    parentPhoneNumber: string;
-    backupPhoneNumber: string;
-    requestSource: "Parent Approved" | "Child Direct";
-    requestTime: string;
-    location: {
-      latitude: number;
-      longitude: number;
-    };
-    status: string;
-    actions: string[];
-    isNew: boolean;
-  }>;
-  newItems: Array<{
-    requestId: string;
-    childName: string;
-    childPhoneNumber: string;
-    parentName: string;
-    parentPhoneNumber: string;
-    backupPhoneNumber: string;
-    requestSource: "Parent Approved" | "Child Direct";
-    requestTime: string;
-    location: {
-      latitude: number;
-      longitude: number;
-    };
-    status: string;
-    actions: string[];
-    isNew: boolean;
-  }>;
+  data: RequestResponseModel['helpRequests'];
+  activeItems: RequestResponseModel['helpRequests'];
+  pending: boolean;
 }
 
 const AnyReactComponent = ({ text }: { text: string }) => (
@@ -58,7 +26,7 @@ const AnyReactComponent = ({ text }: { text: string }) => (
   </div>
 );
 
-export default function List({ data, newItems }: ListProps) {
+export default function List({ data, activeItems, pending }: ListProps) {
   const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const [tableData, setTableData] = useState<ListProps["data"]>([]);
@@ -80,7 +48,10 @@ export default function List({ data, newItems }: ListProps) {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
+      <Modal isOpen={isOpen} onClose={() => {
+        closeModal()
+        setSelectedItem(null)
+      }} className="max-w-[700px] m-4">
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
@@ -104,7 +75,7 @@ export default function List({ data, newItems }: ListProps) {
                         {t('common.firstName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.childName.split(" ")[0]}
+                        {selectedItem?.secondaryUser.name}
                       </p>
                     </div>
 
@@ -113,7 +84,7 @@ export default function List({ data, newItems }: ListProps) {
                         {t('common.lastName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.childName.split(" ")[1]}
+                        {selectedItem?.secondaryUser.name}
                       </p>
                     </div>
 
@@ -122,7 +93,7 @@ export default function List({ data, newItems }: ListProps) {
                         {t('common.phoneNumber')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.childPhoneNumber}
+                        {selectedItem?.secondaryUser.phoneNumber}
                       </p>
                     </div>
                   </div>
@@ -142,7 +113,7 @@ export default function List({ data, newItems }: ListProps) {
                         {t('common.firstName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.parentName.split(" ")[0]}
+                        {selectedItem?.parentUser.name}
                       </p>
                     </div>
 
@@ -151,7 +122,7 @@ export default function List({ data, newItems }: ListProps) {
                         {t('common.lastName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.parentName.split(" ")[1]}
+                        {selectedItem?.parentUser.name}
                       </p>
                     </div>
 
@@ -160,7 +131,7 @@ export default function List({ data, newItems }: ListProps) {
                         {t('common.phoneNumber')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.parentPhoneNumber}
+                        {selectedItem?.parentUser.phoneNumber}
                       </p>
                     </div>
 
@@ -169,7 +140,7 @@ export default function List({ data, newItems }: ListProps) {
                         {t('common.backupPhoneNumber')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.backupPhoneNumber}
+                        N/A
                       </p>
                     </div>
                   </div>
@@ -189,7 +160,7 @@ export default function List({ data, newItems }: ListProps) {
                         {t('home.requesetDetails.latitude')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.location.latitude}
+                        {selectedItem?.latitude}
                       </p>
                     </div>
 
@@ -198,7 +169,7 @@ export default function List({ data, newItems }: ListProps) {
                       {t('home.requesetDetails.longitude')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.location.longitude}
+                        {selectedItem?.longitude}
                       </p>
                     </div>
                  
@@ -208,15 +179,15 @@ export default function List({ data, newItems }: ListProps) {
                     <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                       Google Map
                     </p>
-                    {selectedItem?.location && (
+                    {selectedItem?.latitude && selectedItem.longitude && (
                       <div className="w-full h-[300px]">
                         <GoogleMapReact
                           bootstrapURLKeys={{
                             key: "AIzaSyB-RZ07fiNIAFp9Mdf3V5Rh8v1Q39Jej-0",
                           }}
                           defaultCenter={{
-                            lat: selectedItem?.location.latitude,
-                            lng: selectedItem?.location.longitude,
+                            lat: Number(selectedItem?.latitude) || 0,
+                            lng: Number(selectedItem?.longitude) || 0,
                           }}
                           defaultZoom={8}
                           options={{
@@ -230,11 +201,11 @@ export default function List({ data, newItems }: ListProps) {
                           }}
                         >
                           <AnyReactComponent
-                            lat={selectedItem?.location.latitude}
-                            lng={selectedItem?.location.longitude}
+                            lat={Number(selectedItem?.latitude) || 0}
+                            lng={Number(selectedItem?.longitude) || 0}
                             text={`${
-                              selectedItem?.childName.split(" ")[0][0]
-                            }. ${selectedItem?.childName.split(" ")[1][0]}.`}
+                              selectedItem?.secondaryUser.name.split(" ")[0][0]
+                            }. ${selectedItem?.secondaryUser.name.split(" ")[1][0]}.`}
                           />
                         </GoogleMapReact>
                       </div>
@@ -314,42 +285,46 @@ export default function List({ data, newItems }: ListProps) {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 cursor-pointer dark:divide-white/[0.05] [&>tr]:even:bg-gray-50 dark:[&>tr]:even:bg-gray-900/50 [&>tr]:hover:bg-gray-200 dark:[&>tr]:hover:bg-gray-900">
-              {newItems.map((order) => (
+              {activeItems.map((request) => (
                 <TableRow
-                  key={order.requestId}
-                  className={`${
-                    order.isNew &&
-                    dayjs(order.requestTime).diff(dayjs(), "second") < 5
-                      ? "animate-[highlight_2s_ease-in-out_5]"
-                      : ""
-                  }`}
+                  key={request.id}
+                  // className={`${
+                  //   order.isNew &&
+                  //   dayjs(order.requestTime).diff(dayjs(), "second") < 5
+                  //     ? "animate-[highlight_2s_ease-in-out_5]"
+                  //     : ""
+                  // }`}
+                  className="animate-[highlight_2s_ease-in-out_infinite]"
                 >
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.requestId}
+                    {request.id}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.childName}
+                    {request.parentUser.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.childPhoneNumber}
+                    {request.parentUser.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.parentName}
+                    {request.secondaryUser.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.parentPhoneNumber}
+                    {request.secondaryUser.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.backupPhoneNumber}
+                    {/* {request.backupPhoneNumber} */}
+                    N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.requestSource}
+                    {/* {request.requestSource} */}
+                    N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {dayjs(order.requestTime).format("DD/MM/YYYY HH:mm")}
+                    {/* {dayjs(order.requestTime).format("DD/MM/YYYY HH:mm")} */}
+                    N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    <Badge
+                    {/* <Badge
                       size="sm"
                       color={
                         order.status === "Acknowledged"
@@ -364,56 +339,57 @@ export default function List({ data, newItems }: ListProps) {
                       }
                     >
                         {t(`home.requestStatuses.${camelCase(order.status)}` as any)}
-                    </Badge>
+                    </Badge> */}
+                    N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <Button
                       className="min-w-max"
                       variant="outline"
                       size="sm"
-                      onClick={() => setSelectedItem(order)}
+                      onClick={() => setSelectedItem(request)}
                     >
                       {t('home.table.viewDetails')}
                     </Button>
                   </TableCell>
                 </TableRow>
               ))}
-              {tableData.map((order) => (
+              {tableData.map((request) => (
                 <TableRow
-                  key={order.requestId}
-                  className={`${
-                    order.isNew &&
-                    dayjs(order.requestTime).diff(dayjs(), "second") < 5
-                      ? "animate-[highlight_2s_ease-in-out_5]"
-                      : ""
-                  }`}
+                  key={request.id}
+                  // className={`${
+                  //   order.isNew &&
+                  //   dayjs(order.requestTime).diff(dayjs(), "second") < 5
+                  //     ? "animate-[highlight_2s_ease-in-out_5]"
+                  //     : ""
+                  // }`}
                 >
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.requestId}
+                    {request.id}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.childName}
+                    {request.parentUser.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.childPhoneNumber}
+                    {request.parentUser.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.parentName}
+                    {request.secondaryUser.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.parentPhoneNumber}
+                    {request.secondaryUser.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.backupPhoneNumber}
+                    {/* {request.parentUser.backupPhoneNumber} */} N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {order.requestSource}
+                    {/* {order.requestSource} */} N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {dayjs(order.requestTime).format("DD/MM/YYYY HH:mm")}
+                    {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    <Badge
+                    {/* <Badge
                       size="sm"
                       color={
                         order.status === "Acknowledged"
@@ -428,14 +404,15 @@ export default function List({ data, newItems }: ListProps) {
                       }
                     >
                       {t(`home.requestStatuses.${camelCase(order.status)}` as any)}
-                    </Badge>
+                    </Badge> */}
+                    N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <Button
                       className="min-w-max"
                       variant="outline"
                       size="sm"
-                      onClick={() => setSelectedItem(order)}
+                      onClick={() => setSelectedItem(request)}
                     >
                       {t('home.table.viewDetails')}
                     </Button>

@@ -42,5 +42,8 @@
             "rejectedByParent": "უარყოფილი მშობლის მიერ",
             "pending": "მიმდინარე"
         }
+    },
+    "auth": {
+        "invalidCredential": "არასწორი მონაცემები"
     }
 }

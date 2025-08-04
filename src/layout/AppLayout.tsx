@@ -1,8 +1,11 @@
 import { SidebarProvider, useSidebar } from "../context/SidebarContext";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
+import { useEffect } from "react";
+import useAuthedUserStore from "../store/client/useAuthedUserStore";
+import { useAuthedUserQuery } from "../store/server/features/auth/queries";
 
 const LayoutContent: React.FC = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -28,6 +31,14 @@ const LayoutContent: React.FC = () => {
 };
 
 const AppLayout: React.FC = () => {
+  const navigate  = useNavigate()
+
+  useEffect(() => {
+    if(!localStorage.getItem('token')) {
+      navigate('signin')
+    }
+  }, [navigate])
+
   return (
     <SidebarProvider>
       <LayoutContent />

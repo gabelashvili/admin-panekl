@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react";
 import { buttonSizeClasses, buttonVariantClasses } from "./helprs";
-
+import { LoaderCircle } from 'lucide-react';
 interface ButtonProps {
   children: ReactNode; // Button text or content
   size?: "sm" | "md"; // Button size
@@ -10,6 +10,8 @@ interface ButtonProps {
   onClick?: () => void; // Click handler
   disabled?: boolean; // Disabled state
   className?: string; // Disabled state
+  loading?: boolean;
+  type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
 }
 
 
@@ -24,6 +26,8 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   className = "",
   disabled = false,
+  loading,
+  type = 'button'
 }) => {
 
   return (
@@ -35,10 +39,16 @@ const Button: React.FC<ButtonProps> = ({
       }`}
       onClick={onClick}
       disabled={disabled}
+      type={type}
     >
-      {startIcon && <span className="flex items-center">{startIcon}</span>}
-      {children}
-      {endIcon && <span className="flex items-center">{endIcon}</span>}
+   {loading?  <LoaderCircle className="animate-spin  size-5" /> : 
+      <>
+         {startIcon && <span className="flex items-center">{startIcon}</span>}
+         {children}
+         {endIcon && <span className="flex items-center">{endIcon}</span>}
+      </>
+   }
+      
     </button>
   );
 };

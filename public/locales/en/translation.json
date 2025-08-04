@@ -1,46 +1,49 @@
 {
     "common": {
-        "actions": "Actions",
-        "firstName": "First Name",
-        "lastName": "Last Name",
-        "phoneNumber": "Phone Number",
-        "backupPhoneNumber": "Backup Phone Number",
+        "actions": "მოქმედებები",
+        "firstName": "სახელი",
+        "lastName": "გვარი",
+        "phoneNumber": "ტელეფონის ნომერი",
+        "backupPhoneNumber": "სარეზერვო ტელეფონის ნომერი",
         "lang": {
-            "ka": "Georgian",
-            "en": "English"
+            "ka": "ქართული",
+            "en": "ინგლისური"
         }
     },
     "home": {
-        "title": "Requests",
+        "title": "მოთხოვნები",
         "table": {
-            "requestId": "Request ID",
-            "childName": "Child Name",
-            "childPhoneNumber": "Child Phone Number",
-            "parentName": "Parent Name",
-            "parentPhoneNumber": "Parent Phone Number",
-            "requestSource": "Request Source",
-            "requestTime": "Request Time",
-            "status": "Status",
-            "viewDetails": "View Details",
+            "requestId": "მოთხოვნის ID",
+            "childName": "ბავშვის სახელი",
+            "childPhoneNumber": "ბავშვის ტელეფონის ნომერი",
+            "parentName": "მშობლის სახელი",
+            "parentPhoneNumber": "მშობლის ტელეფონის ნომერი",
+            "requestSource": "მოთხოვნის წყარო",
+            "requestTime": "მოთხოვნის დრო",
+            "status": "სტატუსი",
+            "viewDetails": "დეტალების ნახვა",
             "filters": {
-                "selectDate": "Select Date"
+                "selectDate": "თარიღის არჩევა"
             }
         },
         "requesetDetails": {
-            "title": "Request Details",
-            "description": "Request Details",
-            "childrenInfo": "Child Information",
-            "parentInfo": "Parent Information",
-            "location": "Location",
-            "latitude": "Latitude",
-            "longitude": "Longitude"
+            "title": "მოთხოვნის დეტალები",
+            "description": "მოთხოვნის დეტალები",
+            "childrenInfo": "ბავშვის ინფორმაცია",
+            "parentInfo": "მშობლის ინფორმაცია",
+            "location": "მდებარეობა",
+            "latitude": "latitude",
+            "longitude": "longitude"
         },
         "requestStatuses": {
-            "acknowledged": "Acknowledged",
-            "approved": "Approved",
-            "completed": "Completed",
-            "rejectedByParent": "Rejected by Parent",
-            "pending": "Pending"
+            "acknowledged": "მიღებული",
+            "approved": "დადასტურებული",
+            "completed": "დასრულებული",
+            "rejectedByParent": "უარყოფილი მშობლის მიერ",
+            "pending": "მიმდინარე"
         }
+    },
+    "auth": {
+        "invalidCredentials": "Invalid credentials"
     }
 }
