@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import isBetween from 'dayjs/plugin/isBetween';
 import { useTranslation } from "react-i18next";
 import { useNewRequestsQuery, useRequestsQuery } from "../store/server/requets/queries";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import requestsTags from "../store/server/requets/tags";
 
 dayjs.extend(isBetween);

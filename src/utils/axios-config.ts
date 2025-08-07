@@ -28,6 +28,8 @@ api.interceptors.response.use(
   (response) => {
     if(response.status === 401) {
       useAuthedUserStore.getState().setAuthedUser(null)
+      localStorage.removeItem('token')
+      window.location.href = window.location.href + 'signin';
     }
     if (response.data && response.data.data !== undefined) {
       return response.data.data;
@@ -35,6 +37,12 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    if(error.response.status === 401) {
+      useAuthedUserStore.getState().setAuthedUser(null)
+      localStorage.removeItem('token')
+      window.location.href = window.location.href + 'signin';
+    }
+    
     return Promise.reject(error.response.data);
   }
 );

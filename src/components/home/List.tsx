@@ -183,7 +183,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       <div className="w-full h-[300px]">
                         <GoogleMapReact
                           bootstrapURLKeys={{
-                            key: "AIzaSyB-RZ07fiNIAFp9Mdf3V5Rh8v1Q39Jej-0",
+                            key: "AIzaSyCm1aC6f3A6S1nC9h8NMHicK8jPit58WNg",
                           }}
                           defaultCenter={{
                             lat: Number(selectedItem?.latitude) || 0,
