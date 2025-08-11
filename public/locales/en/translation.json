@@ -8,7 +8,9 @@
         "lang": {
             "ka": "ქართული",
             "en": "ინგლისური"
-        }
+        },
+        "cancel": "გაუქმება",
+        "save": "შენახვა"
     },
     "home": {
         "title": "მოთხოვნები",
@@ -18,13 +20,18 @@
             "childPhoneNumber": "ბავშვის ტელეფონის ნომერი",
             "parentName": "მშობლის სახელი",
             "parentPhoneNumber": "მშობლის ტელეფონის ნომერი",
-            "requestSource": "მოთხოვნის წყარო",
             "requestTime": "მოთხოვნის დრო",
             "status": "სტატუსი",
             "viewDetails": "დეტალების ნახვა",
             "filters": {
                 "selectDate": "თარიღის არჩევა"
-            }
+            },
+            "parentStatus": "მშობლის სტატუსი",
+            "accept": "თანხმობა",
+            "autoAccept": "ავტომატური თანხმობა",
+            "changeStatus": "არჩევა",
+            "securityDispatched": "მიღება",
+            "rejectedByDispatcher": "უარყოფა"
         },
         "requesetDetails": {
             "title": "მოთხოვნის დეტალები",

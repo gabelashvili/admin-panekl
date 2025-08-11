@@ -47,7 +47,8 @@ const Home = () => {
     }
     interval.current = setTimeout(() => {
       try {
-        if((lastAudioPlayTime.current && new Date().getTime() - lastAudioPlayTime.current.getTime() > 5000) || !lastAudioPlayTime.current) {
+        console.log(lastAudioPlayTime.current && new Date().getTime() - lastAudioPlayTime.current.getTime() > 5000)
+        if(((lastAudioPlayTime.current && new Date().getTime() - lastAudioPlayTime.current.getTime() > 5000) || !lastAudioPlayTime.current)) {
           audioRef.current?.play()
           lastAudioPlayTime.current = new Date();
         }
@@ -72,6 +73,9 @@ const Home = () => {
     if(!activeData) return
     if(!activeItems) {
       setActiveItems(activeData)
+      if(activeData.helpRequests.some(item => item.status === "Pending")) {
+        ringBell()
+      }
     }
     else {
       const isActiveItemRemoved = activeItems.helpRequests.some(x => {
@@ -79,12 +83,16 @@ const Home = () => {
       })
       
       const isActiveItemAdded = activeData?.helpRequests.some(x => {
-        return !activeItems?.helpRequests.find(y => x.id === y.id)
+        return !activeItems?.helpRequests.find(y => x.id === y.id || (x.id === y.id && x.status !== y.status))
       })
+      const isStatusChanged = activeData?.helpRequests.some(x => {
+        return activeItems?.helpRequests.find(y => (x.id === y.id && x.status !== y.status))
+      })
+      console.log(isStatusChanged)
       if(isActiveItemAdded) {
         ringBell()
       }
-      if(isActiveItemAdded || isActiveItemRemoved) {
+      if(isActiveItemAdded || isActiveItemRemoved || isStatusChanged) {
           setActiveItems(activeData)
           queryClient.invalidateQueries({queryKey: [ requestsTags.requests ]})
       }
@@ -93,7 +101,7 @@ const Home = () => {
 
   return (
     <>
-      <audio controls autoPlay ref={audioRef} className="hidden" onPlay={() => {
+      <audio controls ref={audioRef} className="hidden" onPlay={() => {
         console.log('Audio played');
         isAudioPlaying.current = true;
       }} onPause={() => {

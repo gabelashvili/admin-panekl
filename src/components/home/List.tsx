@@ -13,6 +13,8 @@ import Button from "../ui/button";
 import GoogleMapReact from "google-map-react";
 import { useTranslation } from "react-i18next";
 import { RequestResponseModel } from "../../store/server/requets/interfaces";
+import Select from "../form/Select";
+import { useRequestStatusChange } from "../../store/server/requets/mutations";
 
 interface ListProps {
   data: RequestResponseModel['helpRequests'];
@@ -28,11 +30,16 @@ const AnyReactComponent = ({ text }: { text: string }) => (
 
 export default function List({ data, activeItems, pending }: ListProps) {
   const { t } = useTranslation();
+  const reqStatusChangeMutation = useRequestStatusChange()
   const { isOpen, openModal, closeModal } = useModal();
   const [tableData, setTableData] = useState<ListProps["data"]>([]);
   const [selectedItem, setSelectedItem] = useState<ListProps["data"][0] | null>(
     null
   );
+  const [statusChangeItem, setStatusChangeItem] = useState<ListProps["data"][0] | null>(
+    null
+  );
+  const [selectedStatus, setSelectedStatus] = useState<null | string>(null)
 
   useEffect(() => {
     setTableData(data);
@@ -217,6 +224,41 @@ export default function List({ data, activeItems, pending }: ListProps) {
           </div>
         </div>
       </Modal>
+      <Modal isOpen={!!statusChangeItem} onClose={() => {
+        setStatusChangeItem(null)
+        setSelectedStatus(null)
+      }} className="max-w-[700px] m-4">
+        <div className="space-y-4 no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+          <h1 className="font-medium text-xl">აირჩიეთ სტატუსი</h1>
+            <Select
+                  placeholder=""
+                  options={[{
+                    label: t("home.table.securityDispatched"),
+                    value: "SecurityDispatched"
+                  },
+                
+                  {
+                    label: t("home.table.rejectedByDispatcher"),
+                    value: "RejectedByDispatcher"
+                  }
+                ]}
+                  value={selectedStatus}
+                  onChange={(value) => setSelectedStatus(value as any)}
+                />
+
+                <div className="flex gap-2 justify-end mt-4">
+                  <Button variant="outline" >{t('common.cancel')}</Button>
+                  <Button disabled={!selectedStatus} onClick={async () => {
+                    await reqStatusChangeMutation.mutateAsync({
+                      helpRequestId: statusChangeItem!.id,
+                      accepted: selectedStatus === "SecurityDispatched"
+                    })
+                    setSelectedStatus(null)
+                    setStatusChangeItem(null)
+                  }}>{t('common.save')}</Button>
+                </div>
+        </div>
+      </Modal>
       <div className="overflow-hidden bg-white dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <Table>
@@ -262,7 +304,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.requestSource')}
+                  {t('home.table.parentStatus')}
                 </TableCell>
                 <TableCell
                   isHeader
@@ -275,6 +317,12 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
                   {t('home.table.status')}
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                >
+                  {t('home.table.changeStatus')}
                 </TableCell>
                 <TableCell
                   isHeader
@@ -316,8 +364,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {/* {request.requestSource} */}
-                    N/A
+                    {t(`home.table.${request.parentRespondedTimestamp ? 'accept': 'autoAccept'}`)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {/* {dayjs(order.requestTime).format("DD/MM/YYYY HH:mm")} */}
@@ -340,7 +387,12 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     >
                         {t(`home.requestStatuses.${camelCase(order.status)}` as any)}
                     </Badge> */}
-                    N/A
+                    {request.status}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  {['Pending'].includes(request.status) &&  <Button size="sm" className="w-max min-w-max" onClick={() => {
+                      setStatusChangeItem(request)
+                    }}>{t('home.table.changeStatus')}</Button>}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <Button
@@ -383,7 +435,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {/* {request.parentUser.backupPhoneNumber} */} N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {/* {order.requestSource} */} N/A
+                    {t(`home.table.${request.parentRespondedTimestamp ? 'accept': 'autoAccept'}`)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
@@ -405,7 +457,12 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     >
                       {t(`home.requestStatuses.${camelCase(order.status)}` as any)}
                     </Badge> */}
-                    N/A
+                       {request.status}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {/* N/A */}
+                   N/A
+
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <Button

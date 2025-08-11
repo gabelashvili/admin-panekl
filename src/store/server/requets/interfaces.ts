@@ -15,8 +15,15 @@ export interface RequestModel {
     latitude: string;
     timestamp: string; // ISO date string
     parentRespondedTimestamp: string;
-    parentStatus: "accepted" | "notViewed";
-    policeStatus: "not-verified" | "accepted" | "pending" | "rejected" | "resolved";
+    status: | "Pending"
+    | "Rejected"
+    | "Accepted"
+    | "AutoAccepted"
+    | "SecurityDispatched"
+    | "RejectedByDispatcher"
+    | "Completed"
+    | "Expired"
+    | "Cancelled";
     updatedTimestamp: string;
     expirationDate: string;
 }

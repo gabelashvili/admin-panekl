@@ -28,7 +28,8 @@ const useNewRequestsQuery = () => {
       const { data } = await api.get(`help/active`)
       return data
     },
-    refetchInterval: 2500
+    refetchInterval: 2000,
+    refetchIntervalInBackground: true
   })
 }
 
