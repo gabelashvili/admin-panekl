@@ -354,10 +354,10 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.parentUser.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.secondaryUser.name}
+                    {request.secondaryUser?.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.secondaryUser.phoneNumber}
+                    {request.secondaryUser?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {/* {request.backupPhoneNumber} */}
@@ -426,10 +426,10 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.parentUser.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.secondaryUser.name}
+                    {request.secondaryUser?.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.secondaryUser.phoneNumber}
+                    {request.secondaryUser?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {/* {request.parentUser.backupPhoneNumber} */} N/A
