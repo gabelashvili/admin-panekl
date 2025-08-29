@@ -82,7 +82,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         {t('common.firstName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.secondaryUser.name}
+                        {selectedItem?.secondaryUser?.name}
                       </p>
                     </div>
 
@@ -91,7 +91,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         {t('common.lastName')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.secondaryUser.name}
+                        {selectedItem?.secondaryUser?.name}
                       </p>
                     </div>
 
@@ -210,9 +210,9 @@ export default function List({ data, activeItems, pending }: ListProps) {
                           <AnyReactComponent
                             lat={Number(selectedItem?.latitude) || 0}
                             lng={Number(selectedItem?.longitude) || 0}
-                            text={`${
-                              selectedItem?.secondaryUser.name.split(" ")[0][0]
-                            }. ${selectedItem?.secondaryUser.name.split(" ")[1][0]}.`}
+                            text={selectedItem?.secondaryUser?.name ? `${
+                              selectedItem?.secondaryUser?.name?.split(" ")?.[0]?.[0]
+                            }. ${selectedItem?.secondaryUser?.name?.split(" ")?.[1]?.[0]}.` : 'N/A'}
                           />
                         </GoogleMapReact>
                       </div>
