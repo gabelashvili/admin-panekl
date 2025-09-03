@@ -16,7 +16,7 @@ const handlePageChange = (page: number) => {
   setPage(page);
 };
 
-return (
+return  totalPages > 1 &&(
   <>
     <PaginationComponent
       totalPages={totalPages}
