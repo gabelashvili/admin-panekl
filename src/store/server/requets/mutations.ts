@@ -10,5 +10,15 @@ const useRequestStatusChange = () => {
     })
 }
 
+const useRequestStatusComplete = () => {
+  return useMutation({
+    mutationFn: async (helpRequestId: string): Promise<any> => {
+      const { data } = await api.post('help/complete', {helpRequestId})
+      return data
+    }
+  })
+}
 
-export { useRequestStatusChange }
+
+
+export { useRequestStatusChange, useRequestStatusComplete }

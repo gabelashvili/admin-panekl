@@ -31,7 +31,8 @@
             "autoAccept": "ავტომატური თანხმობა",
             "changeStatus": "არჩევა",
             "securityDispatched": "მიღება",
-            "rejectedByDispatcher": "უარყოფა"
+            "rejectedByDispatcher": "უარყოფა",
+            "finish": "დასრულება"
         },
         "requesetDetails": {
             "title": "მოთხოვნის დეტალები",

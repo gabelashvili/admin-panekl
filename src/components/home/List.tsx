@@ -14,7 +14,7 @@ import GoogleMapReact from "google-map-react";
 import { useTranslation } from "react-i18next";
 import { RequestResponseModel } from "../../store/server/requets/interfaces";
 import Select from "../form/Select";
-import { useRequestStatusChange } from "../../store/server/requets/mutations";
+import { useRequestStatusChange, useRequestStatusComplete } from "../../store/server/requets/mutations";
 
 interface ListProps {
   data: RequestResponseModel['helpRequests'];
@@ -31,6 +31,7 @@ const AnyReactComponent = ({ text }: { text: string }) => (
 export default function List({ data, activeItems, pending }: ListProps) {
   const { t } = useTranslation();
   const reqStatusChangeMutation = useRequestStatusChange()
+  const reqStatusCompleteMutation = useRequestStatusComplete()
   const { isOpen, openModal, closeModal } = useModal();
   const [tableData, setTableData] = useState<ListProps["data"]>([]);
   const [selectedItem, setSelectedItem] = useState<ListProps["data"][0] | null>(
@@ -100,7 +101,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         {t('common.phoneNumber')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.secondaryUser.phoneNumber}
+                        {selectedItem?.secondaryUser?.phoneNumber}
                       </p>
                     </div>
                   </div>
@@ -232,7 +233,12 @@ export default function List({ data, activeItems, pending }: ListProps) {
           <h1 className="font-medium text-xl">აირჩიეთ სტატუსი</h1>
             <Select
                   placeholder=""
-                  options={[{
+                  options={statusChangeItem?.status === "SecurityDispatched" ? [
+                    {
+                      label: t("home.table.finish"),
+                      value: "Finish"
+                    }
+                  ] : [{
                     label: t("home.table.securityDispatched"),
                     value: "SecurityDispatched"
                   },
@@ -249,10 +255,15 @@ export default function List({ data, activeItems, pending }: ListProps) {
                 <div className="flex gap-2 justify-end mt-4">
                   <Button variant="outline" >{t('common.cancel')}</Button>
                   <Button disabled={!selectedStatus} onClick={async () => {
-                    await reqStatusChangeMutation.mutateAsync({
-                      helpRequestId: statusChangeItem!.id,
-                      accepted: selectedStatus === "SecurityDispatched"
-                    })
+                    if(selectedStatus === "Finish") {
+                      await reqStatusCompleteMutation.mutateAsync(statusChangeItem!.id)
+                    } 
+                    else {
+                      await reqStatusChangeMutation.mutateAsync({
+                        helpRequestId: statusChangeItem!.id,
+                        accepted: selectedStatus === "SecurityDispatched"
+                      })
+                    }
                     setSelectedStatus(null)
                     setStatusChangeItem(null)
                   }}>{t('common.save')}</Button>
@@ -342,7 +353,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   //     ? "animate-[highlight_2s_ease-in-out_5]"
                   //     : ""
                   // }`}
-                  className="animate-[highlight_2s_ease-in-out_infinite]"
+                  className={request.status === "Pending" ? "animate-[highlight_2s_ease-in-out_infinite]" : ""}
                 >
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                     {request.id}
@@ -371,26 +382,10 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {/* <Badge
-                      size="sm"
-                      color={
-                        order.status === "Acknowledged"
-                          ? "warning"
-                          : order.status === "Approved"
-                          ? "info"
-                          : order.status === "Completed"
-                          ? "success"
-                          : order.status === "Rejected by Parent"
-                          ? "error"
-                          : "warning"
-                      }
-                    >
-                        {t(`home.requestStatuses.${camelCase(order.status)}` as any)}
-                    </Badge> */}
                     {request.status}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {['Pending'].includes(request.status) &&  <Button size="sm" className="w-max min-w-max" onClick={() => {
+                  {['Pending', "SecurityDispatched"].includes(request.status) &&  <Button size="sm" className="w-max min-w-max" onClick={() => {
                       setStatusChangeItem(request)
                     }}>{t('home.table.changeStatus')}</Button>}
                   </TableCell>
