@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Link } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import NotificationDropdown from "../components/header/NotificationDropdown";
@@ -8,7 +8,10 @@ import UserDropdown from "../components/header/UserDropdown";
 import LangDropdown from "../components/header/LangDropdown";
 
 const AppHeader: React.FC = () => {
+  const [URLSearchParams] = useSearchParams()
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
+  const navigate = useNavigate()
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
@@ -25,6 +28,15 @@ const AppHeader: React.FC = () => {
   };
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearch = (val: string) => {
+    if(timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+    timerRef.current = setTimeout(() => {
+      navigate(`?search=${val}`)
+    }, 1000)
+  }
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -138,6 +150,8 @@ const AppHeader: React.FC = () => {
                   </svg>
                 </span>
                 <input
+                  defaultValue={URLSearchParams.get('search') || ""}
+                  onChange={(e) => handleSearch(e.target.value)}
                   ref={inputRef}
                   type="text"
                   placeholder="Search or type command..."

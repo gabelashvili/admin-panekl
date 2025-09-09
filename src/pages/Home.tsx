@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useNewRequestsQuery, useRequestsQuery } from "../store/server/requets/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import requestsTags from "../store/server/requets/tags";
+import { useSearchParams } from "react-router";
 
 dayjs.extend(isBetween);
 
@@ -25,11 +26,13 @@ const Home = () => {
   const queryClient = useQueryClient()
   const [dateRange, setDateRange] = useState<Date[] | null>(null);
   const [page, setPage] = useState(0);
+  const [URLSearchParams] = useSearchParams()
   const filters = {
     fromDate: dateRange?.[0] ? toLocalISOString(dateRange?.[0]) : null, 
     toDate: dateRange?.[1] ? toLocalISOString(dateRange?.[1]) : null, 
     page: page + 1, 
-    pageSize: ROWS_PER_PAGE
+    pageSize: ROWS_PER_PAGE,
+    searchTerm: URLSearchParams.get('search') || null
   }
   const { data: allData, isLoading: isAllDataLoading,  } = useRequestsQuery(filters)
   const {data: activeData, isPending: isActiveDataPending} = useNewRequestsQuery()
