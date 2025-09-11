@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { RequestResponseModel } from "../../store/server/requets/interfaces";
 import Select from "../form/Select";
 import { useRequestStatusChange, useRequestStatusComplete } from "../../store/server/requets/mutations";
+import { toast } from "react-toastify";
 
 interface ListProps {
   data: RequestResponseModel['helpRequests'];
@@ -231,7 +232,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
           <h1 className="font-medium text-xl dark:text-white">აირჩიეთ სტატუსი</h1>
             <Select
                   placeholder=""
-                  options={statusChangeItem?.status === "SecurityDispatched" ? [
+                  options={statusChangeItem?.status === "SecurityDispatched" || statusChangeItem?.status === "Accepted" || statusChangeItem?.status === "AutoAccepted" ? [
                     {
                       label: t("home.table.finish"),
                       value: "Finish"
@@ -256,14 +257,18 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     setStatusChangeItem(null)
                   }}>{t('common.cancel')}</Button>
                   <Button disabled={!selectedStatus} onClick={async () => {
-                    if(selectedStatus === "Finish") {
-                      await reqStatusCompleteMutation.mutateAsync(statusChangeItem!.id)
-                    } 
-                    else {
-                      await reqStatusChangeMutation.mutateAsync({
-                        helpRequestId: statusChangeItem!.id,
-                        accepted: selectedStatus === "SecurityDispatched"
-                      })
+                    try {
+                      if(selectedStatus === "Finish") {
+                       await reqStatusCompleteMutation.mutateAsync(statusChangeItem!.id)
+                      } 
+                      else {
+                        await reqStatusChangeMutation.mutateAsync({
+                          helpRequestId: statusChangeItem!.id,
+                          accepted: selectedStatus === "SecurityDispatched"
+                        })
+                      }
+                    } catch (error: any) {
+                      toast.error(error?.error || t('common.somethingWentWrong'))
                     }
                     setSelectedStatus(null)
                     setStatusChangeItem(null)
@@ -386,7 +391,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.status}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {['Pending', "SecurityDispatched"].includes(request.status) &&  <Button size="sm" className="w-max min-w-max" onClick={() => {
+                  {['Pending', "SecurityDispatched", "Accepted", "AutoAccepted"].includes(request.status) &&  <Button size="sm" className="w-max min-w-max" onClick={() => {
                       setStatusChangeItem(request)
                     }}>{t('home.table.changeStatus')}</Button>}
                   </TableCell>
