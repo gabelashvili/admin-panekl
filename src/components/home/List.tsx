@@ -211,9 +211,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                           <AnyReactComponent
                             lat={Number(selectedItem?.latitude) || 0}
                             lng={Number(selectedItem?.longitude) || 0}
-                            text={selectedItem?.secondaryUser?.name ? `${
-                              selectedItem?.secondaryUser?.name?.split(" ")?.[0]?.[0]
-                            }. ${selectedItem?.secondaryUser?.name?.split(" ")?.[1]?.[0]}.` : 'N/A'}
+                            text={`${selectedItem?.secondaryUser?.name[0]} ${selectedItem?.secondaryUser?.name?.split(' ')?.[1]?.[0] || ''}`}
                           />
                         </GoogleMapReact>
                       </div>
@@ -230,7 +228,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
         setSelectedStatus(null)
       }} className="max-w-[700px] m-4">
         <div className="space-y-4 no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-          <h1 className="font-medium text-xl">აირჩიეთ სტატუსი</h1>
+          <h1 className="font-medium text-xl dark:text-white">აირჩიეთ სტატუსი</h1>
             <Select
                   placeholder=""
                   options={statusChangeItem?.status === "SecurityDispatched" ? [
@@ -253,7 +251,10 @@ export default function List({ data, activeItems, pending }: ListProps) {
                 />
 
                 <div className="flex gap-2 justify-end mt-4">
-                  <Button variant="outline" >{t('common.cancel')}</Button>
+                  <Button variant="outline" onClick={() => {
+                    setSelectedStatus(null)
+                    setStatusChangeItem(null)
+                  }}>{t('common.cancel')}</Button>
                   <Button disabled={!selectedStatus} onClick={async () => {
                     if(selectedStatus === "Finish") {
                       await reqStatusCompleteMutation.mutateAsync(statusChangeItem!.id)
