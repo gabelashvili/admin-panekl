@@ -149,7 +149,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         {t('common.backupPhoneNumber')}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        N/A
+                        {selectedItem?.parentUser.secondaryNumber || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -433,7 +433,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.secondaryUser?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {/* {request.parentUser.backupPhoneNumber} */} N/A
+                    {request.parentUser.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {t(`home.table.${request.parentRespondedTimestamp ? 'accept': 'autoAccept'}`)}

@@ -4,6 +4,7 @@ export interface RequestUser {
     phoneNumber: string;
     personalNumber: string;
     userType: 'Main' | 'Secondary';
+    secondaryNumber: string | null;
   }
 
 
@@ -26,6 +27,7 @@ export interface RequestModel {
     | "Cancelled";
     updatedTimestamp: string;
     expirationDate: string;
+    secondaryNumber: string | null;
 }
 
 export interface RequestResponseModel {
