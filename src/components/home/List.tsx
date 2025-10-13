@@ -232,7 +232,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
           <h1 className="font-medium text-xl dark:text-white">აირჩიეთ სტატუსი</h1>
             <Select
                   placeholder=""
-                  options={statusChangeItem?.status === "SecurityDispatched" || statusChangeItem?.status === "Accepted" || statusChangeItem?.status === "AutoAccepted" ? [
+                  options={statusChangeItem?.status === "SecurityDispatched" || statusChangeItem?.status === "Accepted" ? [
                     {
                       label: t("home.table.finish"),
                       value: "Finish"
