@@ -198,7 +198,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                             lat: Number(selectedItem?.latitude) || 0,
                             lng: Number(selectedItem?.longitude) || 0,
                           }}
-                          defaultZoom={8}
+                          defaultZoom={12}
                           options={{
                             zoomControl: true,
                             mapTypeControl: true,
