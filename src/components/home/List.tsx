@@ -448,7 +448,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         request.status === "Rejected" ||
                         request.status === "RejectedByDispatcher"
                       ) &&
-                        request.status === "Accepted" || !!request.parentRespondedTimestamp  &&
+                        (request.status === "Accepted" || !!request.parentRespondedTimestamp)  &&
                         t("home.table.acceptedByParent")}
                       {!(
                         request.status === "Rejected" ||
