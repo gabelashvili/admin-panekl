@@ -26,9 +26,12 @@
             "filters": {
                 "selectDate": "თარიღის არჩევა"
             },
-            "parentStatus": "მშობლის სტატუსი",
+            "acceptedBy": "გამოძახების მიმღები",
+            "cancelled": "გაუქმებული",
             "accept": "თანხმობა",
             "autoAccept": "ავტომატური თანხმობა",
+            "acceptedByParent": "მშობელი",
+            "acceptedBySystem": "სისტემა",
             "changeStatus": "არჩევა",
             "securityDispatched": "მიღება",
             "rejectedByDispatcher": "უარყოფა",
