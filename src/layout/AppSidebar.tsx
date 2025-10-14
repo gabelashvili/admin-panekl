@@ -102,8 +102,6 @@ const AppSidebar: React.FC = () => {
     });
   };
 
-  console.log(openSubmenu, 222);
-
   const renderMenuItems = (items: NavItem[], menuType: "main" | "others") => (
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
