@@ -50,7 +50,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
     status: RequestResponseModel["helpRequests"][number]["status"]
   ) => {
     console.log(status);
-    
+
     if (status === "Pending") {
       return [
         {
@@ -85,7 +85,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
       ];
     }
 
-    return []
+    return [];
   };
 
   useEffect(() => {
@@ -288,12 +288,16 @@ export default function List({ data, activeItems, pending }: ListProps) {
           <h1 className="font-medium text-xl dark:text-white">
             აირჩიეთ სტატუსი
           </h1>
-         {renderOptionsBasedOnStatus(statusChangeItem?.status as any) && <Select
-            placeholder=""
-            options={renderOptionsBasedOnStatus(statusChangeItem?.status as any)}
-            value={selectedStatus}
-            onChange={(value) => setSelectedStatus(value as any)}
-          />}
+          {renderOptionsBasedOnStatus(statusChangeItem?.status as any) && (
+            <Select
+              placeholder=""
+              options={renderOptionsBasedOnStatus(
+                statusChangeItem?.status as any
+              )}
+              value={selectedStatus}
+              onChange={(value) => setSelectedStatus(value as any)}
+            />
+          )}
 
           <div className="flex gap-2 justify-end mt-4">
             <Button
@@ -417,62 +421,129 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   className={
                     request.status === "Pending"
                       ? "animate-[highlight_2s_ease-in-out_infinite]"
-                      : ""
+                      : "bg-[rgb(144,_10,_22)] text-white font-medium"
                   }
                 >
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
                     {request.id}
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
                     {request.parentUser.name}
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
                     {request.parentUser.phoneNumber}
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
                     {request.secondaryUser?.name}
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
                     {request.secondaryUser?.phoneNumber}
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
                     {/* {request.backupPhoneNumber} */}
                     N/A
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {(request.status === "Rejected" ||
-                        request.status === "RejectedByDispatcher") &&
-                        t("home.table.cancelled")}
-                      {!(
-                        request.status === "Rejected" ||
-                        request.status === "RejectedByDispatcher"
-                      ) &&
-                        (request.status === "Accepted" || !!request.parentRespondedTimestamp)  &&
-                        t("home.table.acceptedByParent")}
-                      {!(
-                        request.status === "Rejected" ||
-                        request.status === "RejectedByDispatcher"
-                      ) &&
-                        (request.status === "AutoAccepted" || request.status === "SecurityDispatched") && !request.parentRespondedTimestamp &&
-                        t("home.table.acceptedBySystem")}
-                         {request.status === "Completed" && request.parentRespondedTimestamp && t("home.table.acceptedByParent")}
-                         {request.status === "Completed" && !request.parentRespondedTimestamp && t("home.table.acceptedBySystem")}
-                    </TableCell>
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
+                    {(request.status === "Rejected" ||
+                      request.status === "RejectedByDispatcher") &&
+                      t("home.table.cancelled")}
+                    {!(
+                      request.status === "Rejected" ||
+                      request.status === "RejectedByDispatcher"
+                    ) &&
+                      (request.status === "Accepted" ||
+                        !!request.parentRespondedTimestamp) &&
+                      t("home.table.acceptedByParent")}
+                    {!(
+                      request.status === "Rejected" ||
+                      request.status === "RejectedByDispatcher"
+                    ) &&
+                      (request.status === "AutoAccepted" ||
+                        request.status === "SecurityDispatched") &&
+                      !request.parentRespondedTimestamp &&
+                      t("home.table.acceptedBySystem")}
+                    {request.status === "Completed" &&
+                      request.parentRespondedTimestamp &&
+                      t("home.table.acceptedByParent")}
+                    {request.status === "Completed" &&
+                      !request.parentRespondedTimestamp &&
+                      t("home.table.acceptedBySystem")}
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
                     {/* {dayjs(order.requestTime).format("DD/MM/YYYY HH:mm")} */}
                     N/A
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.status === 'Pending' && 'გამოძახება მუშავდება'}
-                    {request.status === 'Accepted' && 'მშობელმა დაადასტურა გამოძახება'}
-                    {request.status === 'AutoAccepted' && 'სისტემამ ავტომატურად დაადასტურა გამოძახება'}
-                    {request.status === 'SecurityDispatched' && 'დაცვის გუნდი გზაშია'}
-                    {request.status === 'Completed' && 'გამოძახება დასრულდა'}
-
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                    } `}
+                  >
+                    {request.status === "Pending" && "გამოძახება მუშავდება"}
+                    {request.status === "Accepted" &&
+                      "მშობელმა დაადასტურა გამოძახება"}
+                    {request.status === "AutoAccepted" &&
+                      "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
+                    {request.status === "SecurityDispatched" &&
+                      "დაცვის გუნდი გზაშია"}
+                    {request.status === "Completed" && "გამოძახება დასრულდა"}
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)]"
+                    } `}
+                  >
                     {[
                       "Pending",
                       "SecurityDispatched",
@@ -480,6 +551,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       "AutoAccepted",
                     ].includes(request.status) && (
                       <Button
+                        variant="outline"
                         size="sm"
                         className="w-max min-w-max"
                         onClick={() => {
@@ -490,7 +562,13 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       </Button>
                     )}
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  <TableCell
+                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                      request.status === "Pending"
+                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        : "bg-[rgb(144,_10,_22)]"
+                    } `}
+                  >
                     <Button
                       className="min-w-max"
                       variant="outline"
@@ -531,7 +609,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.parentUser.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {(request.status === "Rejected" ||
                         request.status === "RejectedByDispatcher") &&
                         t("home.table.cancelled")}
@@ -539,26 +617,36 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         request.status === "Rejected" ||
                         request.status === "RejectedByDispatcher"
                       ) &&
-                        ((request.status === "Accepted" || !!request.parentRespondedTimestamp) || (request.status === "Completed" && request.parentRespondedTimestamp))  &&
+                        (request.status === "Accepted" ||
+                          !!request.parentRespondedTimestamp ||
+                          (request.status === "Completed" &&
+                            request.parentRespondedTimestamp)) &&
                         t("home.table.acceptedByParent")}
                       {!(
                         request.status === "Rejected" ||
                         request.status === "RejectedByDispatcher"
                       ) &&
-                        (request.status === "AutoAccepted" || request.status === "SecurityDispatched") && !request.parentRespondedTimestamp &&
+                        (request.status === "AutoAccepted" ||
+                          request.status === "SecurityDispatched") &&
+                        !request.parentRespondedTimestamp &&
                         t("home.table.acceptedBySystem")}
-                         {request.status === "Completed" && !request.parentRespondedTimestamp && t("home.table.acceptedBySystem")}
+                      {request.status === "Completed" &&
+                        !request.parentRespondedTimestamp &&
+                        t("home.table.acceptedBySystem")}
                     </TableCell>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.status === 'Pending' && 'გამოძახება მუშავდება'}
-                    {request.status === 'Accepted' && 'მშობელმა დაადასტურა გამოძახება'}
-                    {request.status === 'AutoAccepted' && 'სისტემამ ავტომატურად დაადასტურა გამოძახება'}
-                    {request.status === 'SecurityDispatched' && 'დაცვის გუნდი გზაშია'}
-                    {request.status === 'Completed' && 'გამოძახება დასრულდა'}
+                    {request.status === "Pending" && "გამოძახება მუშავდება"}
+                    {request.status === "Accepted" &&
+                      "მშობელმა დაადასტურა გამოძახება"}
+                    {request.status === "AutoAccepted" &&
+                      "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
+                    {request.status === "SecurityDispatched" &&
+                      "დაცვის გუნდი გზაშია"}
+                    {request.status === "Completed" && "გამოძახება დასრულდა"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {/* N/A */}

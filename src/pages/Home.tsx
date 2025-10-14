@@ -11,6 +11,8 @@ import { useNewRequestsQuery, useRequestsQuery } from "../store/server/requets/q
 import { useQueryClient } from "@tanstack/react-query";
 import requestsTags from "../store/server/requets/tags";
 import { useSearchParams } from "react-router";
+import Button from "../components/ui/button";
+import { DocsIcon } from "../icons";
 
 dayjs.extend(isBetween);
 
@@ -128,6 +130,7 @@ const Home = () => {
                   value={status}
                   onChange={(value) => setStatus(value)}
                 /> */}
+                <Button variant="outline" size="sm" className="w-max min-w-max">სტატისტიკა <DocsIcon className="size-5" /></Button>
                 <DatePicker
                   id="date-picker"
                   placeholder={t('home.table.filters.selectDate')}
