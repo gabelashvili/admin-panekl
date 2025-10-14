@@ -9,6 +9,6 @@ export interface SignInResponse {
 export interface AuthedUserQueryResponse {
     "id": string;
     "userName": string;
-    "userType": string;
+    "userType": "Dispatcher" | "Admin";
     "timeStamp": Date
 }

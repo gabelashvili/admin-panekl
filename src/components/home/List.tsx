@@ -19,6 +19,7 @@ import {
   useRequestStatusComplete,
 } from "../../store/server/requets/mutations";
 import { toast } from "react-toastify";
+import useAuthedUserStore from "../../store/client/useAuthedUserStore";
 
 interface ListProps {
   data: RequestResponseModel["helpRequests"];
@@ -33,6 +34,7 @@ const AnyReactComponent = ({ text }: { text: string }) => (
 );
 
 export default function List({ data, activeItems, pending }: ListProps) {
+  const user = useAuthedUserStore(state => state.user)
   const { t } = useTranslation();
   const reqStatusChangeMutation = useRequestStatusChange();
   const reqStatusCompleteMutation = useRequestStatusComplete();
@@ -398,13 +400,14 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t("home.table.changeStatus")}
+                  სტატუსის შეცვლა
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t("common.actions")}
+                  {' '}
+                  {/* {t("common.actions")} */}
                 </TableCell>
               </TableRow>
             </TableHeader>
@@ -421,14 +424,14 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   className={
                     request.status === "Pending"
                       ? "animate-[highlight_2s_ease-in-out_infinite]"
-                      : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                      : "bg-[rgb(144,_10,_22)] text-white font-medium"
                   }
                 >
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {request.id}
@@ -437,7 +440,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {request.parentUser.name}
@@ -446,7 +449,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {request.parentUser.phoneNumber}
@@ -455,7 +458,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {request.secondaryUser?.name}
@@ -464,7 +467,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {request.secondaryUser?.phoneNumber}
@@ -473,7 +476,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {/* {request.backupPhoneNumber} */}
@@ -483,7 +486,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {(request.status === "Rejected" ||
@@ -515,7 +518,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {/* {dayjs(order.requestTime).format("DD/MM/YYYY HH:mm")} */}
@@ -525,7 +528,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white font-medium"
+                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
                     {request.status === "Pending" && "გამოძახება მუშავდება"}
@@ -541,7 +544,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white"
+                        : "bg-[rgb(144,_10,_22)] text-white"
                     } `}
                   >
                     {[
@@ -549,7 +552,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       "SecurityDispatched",
                       "Accepted",
                       "AutoAccepted",
-                    ].includes(request.status) && (
+                    ].includes(request.status) && user?.userType === "Dispatcher" && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -566,7 +569,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                       request.status === "Pending"
                         ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)]text-white"
+                        : "bg-[rgb(144,_10,_22)] text-white"
                     } `}
                   >
                     <Button

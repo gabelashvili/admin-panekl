@@ -29,7 +29,7 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-            <Route index path="/users-list" element={<UsersList />} />
+            {user?.userType === "Admin" && <Route index path="/users" element={<UsersList />} />}
 
             {/* Others Page */}
             {/* <Route path="/profile" element={<UserProfiles />} /> */}

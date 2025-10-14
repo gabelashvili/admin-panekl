@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router";
 // Assume these icons are imported from an icon library
 import { ChevronDownIcon, HorizontaLDots, TableIcon, UserIcon } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import useAuthedUserStore from "../store/client/useAuthedUserStore";
 
 type NavItem = {
   name: string;
@@ -12,45 +13,12 @@ type NavItem = {
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
 };
 
-const navItems: NavItem[] = [
-  {
-      icon: <TableIcon />,
-      name: "Home",
-      path: "/",
-    },
-  {
-    icon: <UserIcon />,
-    name: "Users",
-    path: "/users-ist",
-  },
-  // {
-  //   icon: <UserCircleIcon />,
-  //   name: "User Profile",
-  //   path: "/profile",
-  // },
-  // {
-  //   name: "Forms",
-  //   icon: <ListIcon />,
-  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  // },
-  // {
-  //   name: "Tables",
-  //   icon: <TableIcon />,
-  //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  // },
-  // {
-  //   name: "Pages",
-  //   icon: <PageIcon />,
-  //   subItems: [
-  //     { name: "Blank Page", path: "/blank", pro: false },
-  //     { name: "404 Error", path: "/error-404", pro: false },
-  //   ],
-  // },
-];
+
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
+  const user = useAuthedUserStore(state => state.user)
 
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main" | "others";
@@ -66,6 +34,24 @@ const AppSidebar: React.FC = () => {
     (path: string) => location.pathname === path,
     [location.pathname]
   );
+
+  const navItems: NavItem[] = [
+    {
+      icon: <TableIcon />,
+      name: "Home",
+      path: "/",
+    },
+    ...(user?.userType === "Admin"
+      ? [
+          {
+            icon: <UserIcon />,
+            name: "Users",
+            path: "/users",
+          },
+        ]
+      : []),
+  ];
+  
 
   useEffect(() => {
     let submenuMatched = false;
