@@ -14,12 +14,15 @@ import GoogleMapReact from "google-map-react";
 import { useTranslation } from "react-i18next";
 import { RequestResponseModel } from "../../store/server/requets/interfaces";
 import Select from "../form/Select";
-import { useRequestStatusChange, useRequestStatusComplete } from "../../store/server/requets/mutations";
+import {
+  useRequestStatusChange,
+  useRequestStatusComplete,
+} from "../../store/server/requets/mutations";
 import { toast } from "react-toastify";
 
 interface ListProps {
-  data: RequestResponseModel['helpRequests'];
-  activeItems: RequestResponseModel['helpRequests'];
+  data: RequestResponseModel["helpRequests"];
+  activeItems: RequestResponseModel["helpRequests"];
   pending: boolean;
 }
 
@@ -31,17 +34,58 @@ const AnyReactComponent = ({ text }: { text: string }) => (
 
 export default function List({ data, activeItems, pending }: ListProps) {
   const { t } = useTranslation();
-  const reqStatusChangeMutation = useRequestStatusChange()
-  const reqStatusCompleteMutation = useRequestStatusComplete()
+  const reqStatusChangeMutation = useRequestStatusChange();
+  const reqStatusCompleteMutation = useRequestStatusComplete();
   const { isOpen, openModal, closeModal } = useModal();
   const [tableData, setTableData] = useState<ListProps["data"]>([]);
   const [selectedItem, setSelectedItem] = useState<ListProps["data"][0] | null>(
     null
   );
-  const [statusChangeItem, setStatusChangeItem] = useState<ListProps["data"][0] | null>(
-    null
-  );
-  const [selectedStatus, setSelectedStatus] = useState<null | string>(null)
+  const [statusChangeItem, setStatusChangeItem] = useState<
+    ListProps["data"][0] | null
+  >(null);
+  const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
+
+  const renderOptionsBasedOnStatus = (
+    status: RequestResponseModel["helpRequests"][number]["status"]
+  ) => {
+    console.log(status);
+    if (status === "Pending") {
+      return [
+        {
+          label: t("home.table.cancel"),
+          value: "Cancelled",
+        },
+      ];
+    }
+    if (
+      status === "Rejected" ||
+      status === "RejectedByDispatcher" ||
+      status === "Completed"
+    ) {
+      return [];
+    }
+
+    if (status === "Accepted" || status === "AutoAccepted") {
+      return [
+        {
+          label: t("home.table.securityDispatched"),
+          value: "SecurityDispatched",
+        },
+      ];
+    }
+
+    if (status === "SecurityDispatched") {
+      return [
+        {
+          label: t("home.table.finish"),
+          value: "Finish",
+        },
+      ];
+    }
+
+    return []
+  };
 
   useEffect(() => {
     setTableData(data);
@@ -57,17 +101,21 @@ export default function List({ data, activeItems, pending }: ListProps) {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={() => {
-        closeModal()
-        setSelectedItem(null)
-      }} className="max-w-[700px] m-4">
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          closeModal();
+          setSelectedItem(null);
+        }}
+        className="max-w-[700px] m-4"
+      >
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              {t('home.requesetDetails.title')}
+              {t("home.requesetDetails.title")}
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              {t('home.requesetDetails.description')}
+              {t("home.requesetDetails.description")}
             </p>
           </div>
           <div className="space-y-6 w-full overflow-y-auto max-h-[60vh]">
@@ -75,13 +123,13 @@ export default function List({ data, activeItems, pending }: ListProps) {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    {t('home.requesetDetails.childrenInfo')}
+                    {t("home.requesetDetails.childrenInfo")}
                   </h4>
 
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t('common.firstName')}
+                        {t("common.firstName")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.secondaryUser?.name}
@@ -90,7 +138,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t('common.lastName')}
+                        {t("common.lastName")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.secondaryUser?.name}
@@ -99,7 +147,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t('common.phoneNumber')}
+                        {t("common.phoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.secondaryUser?.phoneNumber}
@@ -113,13 +161,13 @@ export default function List({ data, activeItems, pending }: ListProps) {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    {t('home.requesetDetails.parentInfo')}
+                    {t("home.requesetDetails.parentInfo")}
                   </h4>
 
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t('common.firstName')}
+                        {t("common.firstName")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentUser.name}
@@ -128,7 +176,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t('common.lastName')}
+                        {t("common.lastName")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentUser.name}
@@ -137,7 +185,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t('common.phoneNumber')}
+                        {t("common.phoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentUser.phoneNumber}
@@ -146,7 +194,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t('common.backupPhoneNumber')}
+                        {t("common.backupPhoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentUser.secondaryNumber || "N/A"}
@@ -160,13 +208,13 @@ export default function List({ data, activeItems, pending }: ListProps) {
               <div className="">
                 <div>
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    {t('home.requesetDetails.location')}
+                    {t("home.requesetDetails.location")}
                   </h4>
 
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t('home.requesetDetails.latitude')}
+                        {t("home.requesetDetails.latitude")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.latitude}
@@ -175,13 +223,12 @@ export default function List({ data, activeItems, pending }: ListProps) {
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                      {t('home.requesetDetails.longitude')}
+                        {t("home.requesetDetails.longitude")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.longitude}
                       </p>
                     </div>
-                 
                   </div>
 
                   <div className="w-full mt-6">
@@ -212,7 +259,11 @@ export default function List({ data, activeItems, pending }: ListProps) {
                           <AnyReactComponent
                             lat={Number(selectedItem?.latitude) || 0}
                             lng={Number(selectedItem?.longitude) || 0}
-                            text={`${selectedItem?.secondaryUser?.name[0]} ${selectedItem?.secondaryUser?.name?.split(' ')?.[1]?.[0] || ''}`}
+                            text={`${selectedItem?.secondaryUser?.name[0]} ${
+                              selectedItem?.secondaryUser?.name?.split(
+                                " "
+                              )?.[1]?.[0] || ""
+                            }`}
                           />
                         </GoogleMapReact>
                       </div>
@@ -224,56 +275,59 @@ export default function List({ data, activeItems, pending }: ListProps) {
           </div>
         </div>
       </Modal>
-      <Modal isOpen={!!statusChangeItem} onClose={() => {
-        setStatusChangeItem(null)
-        setSelectedStatus(null)
-      }} className="max-w-[700px] m-4">
+      <Modal
+        isOpen={!!statusChangeItem}
+        onClose={() => {
+          setStatusChangeItem(null);
+          setSelectedStatus(null);
+        }}
+        className="max-w-[700px] m-4"
+      >
         <div className="space-y-4 no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-          <h1 className="font-medium text-xl dark:text-white">აირჩიეთ სტატუსი</h1>
-            <Select
-                  placeholder=""
-                  options={statusChangeItem?.status === "SecurityDispatched" || statusChangeItem?.status === "Accepted" ? [
-                    {
-                      label: t("home.table.finish"),
-                      value: "Finish"
-                    }
-                  ] : [{
-                    label: t("home.table.securityDispatched"),
-                    value: "SecurityDispatched"
-                  },
-                
-                  {
-                    label: t("home.table.rejectedByDispatcher"),
-                    value: "RejectedByDispatcher"
-                  }
-                ]}
-                  value={selectedStatus}
-                  onChange={(value) => setSelectedStatus(value as any)}
-                />
+          <h1 className="font-medium text-xl dark:text-white">
+            აირჩიეთ სტატუსი
+          </h1>
+         {renderOptionsBasedOnStatus(statusChangeItem?.status as any) && <Select
+            placeholder=""
+            options={renderOptionsBasedOnStatus(statusChangeItem?.status as any)}
+            value={selectedStatus}
+            onChange={(value) => setSelectedStatus(value as any)}
+          />}
 
-                <div className="flex gap-2 justify-end mt-4">
-                  <Button variant="outline" onClick={() => {
-                    setSelectedStatus(null)
-                    setStatusChangeItem(null)
-                  }}>{t('common.cancel')}</Button>
-                  <Button disabled={!selectedStatus} onClick={async () => {
-                    try {
-                      if(selectedStatus === "Finish") {
-                       await reqStatusCompleteMutation.mutateAsync(statusChangeItem!.id)
-                      } 
-                      else {
-                        await reqStatusChangeMutation.mutateAsync({
-                          helpRequestId: statusChangeItem!.id,
-                          accepted: selectedStatus === "SecurityDispatched"
-                        })
-                      }
-                    } catch (error: any) {
-                      toast.error(error?.error || t('common.somethingWentWrong'))
-                    }
-                    setSelectedStatus(null)
-                    setStatusChangeItem(null)
-                  }}>{t('common.save')}</Button>
-                </div>
+          <div className="flex gap-2 justify-end mt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedStatus(null);
+                setStatusChangeItem(null);
+              }}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              disabled={!selectedStatus}
+              onClick={async () => {
+                try {
+                  if (selectedStatus === "Finish") {
+                    await reqStatusCompleteMutation.mutateAsync(
+                      statusChangeItem!.id
+                    );
+                  } else {
+                    await reqStatusChangeMutation.mutateAsync({
+                      helpRequestId: statusChangeItem!.id,
+                      accepted: selectedStatus === "SecurityDispatched",
+                    });
+                  }
+                } catch (error: any) {
+                  toast.error(error?.error || t("common.somethingWentWrong"));
+                }
+                setSelectedStatus(null);
+                setStatusChangeItem(null);
+              }}
+            >
+              {t("common.save")}
+            </Button>
+          </div>
         </div>
       </Modal>
       <div className="overflow-hidden bg-white dark:bg-white/[0.03]">
@@ -285,67 +339,67 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.requestId')}
+                  {t("home.table.requestId")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.childName')}
+                  {t("home.table.childName")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.childPhoneNumber')}
+                  {t("home.table.childPhoneNumber")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.parentName')}
+                  {t("home.table.parentName")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.parentPhoneNumber')}
+                  {t("home.table.parentPhoneNumber")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('common.backupPhoneNumber')}
+                  {t("common.backupPhoneNumber")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.acceptedBy')}
+                  {t("home.table.acceptedBy")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.requestTime')}
+                  {t("home.table.requestTime")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.status')}
+                  {t("home.table.status")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('home.table.changeStatus')}
+                  {t("home.table.changeStatus")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t('common.actions')}
+                  {t("common.actions")}
                 </TableCell>
               </TableRow>
             </TableHeader>
@@ -359,7 +413,11 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   //     ? "animate-[highlight_2s_ease-in-out_5]"
                   //     : ""
                   // }`}
-                  className={request.status === "Pending" ? "animate-[highlight_2s_ease-in-out_infinite]" : ""}
+                  className={
+                    request.status === "Pending"
+                      ? "animate-[highlight_2s_ease-in-out_infinite]"
+                      : ""
+                  }
                 >
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                     {request.id}
@@ -381,23 +439,53 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {(request.status === 'Rejected' || request.status === 'RejectedByDispatcher') && t('home.table.cancelled')}
-                    {!((request.status === 'Rejected' || request.status === 'RejectedByDispatcher')) && request.status === 'Accepted' && t('home.table.acceptedByParent')}
-                    {!((request.status === 'Rejected' || request.status === 'RejectedByDispatcher')) && request.status === 'AutoAccepted' && t('home.table.acceptedBySystem')}
-                  </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {(request.status === "Rejected" ||
+                        request.status === "RejectedByDispatcher") &&
+                        t("home.table.cancelled")}
+                      {!(
+                        request.status === "Rejected" ||
+                        request.status === "RejectedByDispatcher"
+                      ) &&
+                        request.status === "Accepted"  &&
+                        t("home.table.acceptedByParent")}
+                      {!(
+                        request.status === "Rejected" ||
+                        request.status === "RejectedByDispatcher"
+                      ) &&
+                        request.status === "AutoAccepted" || request.status === "SecurityDispatched" &&
+                        t("home.table.acceptedBySystem")}
+                    </TableCell>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {/* {dayjs(order.requestTime).format("DD/MM/YYYY HH:mm")} */}
                     N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.status}
+                    {request.status === 'Pending' && 'გამოძახება მუშავდება'}
+                    {request.status === 'Accepted' && 'მშობელმა დაადასტურა გამოძახება'}
+                    {request.status === 'AutoAccepted' && 'სისტემამ ავტომატურად დაადასტურა გამოძახება'}
+                    {request.status === 'SecurityDispatched' && 'დაცვის გუნდი გზაშია'}
+                    {request.status === 'Completed' && 'გამოძახება დასრულდა'}
+
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {['Pending', "SecurityDispatched", "Accepted", "AutoAccepted"].includes(request.status) &&  <Button size="sm" className="w-max min-w-max" onClick={() => {
-                      setStatusChangeItem(request)
-                    }}>{t('home.table.changeStatus')}</Button>}
+                    {[
+                      "Pending",
+                      "SecurityDispatched",
+                      "Accepted",
+                      "AutoAccepted",
+                    ].includes(request.status) && (
+                      <Button
+                        size="sm"
+                        className="w-max min-w-max"
+                        onClick={() => {
+                          setStatusChangeItem(request);
+                        }}
+                      >
+                        {t("home.table.changeStatus")}
+                      </Button>
+                    )}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <Button
@@ -406,7 +494,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       size="sm"
                       onClick={() => setSelectedItem(request)}
                     >
-                      {t('home.table.viewDetails')}
+                      {t("home.table.viewDetails")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -440,36 +528,35 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.parentUser.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {(request.status === 'Rejected' || request.status === 'RejectedByDispatcher') && t('home.table.cancelled')}
-                    {!((request.status === 'Rejected' || request.status === 'RejectedByDispatcher')) && request.status === 'Accepted' && t('home.table.acceptedByParent')}
-                    {!((request.status === 'Rejected' || request.status === 'RejectedByDispatcher')) && request.status === 'AutoAccepted' && t('home.table.acceptedBySystem')}
+                    {(request.status === "Rejected" ||
+                      request.status === "RejectedByDispatcher") &&
+                      t("home.table.cancelled")}
+                    {!(
+                      request.status === "Rejected" ||
+                      request.status === "RejectedByDispatcher"
+                    ) &&
+                      request.status === "Accepted" &&
+                      t("home.table.acceptedByParent")}
+                    {!(
+                      request.status === "Rejected" ||
+                      request.status === "RejectedByDispatcher"
+                    ) &&
+                      request.status === "AutoAccepted" &&
+                      t("home.table.acceptedBySystem")}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {/* <Badge
-                      size="sm"
-                      color={
-                        order.status === "Acknowledged"
-                          ? "warning"
-                          : order.status === "Approved"
-                          ? "info"
-                          : order.status === "Completed"
-                          ? "success"
-                          : order.status === "Rejected by Parent"
-                          ? "error"
-                          : "warning"
-                      }
-                    >
-                      {t(`home.requestStatuses.${camelCase(order.status)}` as any)}
-                    </Badge> */}
-                       {request.status}
+                    {request.status === 'Pending' && 'გამოძახება მუშავდება'}
+                    {request.status === 'Accepted' && 'მშობელმა დაადასტურა გამოძახება'}
+                    {request.status === 'AutoAccepted' && 'სისტემამ ავტომატურად დაადასტურა გამოძახება'}
+                    {request.status === 'SecurityDispatched' && 'დაცვის გუნდი გზაშია'}
+                    {request.status === 'Completed' && 'გამოძახება დასრულდა'}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {/* N/A */}
-                   N/A
-
+                    N/A
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <Button
@@ -478,7 +565,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       size="sm"
                       onClick={() => setSelectedItem(request)}
                     >
-                      {t('home.table.viewDetails')}
+                      {t("home.table.viewDetails")}
                     </Button>
                   </TableCell>
                 </TableRow>

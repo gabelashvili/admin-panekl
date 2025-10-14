@@ -33,9 +33,10 @@
             "acceptedByParent": "მშობელი",
             "acceptedBySystem": "სისტემა",
             "changeStatus": "არჩევა",
-            "securityDispatched": "მიღება",
+            "securityDispatched": "დაცვის გუნდის გაგზავნა",
             "rejectedByDispatcher": "უარყოფა",
-            "finish": "დასრულება"
+            "finish": "დასრულება",
+            "cancel": "გაუქმება"
         },
         "requesetDetails": {
             "title": "მოთხოვნის დეტალები",
