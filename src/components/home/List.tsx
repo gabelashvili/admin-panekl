@@ -50,6 +50,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
     status: RequestResponseModel["helpRequests"][number]["status"]
   ) => {
     console.log(status);
+    
     if (status === "Pending") {
       return [
         {
@@ -447,13 +448,13 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         request.status === "Rejected" ||
                         request.status === "RejectedByDispatcher"
                       ) &&
-                        request.status === "Accepted"  &&
+                        request.status === "Accepted" || !!request.parentRespondedTimestamp  &&
                         t("home.table.acceptedByParent")}
                       {!(
                         request.status === "Rejected" ||
                         request.status === "RejectedByDispatcher"
                       ) &&
-                        request.status === "AutoAccepted" || request.status === "SecurityDispatched" &&
+                        (request.status === "AutoAccepted" || request.status === "SecurityDispatched") && !request.parentRespondedTimestamp &&
                         t("home.table.acceptedBySystem")}
                     </TableCell>
                   </TableCell>
