@@ -456,6 +456,8 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       ) &&
                         (request.status === "AutoAccepted" || request.status === "SecurityDispatched") && !request.parentRespondedTimestamp &&
                         t("home.table.acceptedBySystem")}
+                         {request.status === "Completed" && request.parentRespondedTimestamp && t("home.table.acceptedByParent")}
+                         {request.status === "Completed" && !request.parentRespondedTimestamp && t("home.table.acceptedBySystem")}
                     </TableCell>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
@@ -529,21 +531,24 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.parentUser.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {(request.status === "Rejected" ||
-                      request.status === "RejectedByDispatcher") &&
-                      t("home.table.cancelled")}
-                    {!(
-                      request.status === "Rejected" ||
-                      request.status === "RejectedByDispatcher"
-                    ) &&
-                      request.status === "Accepted" &&
-                      t("home.table.acceptedByParent")}
-                    {!(
-                      request.status === "Rejected" ||
-                      request.status === "RejectedByDispatcher"
-                    ) &&
-                      request.status === "AutoAccepted" &&
-                      t("home.table.acceptedBySystem")}
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {(request.status === "Rejected" ||
+                        request.status === "RejectedByDispatcher") &&
+                        t("home.table.cancelled")}
+                      {!(
+                        request.status === "Rejected" ||
+                        request.status === "RejectedByDispatcher"
+                      ) &&
+                        ((request.status === "Accepted" || !!request.parentRespondedTimestamp) || (request.status === "Completed" && request.parentRespondedTimestamp))  &&
+                        t("home.table.acceptedByParent")}
+                      {!(
+                        request.status === "Rejected" ||
+                        request.status === "RejectedByDispatcher"
+                      ) &&
+                        (request.status === "AutoAccepted" || request.status === "SecurityDispatched") && !request.parentRespondedTimestamp &&
+                        t("home.table.acceptedBySystem")}
+                         {request.status === "Completed" && !request.parentRespondedTimestamp && t("home.table.acceptedBySystem")}
+                    </TableCell>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
