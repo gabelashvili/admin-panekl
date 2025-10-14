@@ -51,7 +51,6 @@ export default function List({ data, activeItems, pending }: ListProps) {
   const renderOptionsBasedOnStatus = (
     status: RequestResponseModel["helpRequests"][number]["status"]
   ) => {
-    console.log(status);
 
     if (status === "Pending") {
       return [

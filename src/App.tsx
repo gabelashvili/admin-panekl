@@ -10,6 +10,7 @@ import { useAuthedUserQuery } from "./store/server/features/auth/queries";
 import UsersList from "./pages/UsersList";
   
 export default function App() {
+  console.log(111);
   const { user, setAuthedUser } = useAuthedUserStore()
   const authedUserQuery = useAuthedUserQuery(!!localStorage.getItem('token'))
 
