@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 // Assume these icons are imported from an icon library
-import { CalenderIcon, ChevronDownIcon, HorizontaLDots, TableIcon } from "../icons";
+import { ChevronDownIcon, HorizontaLDots, TableIcon, UserIcon } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
 type NavItem = {
@@ -13,15 +13,15 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  // {
-  //   icon: <GridIcon />,
-  //   name: "Dashboard",
-  //   subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-  // },
   {
-    icon: <TableIcon />,
-    name: "Home",
-    path: "/",
+      icon: <TableIcon />,
+      name: "Home",
+      path: "/",
+    },
+  {
+    icon: <UserIcon />,
+    name: "Users",
+    path: "/users-ist",
   },
   // {
   //   icon: <UserCircleIcon />,

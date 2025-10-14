@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import useAuthedUserStore from "./store/client/useAuthedUserStore";
 import { useEffect } from "react";
 import { useAuthedUserQuery } from "./store/server/features/auth/queries";
+import UsersList from "./pages/UsersList";
   
 export default function App() {
   const { user, setAuthedUser } = useAuthedUserStore()
@@ -28,6 +29,7 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
+            <Route index path="/users-list" element={<UsersList />} />
 
             {/* Others Page */}
             {/* <Route path="/profile" element={<UserProfiles />} /> */}

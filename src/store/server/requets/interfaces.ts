@@ -44,3 +44,41 @@ export interface RequestsFiltersModel {
     page: number | null;
     pageSize: number | null;
 }
+
+
+export interface UsersListFiltersModel {
+    Page: number | null;
+    PageSize: number | null;
+    SearchTerm: string | null;
+}
+
+export interface ChildModel {
+    kidId: string;
+    kidName: string;
+    kidPhoneNumber: string;
+    kidPersonalNumber: string;
+    kidNumberOfSosRequestsSent: number;
+}
+
+export interface UsersListResponseModel {
+    userId: string;
+    parentName: string;
+    personalNumber: string;
+    parentNumber: string;
+    secondaryNumber: string;
+    howManyKids: number;
+    subscriptionType: string;
+    subscriptionPlan: string;
+    subscriptionStatus: string;
+    rejectedSosRequests: number;
+    acceptedSosRequestsByParent: number;
+    acceptedSosRequestsByOperator: number;
+    kids: ChildModel[];
+}
+
+export interface UsersListResponseModel {
+    "users": Array<UsersListResponseModel>;
+    "totalCount": number;
+    "totalPages": number;
+    "currentPage": number;
+}
