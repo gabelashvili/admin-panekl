@@ -442,7 +442,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.parentUser.name}
+                    {request.secondaryUser.name}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -451,7 +451,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.parentUser.phoneNumber}
+                    {request.secondaryUser.phoneNumber}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -460,7 +460,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.secondaryUser?.name}
+                    {request.parentUser?.name}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -469,7 +469,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.secondaryUser?.phoneNumber}
+                    {request.parentUser?.phoneNumber}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -520,8 +520,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {/* {dayjs(order.requestTime).format("DD/MM/YYYY HH:mm")} */}
-                    N/A
+                    {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -538,6 +537,8 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.status === "SecurityDispatched" &&
                       "დაცვის გუნდი გზაშია"}
                     {request.status === "Completed" && "გამოძახება დასრულდა"}
+                    {request.status === "Rejected" && "გამოძახება გააუქმა მშობელმა"}
+                    {request.status === "RejectedByDispatcher" && "გამოძახება გააუქმა ოპერატორმა"}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -596,16 +597,16 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.id}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.parentUser.name}
+                    {request.secondaryUser.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.parentUser.phoneNumber}
+                    {request.secondaryUser.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.secondaryUser?.name}
+                    {request.parentUser?.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.secondaryUser?.phoneNumber}
+                    {request.parentUser?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {request.parentUser.secondaryNumber || "N/A"}
@@ -649,10 +650,12 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.status === "SecurityDispatched" &&
                       "დაცვის გუნდი გზაშია"}
                     {request.status === "Completed" && "გამოძახება დასრულდა"}
+                    {request.status === "Rejected" && "გამოძახება გააუქმა მშობელმა"}
+                    {request.status === "RejectedByDispatcher" && "გამოძახება გააუქმა ოპერატორმა"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {/* N/A */}
-                    N/A
+                  {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
+
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <Button
