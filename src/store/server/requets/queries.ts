@@ -53,3 +53,15 @@ const useUsersListQuery = (filters: UsersListFiltersModel) => {
 
 
 export { useRequestsQuery, useNewRequestsQuery, useUsersListQuery }
+
+
+export function useDownloadCSV() {
+  return useQuery({
+    queryKey: ["help", "csv", "last-month"],
+    queryFn: async (): Promise<void> => {
+      const { data } = await api.get(`help/download/last-month`)
+      return data
+    },
+    enabled: false, // ⚠️ We’ll trigger it manually
+  });
+}

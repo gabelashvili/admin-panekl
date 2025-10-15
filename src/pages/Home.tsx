@@ -7,9 +7,8 @@ import DatePicker from "../components/form/date-picker";
 import dayjs from "dayjs";
 import isBetween from 'dayjs/plugin/isBetween';
 import { useTranslation } from "react-i18next";
-import { useNewRequestsQuery, useRequestsQuery } from "../store/server/requets/queries";
+import { useDownloadCSV, useNewRequestsQuery, useRequestsQuery } from "../store/server/requets/queries";
 import { useQueryClient } from "@tanstack/react-query";
-import requestsTags from "../store/server/requets/tags";
 import { useSearchParams } from "react-router";
 import Button from "../components/ui/button";
 import { DocsIcon } from "../icons";
@@ -26,6 +25,7 @@ function toLocalISOString(date: Date) {
 
 const Home = () => {
   const queryClient = useQueryClient()
+  const { refetch: refetchDownloadCSV, isPending: isDownloading } = useDownloadCSV()  
   const [dateRange, setDateRange] = useState<Date[] | null>(null);
   const [page, setPage] = useState(0);
   const [URLSearchParams] = useSearchParams()
@@ -44,6 +44,24 @@ const Home = () => {
   const isAudioPlaying = useRef(false);
   const lastAudioPlayTime = useRef<Date | null>(null);
   const { t } = useTranslation();
+
+  const downloadStatisticsCSV = async () => {
+    const { data } = await refetchDownloadCSV();
+    if (data) {
+      const blob = new Blob([data], { type: "text/csv;charset=utf-8;" });
+      const url = window.URL.createObjectURL(blob);
+    
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "statistics.csv";
+      document.body.appendChild(a);
+      a.click();
+    
+      // Cleanup
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    }
+  };
   
   const ringBell = useCallback(() => {
     if(interval.current) {
@@ -144,7 +162,7 @@ const Home = () => {
                   value={status}
                   onChange={(value) => setStatus(value)}
                 /> */}
-                <Button variant="outline" size="sm" className="w-max min-w-max">სტატისტიკა <DocsIcon className="size-5" /></Button>
+                <Button loading={isDownloading} onClick={downloadStatisticsCSV} variant="outline" size="sm" className="w-max min-w-max">სტატისტიკა <DocsIcon className="size-5" /></Button>
                 <DatePicker
                   id="date-picker"
                   placeholder={t('home.table.filters.selectDate')}
