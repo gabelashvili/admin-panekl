@@ -25,7 +25,7 @@ const useNewRequestsQuery = () => {
   return useQuery({
     queryKey: ['new-requests'],
     queryFn: async (): Promise<RequestResponseModel> => {
-      const { data } = await api.get(`help/active`)
+      const { data } = await api.get(`help/active`, {params: {pageSize: 1000}})
       return data
     },
     refetchInterval: 2000,

@@ -38,7 +38,6 @@ const Home = () => {
   }
   const { data: allData, isLoading: isAllDataLoading,  } = useRequestsQuery(filters)
   const {data: activeData, isPending: isActiveDataPending} = useNewRequestsQuery()
-  const [activeItems, setActiveItems] = useState<typeof activeData | null>(null)
   const [allItems, setAllItems] = useState<typeof activeData | null>(null)
   const interval = useRef<ReturnType<typeof setTimeout> | null>(null);   
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -74,36 +73,51 @@ const Home = () => {
   }, [allData])
 
 
-  useEffect(() => {
-    if(!activeData) return
-    if(!activeItems) {
-      setActiveItems(activeData)
-      if(activeData.helpRequests.some(item => item.status === "Pending")) {
-        ringBell()
-      }
-    }
-    else {
-      const isActiveItemRemoved = activeItems.helpRequests.some(x => {
-        return !activeData?.helpRequests.find(y => x.id === y.id)
-      })
-      
-      const isActiveItemAdded = activeData?.helpRequests.some(x => {
-        return !activeItems?.helpRequests.find(y => x.id === y.id || (x.id === y.id && x.status !== y.status))
-      })
-      const isStatusChanged = activeData?.helpRequests.some(x => {
-        return activeItems?.helpRequests.find(y => (x.id === y.id && x.status !== y.status))
-      })
-      console.log(isStatusChanged)
-      if(isActiveItemAdded) {
-        ringBell()
-      }
-      if(isActiveItemAdded || isActiveItemRemoved || isStatusChanged) {
-          setActiveItems(activeData)
-          queryClient.invalidateQueries({queryKey: [ requestsTags.requests ]})
-      }
-    }
-  }, [activeData, activeItems, queryClient, ringBell])
 
+
+  const previusActivItemsRef = useRef<typeof activeData | null>(null)
+
+  useEffect(() => {
+    if (!activeData) {
+
+      return
+    };
+  
+
+    if(!previusActivItemsRef.current && activeData) {
+      const isPendingItems = activeData.helpRequests.filter((r) => r.status === "Pending")
+      if(isPendingItems.length > 0) {
+        ringBell()
+      }
+    }
+    
+    const curr = activeData;
+  
+    // Run only if we have previous data (i.e., not on first render)
+    if (previusActivItemsRef.current) {
+      const prevIds = new Set(previusActivItemsRef.current.helpRequests.map((r) => r.id));
+      const currIds = new Set(curr.helpRequests.map((r) => r.id));
+      console.log("prevIds", prevIds, currIds)
+  
+      // Added items → exist in current but not in previous
+      const added = curr.helpRequests.filter((r) => !prevIds.has(r.id));
+  
+      // Removed items → exist in previous but not in current
+      const removed = previusActivItemsRef.current.helpRequests.filter((r) => !currIds.has(r.id));
+  
+      if (added.length > 0) {
+        ringBell()
+        console.log("🟢 Added items:", added);
+      }
+  
+      if (removed.length > 0) {
+        console.log("🔴 Removed items:", removed);
+      }
+    }
+  
+    // Update ref AFTER comparison
+    previusActivItemsRef.current = {...activeData};
+  }, [activeData]);
   return (
     <>
       <audio controls ref={audioRef} className="hidden" onPlay={() => {
@@ -145,7 +159,7 @@ const Home = () => {
           <List 
             pending={!allData || !activeData || isAllDataLoading || isActiveDataPending}
             data={allItems?.helpRequests || []}
-            activeItems={activeItems?.helpRequests || []}
+            activeItems={activeData?.helpRequests || []}
           />
           <div className="border-t rounded-b-2xl py-4 px-6">
            {allData && <Pagination

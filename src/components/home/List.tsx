@@ -442,7 +442,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.secondaryUser.name}
+                    {request?.secondaryUser?.name}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -451,7 +451,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.secondaryUser.phoneNumber}
+                    {request?.secondaryUser?.phoneNumber}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -597,10 +597,10 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.id}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.secondaryUser.name}
+                    {request?.secondaryUser?.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.secondaryUser.phoneNumber}
+                    {request?.secondaryUser?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                     {request.parentUser?.name}
