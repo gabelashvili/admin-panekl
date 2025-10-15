@@ -12,6 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router";
 import Button from "../components/ui/button";
 import { DocsIcon } from "../icons";
+import requestsTags from "../store/server/requets/tags";
 
 dayjs.extend(isBetween);
 
@@ -126,10 +127,12 @@ const Home = () => {
       if (added.length > 0) {
         ringBell()
         console.log("🟢 Added items:", added);
+        queryClient.invalidateQueries({queryKey: [ requestsTags.requests ]})
       }
   
       if (removed.length > 0) {
         console.log("🔴 Removed items:", removed);
+        queryClient.invalidateQueries({queryKey: [ requestsTags.requests ]})
       }
     }
   
