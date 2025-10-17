@@ -26,7 +26,7 @@ function toLocalISOString(date: Date) {
 
 const Home = () => {
   const queryClient = useQueryClient()
-  const { refetch: refetchDownloadCSV, isPending: isDownloading } = useDownloadCSV()  
+  const { refetch: refetchDownloadCSV, isLoading: isDownloading } = useDownloadCSV()  
   const [dateRange, setDateRange] = useState<Date[] | null>(null);
   const [page, setPage] = useState(0);
   const [URLSearchParams] = useSearchParams()
