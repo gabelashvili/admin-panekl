@@ -17,10 +17,13 @@ import { ToastContainer } from 'react-toastify';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
       refetchOnReconnect: true,
-      refetchInterval: 0,
-      retry: false
+      refetchIntervalInBackground: true,
+      refetchOnMount: true,
+      staleTime: 60000 * 5,
+      refetchInterval: 8000,
+      retry: true
     }
   }
 });
