@@ -26,12 +26,17 @@
             "filters": {
                 "selectDate": "თარიღის არჩევა"
             },
-            "parentStatus": "მშობლის სტატუსი",
+            "acceptedBy": "გამოძახების მიმღები",
+            "cancelled": "გაუქმებული",
             "accept": "თანხმობა",
             "autoAccept": "ავტომატური თანხმობა",
+            "acceptedByParent": "მშობელი",
+            "acceptedBySystem": "სისტემა",
             "changeStatus": "არჩევა",
-            "securityDispatched": "მიღება",
-            "rejectedByDispatcher": "უარყოფა"
+            "securityDispatched": "დაცვის გუნდის გაგზავნა",
+            "rejectedByDispatcher": "უარყოფა",
+            "finish": "დასრულება",
+            "cancel": "გაუქმება"
         },
         "requesetDetails": {
             "title": "მოთხოვნის დეტალები",
@@ -40,7 +45,8 @@
             "parentInfo": "მშობლის ინფორმაცია",
             "location": "მდებარეობა",
             "latitude": "latitude",
-            "longitude": "longitude"
+            "longitude": "longitude",
+            "address": "მისამართი"
         },
         "requestStatuses": {
             "acknowledged": "მიღებული",

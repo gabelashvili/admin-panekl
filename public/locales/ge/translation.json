@@ -45,7 +45,8 @@
             "parentInfo": "მშობლის ინფორმაცია",
             "location": "მდებარეობა",
             "latitude": "latitude",
-            "longitude": "longitude"
+            "longitude": "longitude",
+            "address": "მისამართი"
         },
         "requestStatuses": {
             "acknowledged": "მიღებული",
