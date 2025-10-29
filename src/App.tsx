@@ -5,14 +5,15 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Home";
 import useAuthedUserStore from "./store/client/useAuthedUserStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthedUserQuery } from "./store/server/features/auth/queries";
 import UsersList from "./pages/UsersList";
+import { Modal } from "./components/ui/modal";
   
 export default function App() {
-  console.log(2323);
   const { user, setAuthedUser } = useAuthedUserStore()
   const authedUserQuery = useAuthedUserQuery(!!localStorage.getItem('token'))
+  const [showAudioPermissionPopup, setShowAudioPermissionPopup] = useState(true)
 
   useEffect(() => {
     if(authedUserQuery.isPending) return
@@ -22,11 +23,42 @@ export default function App() {
     }
   }, [authedUserQuery.data, authedUserQuery.isPending, setAuthedUser, user])
 
+  useEffect(() => {
+    if(!localStorage.getItem('token')) {
+      setShowAudioPermissionPopup(false)
+    }
+  }, [])
+
   return (
     <>
+    <Modal isOpen={showAudioPermissionPopup} onClose={() => {}} showCloseButton={false}>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center animate-fadeIn">
+        <div className="flex flex-col items-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-3xl mb-4">
+            👋
+          </div>
+
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">მოგესალმებით!</h2>
+          <p className="text-gray-600 mb-6">
+           იმისათვის რომ შეძლოთ სისტემის სრულყოფილად გამოყენება დააჭირეთ ღილაკს <strong>თანხმობა</strong>.
+          </p>
+
+          <button
+            onClick={() => setShowAudioPermissionPopup(false)}
+            className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition"
+          >
+            თანხმობა
+          </button>
+        </div>
+      </div>
+    </div>
+    </div>
+    </Modal>
       <Router>
         <ScrollToTop />
-        <Routes>
+       {!showAudioPermissionPopup && <Routes>
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
@@ -62,7 +94,7 @@ export default function App() {
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
-        </Routes>
+        </Routes>}
       </Router>
     </>
   );

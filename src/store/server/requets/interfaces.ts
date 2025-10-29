@@ -5,6 +5,7 @@ export interface RequestUser {
     personalNumber: string;
     userType: 'Main' | 'Secondary';
     secondaryNumber: string | null;
+    address?: string | null;
   }
 
 

@@ -209,6 +209,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
               <div className="">
                 <div>
+                 {selectedItem?.secondaryUser?.address && <>
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
                     {t("home.requesetDetails.location")}
                   </h4>
@@ -217,9 +218,9 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         {t("home.requesetDetails.address")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                      თბილისი, საბურთალო, კოსტავას ქ. 70
+                      {selectedItem?.secondaryUser?.address}
                       </p>
-                    </div>
+                    </div></>}
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                
                     <div>
