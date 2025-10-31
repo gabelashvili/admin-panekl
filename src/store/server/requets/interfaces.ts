@@ -15,6 +15,7 @@ export interface RequestModel {
     parentUser: RequestUser;
     longitude: string;
     latitude: string;
+    address?: string;
     timestamp: string; // ISO date string
     parentRespondedTimestamp: string;
     status: | "Pending"
