@@ -20,6 +20,7 @@ import {
 } from "../../store/server/requets/mutations";
 import { toast } from "react-toastify";
 import useAuthedUserStore from "../../store/client/useAuthedUserStore";
+import CommentBox from "../comment";
 
 interface ListProps {
   data: RequestResponseModel["helpRequests"];
@@ -280,8 +281,12 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       </div>
                     )}
                   </div>
+                
                 </div>
               </div>
+            </div>
+            <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+              <CommentBox />
             </div>
           </div>
         </div>
