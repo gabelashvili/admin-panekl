@@ -1,52 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useCommentsQuery } from "../store/server/comments/queries";
+import { useCreateComment } from "../store/server/comments/mutations";
+import { CommentModel } from "../store/server/comments/interfaces";
 
-const defaultConfig = {
-  page_title: "Comments",
-  input_placeholder: "Share your thoughts...",
-  button_text: "Send",
-  background_color: "#f0f4f8",
-  card_color: "#ffffff",
-  text_color: "#1a202c",
-  primary_button_color: "#3b82f6",
-  secondary_text_color: "#718096",
-  font_family: "system-ui",
-  font_size: 16,
-};
 
-export default function CommentBox() {
-  const [comments, setComments] = useState<any[]>([]);
+export default function CommentBox({parentUserId}: {parentUserId: string}) {
   const [text, setText] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [config, setConfig] = useState(defaultConfig);
+  const { data } = useCommentsQuery(parentUserId);
+  const { mutateAsync: createComment, isPending } = useCreateComment();
 
-  useEffect(() => {
-    // document.body.style.fontFamily = `${config.font_family}, system-ui, -apple-system, sans-serif`;
-    // document.body.style.fontSize = `${config.font_size}px`;
-  }, [config]);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!text.trim() || isSubmitting) return;
-
-    if (comments.length >= 999) {
-      alert("Maximum limit of 999 comments reached.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    const newComment: Comment = {
-      id: Date.now().toString(),
-      text: text.trim(),
-      timestamp: new Date().toISOString(),
-    };
-
-    // Simulate async save
-    await new Promise((res) => setTimeout(res, 500));
-
-    setComments([newComment, ...comments]);
+    if (!text.trim() || isPending) return;
+    await createComment({
+      userId: parentUserId,
+      comment: text.trim(),
+    });
+    
     setText("");
-    setIsSubmitting(false);
   };
 
   return (
@@ -56,7 +27,7 @@ export default function CommentBox() {
               <label
                 htmlFor="comment"
                 className="block text-sm font-medium mb-2"
-                style={{ color: config.secondary_text_color }}
+                style={{ color: "#718096" }}
               >
                 დაწერეთ კომენტარი
               </label>
@@ -69,16 +40,16 @@ export default function CommentBox() {
                 className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-blue-500 transition-colors resize-none"
                 style={{
                   borderColor: "#cbd5e0",
-                  color: config.text_color,
+                  color: "#1a202c",
                 }}
               />
               <div className="flex justify-end mt-4">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isPending}
                   className="px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-60"
                   style={{
-                    backgroundColor: config.primary_button_color,
+                    backgroundColor: "#3b82f6",
                     color: "#ffffff",
                   }}
                   onMouseEnter={(e) =>
@@ -86,10 +57,10 @@ export default function CommentBox() {
                   }
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.backgroundColor =
-                      config.primary_button_color)
+                      "#3b82f6")
                   }
                 >
-                  {isSubmitting ? "ᲘᲒᲖᲐᲕᲜᲔᲑᲐ..." : "ᲓᲐᲛᲐᲢᲔᲑᲐ"}
+                  {isPending ? "ᲘᲒᲖᲐᲕᲜᲔᲑᲐ..." : "ᲓᲐᲛᲐᲢᲔᲑᲐ"}
                 </button>
               </div>
             </form>
@@ -98,15 +69,15 @@ export default function CommentBox() {
           <div>
             <h2
               className="text-xl font-semibold mb-4"
-              style={{ color: config.text_color }}
+              style={{ color: "#1a202c" }}
             >
               ყველა კომენტარი
             </h2>
 
-            {comments.length === 0 ? (
+            {data?.comments?.length === 0 ? (
               <div
                 className="text-center py-12 flex flex-col items-center"
-                style={{ color: config.secondary_text_color }}
+                style={{ color: "#718096" }}
               >
                 <svg
                   className="h-12 w-12 mb-3"
@@ -125,26 +96,26 @@ export default function CommentBox() {
               </div>
             ) : (
               <div className="space-y-4">
-                {comments.map((c, i) => (
+                {data?.comments?.map((c: CommentModel) => (
                   <div
                     key={c.id}
                     className="comment-card p-4 rounded-lg shadow-sm border-l-4 transition-all"
                     style={{
-                      backgroundColor: config.card_color,
-                      borderLeftColor: config.primary_button_color,
+                      backgroundColor: "#ffffff",
+                      borderLeftColor: "#3b82f6",
                     }}
                   >
                     <p
                       className="comment-text mb-2"
-                      style={{ color: config.text_color }}
+                      style={{ color: "#1a202c" }}
                     >
-                      {c.text}
+                      {c.comment}
                     </p>
                     <p
                       className="comment-time text-sm"
-                      style={{ color: config.secondary_text_color }}
+                      style={{ color: "#718096" }}
                     >
-                      {new Date(c.timestamp).toLocaleString()}
+                      {new Date(c.timeStamp).toLocaleString()}
                     </p>
                   </div>
                 ))}

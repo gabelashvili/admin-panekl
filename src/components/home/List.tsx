@@ -286,7 +286,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
               </div>
             </div>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
-              <CommentBox />
+             {selectedItem?.parentUser.id && <CommentBox parentUserId={selectedItem.parentUser.id} />}
             </div>
           </div>
         </div>
