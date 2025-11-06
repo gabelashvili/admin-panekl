@@ -38,14 +38,14 @@ const AppSidebar: React.FC = () => {
   const navItems: NavItem[] = [
     {
       icon: <TableIcon />,
-      name: "Home",
+      name: "გამოძახებები",
       path: "/",
     },
     ...(user?.userType === "Admin"
       ? [
           {
             icon: <UserIcon />,
-            name: "Users",
+            name: "მომხმარებლები",
             path: "/users",
           },
         ]
