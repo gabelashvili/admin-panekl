@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useCommentsQuery } from "../store/server/comments/queries";
 import { useCreateComment } from "../store/server/comments/mutations";
 import { CommentModel } from "../store/server/comments/interfaces";
+import useAuthedUserStore from "../store/client/useAuthedUserStore";
 
 
 export default function CommentBox({parentUserId}: {parentUserId: string}) {
   const [text, setText] = useState("");
   const { data } = useCommentsQuery(parentUserId);
   const { mutateAsync: createComment, isPending } = useCreateComment();
+  const { user, setAuthedUser } = useAuthedUserStore()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +25,7 @@ export default function CommentBox({parentUserId}: {parentUserId: string}) {
   return (
         <div className="max-w-3xl mx-auto">
           {/* Comment Input */}
-            <form onSubmit={handleSubmit}>
+         {user?.userType !== 'Admin' &&   <form onSubmit={handleSubmit}>
               <label
                 htmlFor="comment"
                 className="block text-sm font-medium mb-2"
@@ -64,7 +66,7 @@ export default function CommentBox({parentUserId}: {parentUserId: string}) {
                 </button>
               </div>
             </form>
-
+}
           {/* Comments Section */}
           <div>
             <h2
