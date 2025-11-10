@@ -280,6 +280,9 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         </GoogleMapReact>
                       </div>
                     )}
+                    <Button className="w-full mt-3" variant="outline" onClick={() => {
+                      window.open(`http://www.google.com/maps/place/${selectedItem?.latitude},${selectedItem?.longitude}/@${selectedItem?.latitude},${selectedItem?.longitude},20z`)
+                    }}>რუკაზე ნახვა</Button>
                   </div>
                 
                 </div>
