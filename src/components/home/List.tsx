@@ -280,7 +280,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         </GoogleMapReact>
                       </div>
                     )}
-                    <Button className="w-full mt-3 bg-red-400 hover:bg-red-500 text-black font-bold" variant="primary" size="md"   onClick={() => {
+                    <Button className="w-full mt-3 bg-[#900a16]/90 hover:bg-[#900a16] text-black font-bold" variant="primary" size="md"   onClick={() => {
                       window.open(`http://www.google.com/maps/place/${selectedItem?.latitude},${selectedItem?.longitude}/@${selectedItem?.latitude},${selectedItem?.longitude},20z`)
                     }}>რუკაზე ნახვა</Button>
                   </div>
