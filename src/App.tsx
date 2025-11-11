@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useAuthedUserQuery } from "./store/server/features/auth/queries";
 import UsersList from "./pages/UsersList";
 import { Modal } from "./components/ui/modal";
+import PaymentPage from "./pages/PaymentPage";
   
 export default function App() {
   const { user, setAuthedUser } = useAuthedUserStore()
@@ -63,6 +64,7 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
             {user?.userType === "Admin" && <Route index path="/users" element={<UsersList />} />}
+            {user?.userType === "Admin" && <Route index path="/payments" element={<PaymentPage />} />}
 
             {/* Others Page */}
             {/* <Route path="/profile" element={<UserProfiles />} /> */}

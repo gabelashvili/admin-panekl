@@ -96,7 +96,7 @@ const UsersList = () => {
         </div>
       </Modal>
       <ComponentCard
-        title={"Test"}
+        title={"მომხმარებლების სია"}
         bodyClassName="sm:p-0"
         renderHeader={() => {
           return (

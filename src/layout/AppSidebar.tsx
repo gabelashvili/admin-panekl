@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 
 // Assume these icons are imported from an icon library
-import { ChevronDownIcon, HorizontaLDots, TableIcon, UserIcon } from "../icons";
+import { ChevronDownIcon, HorizontaLDots, TableIcon, TaskIcon, UserIcon } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import useAuthedUserStore from "../store/client/useAuthedUserStore";
 
@@ -47,6 +47,11 @@ const AppSidebar: React.FC = () => {
             icon: <UserIcon />,
             name: "მომხმარებლები",
             path: "/users",
+          },
+          {
+            icon: <TaskIcon />,
+            name: "გადახდები",
+            path: "/payments",
           },
         ]
       : []),
