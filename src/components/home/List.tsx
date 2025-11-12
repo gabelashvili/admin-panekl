@@ -602,12 +602,6 @@ export default function List({ data, activeItems, pending }: ListProps) {
               {tableData.map((request) => (
                 <TableRow
                   key={request.id}
-                  // className={`${
-                  //   order.isNew &&
-                  //   dayjs(order.requestTime).diff(dayjs(), "second") < 5
-                  //     ? "animate-[highlight_2s_ease-in-out_5]"
-                  //     : ""
-                  // }`}
                 >
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                     {request.id}

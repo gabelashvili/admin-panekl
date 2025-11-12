@@ -9,7 +9,7 @@ export default function CommentBox({parentUserId}: {parentUserId: string}) {
   const [text, setText] = useState("");
   const { data } = useCommentsQuery(parentUserId);
   const { mutateAsync: createComment, isPending } = useCreateComment();
-  const { user, setAuthedUser } = useAuthedUserStore()
+  const { user } = useAuthedUserStore()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ export default function CommentBox({parentUserId}: {parentUserId: string}) {
   return (
         <div className="max-w-3xl mx-auto">
           {/* Comment Input */}
-         {user?.userType !== 'Admin' &&   <form onSubmit={handleSubmit}>
+         {user?.userType === 'Dispatcher' &&   <form onSubmit={handleSubmit}>
               <label
                 htmlFor="comment"
                 className="block text-sm font-medium mb-2"
