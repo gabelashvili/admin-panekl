@@ -1,6 +1,6 @@
 export interface PaymentModel  {
     "userId": string;
-    "userName": string;
+    "name": string;
     "subscription": {
         "subscriptionId": string;
         "status": "Active" | "Inactive";
@@ -33,6 +33,23 @@ export interface PaymentModel  {
 
 export interface PaymentResponseModel {
     "users": Array<PaymentModel>;
+    "page": number;
+    "pageSize": number;
+    "totalPages": number;
+}
+
+export interface TransactionsResponseModel {
+    "transactions": Array<{
+        "transactionId": string,
+        "amount": number,
+        "status": "string",
+        "timestamp": Date,
+        "description": "string",
+        "card": {
+          "cardId": string,
+          "cardType": "string"
+        }
+    }>;
     "page": number;
     "pageSize": number;
     "totalPages": number;
