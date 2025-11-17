@@ -132,21 +132,13 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t("common.firstName")}
+                        სახელი, გვარი
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.secondaryUser?.name}
                       </p>
                     </div>
 
-                    <div>
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t("common.lastName")}
-                      </p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.secondaryUser?.name}
-                      </p>
-                    </div>
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
@@ -170,16 +162,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t("common.firstName")}
-                      </p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.parentUser.name}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t("common.lastName")}
+                      სახელი, გვარი
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentUser.name}
