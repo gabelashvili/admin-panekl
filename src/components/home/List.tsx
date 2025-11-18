@@ -186,7 +186,8 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   },
                   latitude: {
                     title: "მისამართი",
-                    value: selectedItem?.secondaryUser.address,
+                    value: selectedItem?.secondaryUser?.address ||
+                    selectedItem?.address,
                   },
                 },
               ];
