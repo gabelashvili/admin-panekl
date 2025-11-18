@@ -21,6 +21,7 @@ import {
 import { toast } from "react-toastify";
 import useAuthedUserStore from "../../store/client/useAuthedUserStore";
 import CommentBox from "../comment";
+import { CopyIcon } from "lucide-react";
 
 interface ListProps {
   data: RequestResponseModel["helpRequests"];
@@ -35,7 +36,7 @@ const AnyReactComponent = ({ text }: { text: string }) => (
 );
 
 export default function List({ data, activeItems, pending }: ListProps) {
-  const user = useAuthedUserStore(state => state.user)
+  const user = useAuthedUserStore((state) => state.user);
   const { t } = useTranslation();
   const reqStatusChangeMutation = useRequestStatusChange();
   const reqStatusCompleteMutation = useRequestStatusComplete();
@@ -52,7 +53,6 @@ export default function List({ data, activeItems, pending }: ListProps) {
   const renderOptionsBasedOnStatus = (
     status: RequestResponseModel["helpRequests"][number]["status"]
   ) => {
-
     if (status === "Pending") {
       return [
         {
@@ -102,6 +102,38 @@ export default function List({ data, activeItems, pending }: ListProps) {
     }
   }, [selectedItem, openModal, closeModal]);
 
+
+  const copyDataToClipboard = (data) => {
+    let text = "";
+  
+    data.forEach((section, index) => {
+      // Title / Type (with one space below)
+      const sectionTitle = section.title || section.type;
+      if (sectionTitle) {
+        text += `${sectionTitle}:\n\n`; // space after title
+      }
+  
+      // Fields
+      Object.entries(section).forEach(([key, field]) => {
+        if (typeof field === "object" && field.title && field.value !== undefined) {
+          text += `${field.title}: ${field.value || "-"}\n`;
+        }
+      });
+  
+      // ⬇ Add **2 blank lines BETWEEN SECTIONS**, but NOT after last
+      if (index < data.length - 1) {
+        text += `\n\n`;
+      }
+    });
+  
+    navigator.clipboard.writeText(text)
+      .then(() => alert("ინფორმაცია დაკოპირდა!"))
+      .catch((err) => console.error("Failed to copy:", err));
+  };
+  
+  
+  
+
   return (
     <>
       <Modal
@@ -113,13 +145,56 @@ export default function List({ data, activeItems, pending }: ListProps) {
         className="max-w-[700px] m-4"
       >
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-          <div className="px-2 pr-14">
+       
+          <div className="px-2 pr-14 flex justify-between items-center mb-2">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               {t("home.requesetDetails.title")}
             </h4>
-            <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              {t("home.requesetDetails.description")}
-            </p>
+            <Button
+            variant="outline"
+            size="sm"
+            className=""
+            onClick={() => {
+              const data = [
+                {
+                  title: "შვილის ინფორმაცია",
+                  name: {
+                    title: "სახელი, გვარი",
+                    value: selectedItem?.secondaryUser?.name,
+                  },
+                  phone: {
+                    title: "ტელეფონის ნომერი",
+                    value: selectedItem?.secondaryUser?.phoneNumber,
+                  },
+                },
+                {
+                  title: "მშობლის ინფორმაცია",
+                  name: {
+                    title: "სახელი, გვარი",
+                    value: selectedItem?.parentUser?.name,
+                  },
+                  phone: {
+                    title: "ტელეფონის ნომერი",
+                    value: selectedItem?.parentUser?.phoneNumber,
+                  },
+                },
+                {
+                  title: "მისამართი",
+                  name: {
+                    title: "Google Map",
+                    value: `http://www.google.com/maps/place/${selectedItem?.latitude},${selectedItem?.longitude}/@${selectedItem?.latitude},${selectedItem?.longitude},20z`,
+                  },
+                  latitude: {
+                    title: "მისამართი",
+                    value: selectedItem?.secondaryUser.address,
+                  },
+                },
+              ];
+              copyDataToClipboard(data)
+            }}
+          >
+            <CopyIcon className="size-5" />
+          </Button>
           </div>
           <div className="space-y-6 w-full overflow-y-auto max-h-[60vh]">
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -138,7 +213,6 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         {selectedItem?.secondaryUser?.name}
                       </p>
                     </div>
-
 
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
@@ -162,7 +236,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                      სახელი, გვარი
+                        სახელი, გვარი
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.parentUser.name}
@@ -193,20 +267,24 @@ export default function List({ data, activeItems, pending }: ListProps) {
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
               <div className="">
                 <div>
-                 {selectedItem?.secondaryUser?.address || selectedItem?.address && <>
-                  <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    {t("home.requesetDetails.location")}
-                  </h4>
-                    <div className="mb-4">
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t("home.requesetDetails.address")}
-                      </p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                      {selectedItem?.secondaryUser?.address || selectedItem?.address}
-                      </p>
-                    </div></>}
+                  {selectedItem?.secondaryUser?.address ||
+                    (selectedItem?.address && (
+                      <>
+                        <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
+                          {t("home.requesetDetails.location")}
+                        </h4>
+                        <div className="mb-4">
+                          <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                            {t("home.requesetDetails.address")}
+                          </p>
+                          <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                            {selectedItem?.secondaryUser?.address ||
+                              selectedItem?.address}
+                          </p>
+                        </div>
+                      </>
+                    ))}
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
-               
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                         {t("home.requesetDetails.latitude")}
@@ -263,16 +341,26 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         </GoogleMapReact>
                       </div>
                     )}
-                    <Button className="w-full mt-3 !bg-[#900a16]/90 hover:!bg-[#900a16] text-black font-bold" variant="primary" size="md"   onClick={() => {
-                      window.open(`http://www.google.com/maps/place/${selectedItem?.latitude},${selectedItem?.longitude}/@${selectedItem?.latitude},${selectedItem?.longitude},20z`)
-                    }}>რუკაზე ნახვა</Button>
+                    <Button
+                      className="w-full mt-3 !bg-[#900a16]/90 hover:!bg-[#900a16] text-black font-bold"
+                      variant="primary"
+                      size="md"
+                      onClick={() => {
+                        window.open(
+                          `http://www.google.com/maps/place/${selectedItem?.latitude},${selectedItem?.longitude}/@${selectedItem?.latitude},${selectedItem?.longitude},20z`
+                        );
+                      }}
+                    >
+                      რუკაზე ნახვა
+                    </Button>
                   </div>
-                
                 </div>
               </div>
             </div>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
-             {selectedItem?.parentUser.id && <CommentBox parentUserId={selectedItem.parentUser.id} />}
+              {selectedItem?.parentUser.id && (
+                <CommentBox parentUserId={selectedItem.parentUser.id} />
+              )}
             </div>
           </div>
         </div>
@@ -405,7 +493,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {' '}
+                  {" "}
                   {/* {t("common.actions")} */}
                 </TableCell>
               </TableRow>
@@ -478,7 +566,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.parentUser?.secondaryNumber || 'N/A'}
+                    {request.parentUser?.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -536,8 +624,10 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.status === "SecurityDispatched" &&
                       "დაცვის გუნდი გზაშია"}
                     {request.status === "Completed" && "გამოძახება დასრულდა"}
-                    {request.status === "Rejected" && "გამოძახება გააუქმა მშობელმა"}
-                    {request.status === "RejectedByDispatcher" && "გამოძახება გააუქმა ოპერატორმა"}
+                    {request.status === "Rejected" &&
+                      "გამოძახება გააუქმა მშობელმა"}
+                    {request.status === "RejectedByDispatcher" &&
+                      "გამოძახება გააუქმა ოპერატორმა"}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -551,18 +641,19 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       "SecurityDispatched",
                       "Accepted",
                       "AutoAccepted",
-                    ].includes(request.status) && user?.userType === "Dispatcher" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-max min-w-max"
-                        onClick={() => {
-                          setStatusChangeItem(request);
-                        }}
-                      >
-                        {t("home.table.changeStatus")}
-                      </Button>
-                    )}
+                    ].includes(request.status) &&
+                      user?.userType === "Dispatcher" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-max min-w-max"
+                          onClick={() => {
+                            setStatusChangeItem(request);
+                          }}
+                        >
+                          {t("home.table.changeStatus")}
+                        </Button>
+                      )}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -583,9 +674,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                 </TableRow>
               ))}
               {tableData.map((request) => (
-                <TableRow
-                  key={request.id}
-                >
+                <TableRow key={request.id}>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                     {request.id}
                   </TableCell>
@@ -643,12 +732,13 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {request.status === "SecurityDispatched" &&
                       "დაცვის გუნდი გზაშია"}
                     {request.status === "Completed" && "გამოძახება დასრულდა"}
-                    {request.status === "Rejected" && "გამოძახება გააუქმა მშობელმა"}
-                    {request.status === "RejectedByDispatcher" && "გამოძახება გააუქმა ოპერატორმა"}
+                    {request.status === "Rejected" &&
+                      "გამოძახება გააუქმა მშობელმა"}
+                    {request.status === "RejectedByDispatcher" &&
+                      "გამოძახება გააუქმა ოპერატორმა"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
-
+                    {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <Button
