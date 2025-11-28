@@ -13,6 +13,7 @@ import { useSearchParams } from "react-router";
 import Button from "../components/ui/button";
 import { DocsIcon } from "../icons";
 import requestsTags from "../store/server/requets/tags";
+import useAuthedUserStore from "../store/client/useAuthedUserStore";
 
 dayjs.extend(isBetween);
 
@@ -26,6 +27,7 @@ function toLocalISOString(date: Date) {
 
 const Home = () => {
   const queryClient = useQueryClient()
+  const authdeUser = useAuthedUserStore()
   const { refetch: refetchDownloadCSV, isLoading: isDownloading } = useDownloadCSV()  
   const [dateRange, setDateRange] = useState<Date[] | null>(null);
   const [page, setPage] = useState(0);
@@ -63,14 +65,19 @@ const Home = () => {
       window.URL.revokeObjectURL(url);
     }
   };
+
+  const isAdmin = useRef(false)
   
   const ringBell = useCallback(() => {
     if(interval.current) {
       clearTimeout(interval.current);
     }
+
+    if (isAdmin.current) {
+      return
+    }
     interval.current = setTimeout(() => {
       try {
-        console.log(lastAudioPlayTime.current && new Date().getTime() - lastAudioPlayTime.current.getTime() > 5000)
         if(((lastAudioPlayTime.current && new Date().getTime() - lastAudioPlayTime.current.getTime() > 5000) || !lastAudioPlayTime.current)) {
           audioRef.current?.play()
           lastAudioPlayTime.current = new Date();
@@ -91,6 +98,15 @@ const Home = () => {
     setAllItems(allData || null)
   }, [allData])
 
+
+  useEffect(() => {
+    if(authdeUser.user?.userType === 'Admin') {
+      isAdmin.current = true
+    }
+    else {
+      isAdmin.current = false
+    }
+  }, [authdeUser])
 
 
 
