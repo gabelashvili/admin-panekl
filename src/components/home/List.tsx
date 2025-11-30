@@ -105,7 +105,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
   };
 
   useEffect(() => {
-    setTableData(data.filter(el => el.parentUser.phoneNumber !== '548444448'));
+    setTableData(data);
   }, [data]);
 
   useEffect(() => {
