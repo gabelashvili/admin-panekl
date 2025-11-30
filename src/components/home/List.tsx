@@ -29,6 +29,20 @@ interface ListProps {
   pending: boolean;
 }
 
+
+const randomUsers = [
+  "ლაშა გებელაშვილი",
+  "ნიკა ლომიძე",
+  "თემო ბერიძე",
+  "ანა ქავთარაძე",
+  "ნინო ჯაფარიძე",
+  "გიორგი მიქელაძე",
+  "სოფო კუჭავავა",
+  "მარიამ შავლაძე",
+  "დავით ქობულაძე",
+  "ელენე ჭუმბურიძე"
+];
+
 const AnyReactComponent = ({ text }: { text: string }) => (
   <div className="text-white bg-gray-500 p-2 rounded-full size-14 flex items-center justify-center text-sm">
     {text}
@@ -91,7 +105,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
   };
 
   useEffect(() => {
-    setTableData(data);
+    setTableData(data.filter(el => el.parentUser.phoneNumber !== '548444448'));
   }, [data]);
 
   useEffect(() => {
