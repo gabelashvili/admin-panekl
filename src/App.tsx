@@ -11,6 +11,7 @@ import UsersList from "./pages/UsersList";
 import { Modal } from "./components/ui/modal";
 import PaymentPage from "./pages/PaymentPage";
 import StatisticsPage from "./pages/StatisticsPage";
+import TestPage from "./pages/TestPage";
   
 export default function App() {
   const { user, setAuthedUser } = useAuthedUserStore()
@@ -64,6 +65,7 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
+            <Route index path="/test" element={<TestPage />} />
             {user?.userType === "Admin" && <Route index path="/users" element={<UsersList />} />}
             {user?.userType === "Admin" && <Route index path="/payments" element={<PaymentPage />} />}
             {user?.userType === "Admin" && <Route index path="/statistics" element={<StatisticsPage />} />}

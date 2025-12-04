@@ -1,4 +1,5 @@
 import React from "react";
+import clsx from "clsx";
 
 interface TextareaProps {
   placeholder?: string; // Placeholder text
@@ -45,7 +46,7 @@ const TextArea: React.FC<TextareaProps> = ({
         value={value}
         onChange={handleChange}
         disabled={disabled}
-        className={textareaClasses}
+        className={clsx(textareaClasses, error && 'border !border-red-500')}
       />
       {hint && (
         <p
