@@ -9,7 +9,8 @@ const useAuthedUserQuery = (enabled?: boolean) => {
         return data
       },
       queryKey: ['authedUserQuery'],
-      enabled
+      enabled,
+      refetchInterval: false
     })
 }
 
