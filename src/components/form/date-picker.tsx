@@ -3,14 +3,13 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import Label from "./Label";
 import { CalenderIcon } from "../../icons";
-import DateOption = flatpickr.Options.DateOption;
 import { cn } from "../../utils/cn";
 
 type PropsType = {
   id: string;
   mode?: "single" | "multiple" | "range" | "time";
   onChange?: (value: Date[]) => void;
-  defaultDate?: DateOption;
+  defaultDate?: any;
   label?: string;
   placeholder?: string;
   inputClassName?: string;
@@ -25,13 +24,14 @@ export default function DatePicker({
   placeholder,
   inputClassName,
 }: PropsType) {
+  
 
   useEffect(() => {
     const flatPickr = flatpickr(`#${id}`, {
       mode: mode || "single",
       static: true,
       monthSelectorType: "static",
-      dateFormat: "Y-m-d",
+      dateFormat: "d-m-Y",
       defaultDate,
       locale: {
         rangeSeparator: " - ",
@@ -49,12 +49,17 @@ export default function DatePicker({
     }
     });
 
+    if (!Array.isArray(flatPickr) && !defaultDate?.[0] && !defaultDate?.[1]) {
+      flatPickr.clear();
+    }
+
     return () => {
       if (!Array.isArray(flatPickr)) {
         flatPickr.destroy();
       }
     };
   }, [mode, onChange, id, defaultDate]);
+
 
   return (
     <div>
