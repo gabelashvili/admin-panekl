@@ -41,7 +41,6 @@ const schema = z.object({
 
 function replaceOklabColors() {
   const elements = document.querySelectorAll("#print-area *");
-
   elements.forEach((el) => {
     const style = getComputedStyle(el);
 
@@ -58,9 +57,11 @@ export async function htmlElementToPdfBlob(
   element: HTMLElement
 ): Promise<Blob> {
   replaceOklabColors();
-
   // Find the print-page element
+  console.log(element, 11111111111, document.getElementById("print-area"));
   const printPage = element.querySelector(".print-page") as HTMLElement;
+  console.log(printPage, 22);
+
   if (!printPage) {
     throw new Error("Print page element not found");
   }
@@ -143,31 +144,25 @@ export default function PrintCard({
 
   const signatureCanvas = useRef<SignatureCanvas>(null);
 
-  const contentRef = useRef<HTMLDivElement>(null);
-
   const { mutateAsync: generateDocument, isPending } =
     useRequestDocumentGenerate();
 
-  if (pending) {
-    return (
-      <div className="fixed top-0 left-0 flex justify-center items-center h-full bg-black/40 w-screen z-[999]">
-        <Loader2 className="w-10 h-10 animate-spin" />
-      </div>
-    );
-  }
-
   return (
-    data && (
+   (
       <>
+      {pending && (
+        <div className="fixed top-0 left-0 flex justify-center items-center h-full bg-black/40 w-screen z-[999]">
+          <Loader2 className="w-10 h-10 animate-spin" />
+        </div>
+      )}
         <Modal
           isOpen={true}
           onClose={onClose}
-          className="max-w-[700px] m-4 max-h-[90vh]"
+          className={clsx("max-w-[700px] m-4 max-h-[90vh]", pending && "opacity-0")}
         >
           <div
             className="flex justify-center items-start pdf-edit-mode  overflow-y-auto max-h-[90vh]"
             id="print-area"
-            ref={contentRef}
           >
             <div
               className={clsx(
@@ -715,7 +710,7 @@ export default function PrintCard({
                         );
                         try {
                           const blob = await htmlElementToPdfBlob(
-                            contentRef.current!
+                            document.getElementById("print-area")!
                           );
                           await generateDocument({
                             HelpRequestId: data.id,
