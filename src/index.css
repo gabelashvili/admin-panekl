@@ -788,3 +788,28 @@ span.flatpickr-weekday,
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
 }
+
+
+.pdf-print-mode {
+  .input {
+    @apply hidden;
+  }
+  .label {
+    @apply block border-black break-all pb-3.5;
+  }
+  .title {
+    @apply pb-1
+  }
+  .textarea-title {
+    @apply pb-4
+  }
+}
+
+.pdf-edit-mode {
+  .input {
+    @apply block;
+  }
+  .label {
+    @apply hidden;
+  }
+}

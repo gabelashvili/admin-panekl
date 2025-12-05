@@ -8,53 +8,13 @@ import Button from "../components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
-import { useRef, useState } from "react";
-import { useReactToPrint } from "react-to-print";
+import { useRef } from "react";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 
-export async function htmlToPdfBlob(elementId: string): Promise<Blob | null> {
-    const element = document.getElementById(elementId);
-    if (!element) return null;
-  
-    // Create A4 PDF (portrait)
-    const doc = new jsPDF("p", "pt", "a4");
-  
-    return new Promise((resolve) => {
-      doc.html(element, {
-        callback: (doc) => {
-          // 👇 This is the Blob you want
-          const blob = doc.output("blob");
-          resolve(blob);
-        },
-        margin: [20, 20, 20, 20],
-        autoPaging: "text",
-        html2canvas: {
-          scale: 2, // better quality
-        },
-      });
-    });
-  }
 
-
-  async function handleGenerate() {
-    const blob = await htmlToPdfBlob("print-area");
-    if (!blob) return;
-  
-    // Example: download
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "myfile.pdf";
-    a.click();
-    URL.revokeObjectURL(url);
-  
-    // Or: upload via fetch
-    // const formData = new FormData();
-    // formData.append("file", blob, "myfile.pdf");
-    // await fetch("/api/upload", { method: "POST", body: formData });
-  }
 
 const schema = z.object({
   cardNumber: z.string().min(1, { message: "ბარათის ნომერი აუცილებელია" }),
@@ -76,6 +36,88 @@ const schema = z.object({
   date: z.string().min(1, { message: "თარიღი აუცილებელია" }),
   description: z.string().min(1, { message: "შემთხვევის აღწერა აუცილებელია" }),
 });
+
+
+
+
+function replaceOklabColors() {
+  const elements = document.querySelectorAll("*");
+
+  elements.forEach((el) => {
+    const style = getComputedStyle(el);
+
+    ["color", "backgroundColor", "borderColor"].forEach((prop) => {
+      const value = style[prop as any];
+      if (value?.includes("oklab") || value?.includes("oklch")) {
+        (el as HTMLElement).style[prop as any] = "rgb(0,0,0)";
+      }
+    });
+  });
+}
+
+
+export async function htmlElementToPdfBlob(
+  element: HTMLElement
+): Promise<Blob> {
+  replaceOklabColors();
+
+  // Find the print-page element
+  const printPage = element.querySelector('.print-page') as HTMLElement;
+  if (!printPage) {
+    throw new Error("Print page element not found");
+  }
+
+  // Force element to exact A4 dimensions before capture
+  printPage.style.width = '210mm';
+  printPage.style.height = '297mm';
+  printPage.style.maxHeight = '297mm';
+  printPage.style.overflow = 'hidden';
+
+  element.classList.add("pdf-print-mode");
+  element.classList.remove("pdf-edit-mode");
+  // Wait for styles to apply
+  await new Promise(resolve => setTimeout(resolve, 200));
+
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pageWidth = pdf.internal.pageSize.getWidth();   // 210 mm
+  const pageHeight = pdf.internal.pageSize.getHeight(); // 297 mm
+
+  // Capture only the print-page element, not the entire container
+  const canvas = await html2canvas(printPage, {
+    scale: 4,      // Good balance between quality and performance
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false,
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+
+  // Fill entire page (no centering needed since we're capturing exact A4 size)
+  pdf.addImage(
+    imgData,
+    "PNG",
+    0,
+    0,
+    pageWidth,
+    pageHeight
+  );
+
+  element.classList.remove("pdf-print-mode");
+  element.classList.add("pdf-edit-mode");
+
+  // Reset styles
+  printPage.style.width = '';
+  printPage.style.height = '';
+  printPage.style.maxHeight = '';
+  printPage.style.overflow = '';
+  printPage.style.boxSizing = '';
+
+  pdf.save("test.pdf");
+  const blob = pdf.output("blob");
+  return blob;
+}
+
+
 
 export default function App() {
   const {
@@ -104,17 +146,13 @@ export default function App() {
     },
   });
 
-  const [saved, setSaved] = useState(false);
   const signatureCanvas = useRef<SignatureCanvas>(null);
-  const handleSave = () => {
-    setSaved(true);
-  };
 
   const contentRef = useRef<HTMLDivElement>(null);
-  const reactToPrintFn = useReactToPrint({ contentRef });
+
 
   return (
-    <div className="flex justify-center items-start" id="print-area" ref={contentRef}>
+    <div className="flex justify-center items-start pdf-edit-mode" id="print-area" ref={contentRef}>
       <div className="print-page w-[210mm] print:h-[297mm] mx-auto bg-white shadow-2xl print:shadow-none print:overflow-hidden">
         {/* Decorative Top Border */}
 
@@ -164,7 +202,7 @@ export default function App() {
               >
                 ბარათის ნომერი:
               </span>
-              <div className="border-b-2 border-gray-300 pb-1.5 hidden print:flex w-full">
+              <div className="border-b-2 border-gray-300 pb-1.5 label w-full">
                 <p className="text-sm text-black w-full">
                   {watch("cardNumber")}
                 </p>
@@ -173,7 +211,7 @@ export default function App() {
                 id="cardNumber"
                 type="text"
                 placeholder="ბარათის ნომერი"
-                className="w-full print:hidden"
+                className="w-full input"
                 rootClassName="w-full"
                 value={watch("cardNumber")}
                 error={!!errors.cardNumber}
@@ -201,13 +239,13 @@ export default function App() {
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.customerName && "text-red-500"
                     )}
                   >
                     სახელი გვარი
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">
                       {watch("customerName")}
                     </p>
@@ -224,20 +262,20 @@ export default function App() {
                         shouldDirty: true,
                       })
                     }
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
 
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.customerAge && "text-red-500"
                     )}
                   >
                     ასაკი
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">{watch("customerAge")}</p>
                   </div>
                   <Input
@@ -251,20 +289,20 @@ export default function App() {
                         shouldDirty: true,
                       })
                     }
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
 
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.customerParentName && "text-red-500"
                     )}
                   >
                     მშობლის სახელი გვარი
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">
                       {watch("customerParentName")}
                     </p>
@@ -280,7 +318,7 @@ export default function App() {
                         shouldDirty: true,
                       })
                     }
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
               </div>
@@ -299,13 +337,13 @@ export default function App() {
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold  pb-2.5",
+                      "text-sm block font-semibold  pb-2.5 title",
                       errors.policeName && "text-red-500"
                     )}
                   >
                     დაცვა
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">{watch("policeName")}</p>
                   </div>
                   <Input
@@ -319,20 +357,20 @@ export default function App() {
                         shouldDirty: true,
                       })
                     }
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
 
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.doctorName && "text-red-500"
                     )}
                   >
                     უმცროსი ექიმი
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">{watch("doctorName")}</p>
                   </div>
                   <Input
@@ -346,7 +384,7 @@ export default function App() {
                         shouldDirty: true,
                       })
                     }
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
               </div>
@@ -367,13 +405,13 @@ export default function App() {
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold  pb-2.5",
+                      "text-sm block font-semibold  pb-2.5 title",
                       errors.address && "text-red-500"
                     )}
                   >
                     შემთხვევის მისამართი
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">{watch("address")}</p>
                   </div>
                   <Input
@@ -387,20 +425,20 @@ export default function App() {
                         shouldDirty: true,
                       })
                     }
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
 
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.arriveTime && "text-red-500"
                     )}
                   >
                     მისვლის დრო
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">{dayjs(watch("arriveTime")).format("MM.DD.YYYY HH:mm")}</p>
                   </div>
                   <DatePicker
@@ -416,7 +454,7 @@ export default function App() {
                     }
                     enableTime
                     error={!!errors.arriveTime}
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
               </div>
@@ -425,13 +463,13 @@ export default function App() {
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.reason && "text-red-500"
                     )}
                   >
                     გამოძახების მიზეზი
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">{watch("reason")}</p>
                   </div>
                   <Input
@@ -445,20 +483,20 @@ export default function App() {
                         shouldDirty: true,
                       })
                     }
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
 
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.finishTime && "text-red-500"
                     )}
                   >
                     დასრულების დრო
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">{dayjs(watch("finishTime")).format("MM.DD.YYYY HH:mm")}</p>
                   </div>
                   {/* <Input type="text" placeholder="დასრულების დრო" /> */}
@@ -475,7 +513,7 @@ export default function App() {
                     }
                     enableTime
                     error={!!errors.finishTime}
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
               </div>
@@ -483,13 +521,13 @@ export default function App() {
               <div className="space-y-0">
                 <label
                   className={clsx(
-                    "text-sm block font-semibold pb-2.5",
+                    "text-sm block font-semibold pb-2.5 textarea-title",
                     errors.description && "text-red-500"
                   )}
                 >
                   შემთხვევის აღწერა
                 </label>
-                <div className="border-2 border-gray-300 rounded-lg min-h-28 p-3 bg-white hidden print:block">
+                <div className="border-2 border-gray-300 rounded-lg min-h-28 p-3 bg-white label">
                   <p className="text-sm text-black">{watch("description")}</p>
                 </div>
                 <TextArea
@@ -502,7 +540,7 @@ export default function App() {
                       shouldDirty: true,
                     })
                   }
-                  className="block print:hidden"
+                  className="input"
                 />
               </div>
             </div>
@@ -522,13 +560,13 @@ export default function App() {
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.responsiblePersonName && "text-red-500"
                     )}
                   >
                     მეურვე/დროებითი პასუხისმგებელი პირი
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">
                       {watch("responsiblePersonName")}
                     </p>
@@ -544,19 +582,19 @@ export default function App() {
                       })
                     }
                     error={!!errors.responsiblePersonName}
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
                 <div className="space-y-0">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.date && "text-red-500"
                     )}
                   >
                     თარიღი
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block">
+                  <div className="border-b-2 border-gray-300 pb-1.5 label">
                     <p className="text-sm text-black">{dayjs(watch("date")).format("MM.DD.YYYY")}</p>
                   </div>
                   {/* <Input type="text" placeholder="თარიღი" /> */}
@@ -572,23 +610,23 @@ export default function App() {
                       })
                     }
                     error={!!errors.date}
-                    className="block print:hidden"
+                    className="input"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-0">
+                  <div className="flex items-center gap-2">
                   <label
                     className={clsx(
-                      "text-sm block font-semibold pb-2.5",
+                      "text-sm block font-semibold pb-2.5 title",
                       errors.signature && "text-red-500"
                     )}
                   >
                     ხელმოწერა
                   </label>
-                  <div className="border-b-2 border-gray-300 pb-1.5 hidden print:block print:w-full">
-                    <img src={watch("signature")} alt="signature" className="text-sm text-black" width={200} height={120}>
+                    <img src={watch("signature")} alt="signature" className="text-sm text-black label" width={200} height={120}>
                     </img>
                   </div>
                   <SignatureCanvas
@@ -596,7 +634,7 @@ export default function App() {
                     ref={signatureCanvas}
                     canvasProps={{
                       height: 150,
-                      className: "sigCanvas bg-gray-100 w-full print:hidden",
+                      className: "sigCanvas bg-gray-100 w-full input",
                     }}
                     onEnd={() => {
                       setValue(
@@ -610,13 +648,13 @@ export default function App() {
               </div>
             </div>
           </div>
-          <div className="flex justify-end p-4 px-4 print:hidden">
+          <div className="flex justify-end p-4 px-4 input">
             <Button
               className="ml-auto"
               onClick={handleSubmit(
-                (data) => {
-                  handleSave();
-                  handleGenerate();
+                async () => {
+                  const blob = await htmlElementToPdfBlob(contentRef.current!);
+                  console.log(blob);
                 },
                 (errors) => console.log(errors)
               )}
@@ -661,6 +699,39 @@ export default function App() {
     body > div {
       display: block !important;
     }
+  }
+
+  /* PDF Print Mode Styles */
+  .pdf-print-mode .input {
+    display: none !important;
+  }
+
+  .pdf-print-mode .sigCanvas {
+    display: none !important;
+  }
+
+  .pdf-print-mode button {
+    display: none !important;
+  }
+
+  .pdf-print-mode .print-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .pdf-print-mode .label {
+    display: block !important;
+  }
+
+  .pdf-edit-mode .label {
+    display: none !important;
+  }
+
+  .pdf-edit-mode .input {
+    display: block !important;
   }
 `}</style>
     </div>
