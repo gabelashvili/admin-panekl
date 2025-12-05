@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import useAuthedUserStore from "../../store/client/useAuthedUserStore";
 import CommentBox from "../comment";
 import { CopyIcon } from "lucide-react";
+import PrintCard from "../print-card/PrintCard";
 
 interface ListProps {
   data: RequestResponseModel["helpRequests"];
@@ -62,8 +63,8 @@ export default function List({ data, activeItems, pending }: ListProps) {
   const [statusChangeItem, setStatusChangeItem] = useState<
     ListProps["data"][0] | null
   >(null);
+  const [openCardData, setOpenCardData] = useState<RequestResponseModel["helpRequests"][number] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
-
   const renderOptionsBasedOnStatus = (
     status: RequestResponseModel["helpRequests"][number]["status"]
   ) => {
@@ -146,6 +147,9 @@ export default function List({ data, activeItems, pending }: ListProps) {
   };
   
   
+  const openCardModal = (data: RequestResponseModel["helpRequests"][number]) => {
+    setOpenCardData(data);
+  };
   
 
   return (
@@ -439,6 +443,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
           </div>
         </div>
       </Modal>
+   {openCardData &&   <PrintCard data={openCardData} onClose={() => setOpenCardData(null)} />}
       <div className="overflow-hidden bg-white dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <Table>
@@ -756,6 +761,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex flex-col gap-2">
                     <Button
                       className="min-w-max"
                       variant="outline"
@@ -764,6 +770,19 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     >
                       {t("home.table.viewDetails")}
                     </Button>
+                    <Button
+                      className="min-w-max"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if(!request.document) {
+                          openCardModal(request);
+                        }
+                      }}
+                    >
+                      ბარათი
+                    </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

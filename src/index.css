@@ -795,7 +795,7 @@ span.flatpickr-weekday,
     @apply hidden;
   }
   .label {
-    @apply block border-black break-all pb-3.5;
+    @apply block border-black break-all pb-2.5;
   }
   .title {
     @apply pb-1

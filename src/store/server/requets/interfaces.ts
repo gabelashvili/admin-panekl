@@ -11,7 +11,7 @@ export interface RequestUser {
 
 export interface RequestModel {
     id: string;
-    secondaryUser: RequestUser;
+    secondaryUser: RequestUser & { age: number };
     parentUser: RequestUser;
     longitude: string;
     latitude: string;
@@ -30,6 +30,7 @@ export interface RequestModel {
     updatedTimestamp: string;
     expirationDate: string;
     secondaryNumber: string | null;
+    document: string | null;
 }
 
 export interface RequestResponseModel {
