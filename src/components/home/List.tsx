@@ -682,6 +682,7 @@ export default function List({ data, activeItems, pending }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white"
                     } `}
                   >
+                    <div className="flex gap-2">
                     <Button
                       className="min-w-max"
                       variant="outline"
@@ -690,6 +691,22 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     >
                       {t("home.table.viewDetails")}
                     </Button>
+                    <Button
+                      className="min-w-max"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if(!request.document) {
+                          openCardModal(request);
+                        }
+                        else {
+                          window.open(request.document, "_blank");
+                        }
+                      }}
+                    >
+                      ბარათი
+                    </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -777,6 +794,9 @@ export default function List({ data, activeItems, pending }: ListProps) {
                       onClick={() => {
                         if(!request.document) {
                           openCardModal(request);
+                        }
+                        else {
+                          window.open(request.document, "_blank");
                         }
                       }}
                     >
