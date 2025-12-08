@@ -1,16 +1,22 @@
 import clsx from "clsx";
-import Input from "../components/form/input/InputField";
+import Input from "../../components/form/input/InputField";
 import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
 import { useRef, useState } from "react";
-import DatePicker from "../components/form/date-picker";
-import TextArea from "../components/form/input/TextArea";
+import DatePicker from "../../components/form/date-picker";
+import TextArea from "../../components/form/input/TextArea";
 import SignatureCanvas from "react-signature-canvas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { RequestResponseModel } from "../store/server/requets/interfaces";
+import { RequestResponseModel } from "../../store/server/requets/interfaces";
 import dayjs from "dayjs";
+import { useRequestDocumentGenerate } from "../../store/server/requets/mutations";
+import Button from "../ui/button";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
+
+
 
 const schema = z.object({
   cardNumber: z.string().min(1, { message: "ბარათის ნომერი აუცილებელია" }),
@@ -57,6 +63,7 @@ const RenderTextField = ({
   error?: boolean;
 }) => {
   const signatureCanvas = useRef<SignatureCanvas>(null);
+
   return (
     <div
       className={clsx(
@@ -64,7 +71,12 @@ const RenderTextField = ({
         direction === "column" ? "flex-col " : "flex-row items-baseline"
       )}
     >
-      <p className={clsx("text-lg text-black dark:text-white font-semibold", error ? "text-red-500" : "")}>
+      <p
+        className={clsx(
+          "text-lg text-black dark:text-white font-semibold",
+          error ? "text-red-500" : ""
+        )}
+      >
         {label}:
       </p>
       <div className={clsx("w-full", inputClassName)}>
@@ -72,13 +84,9 @@ const RenderTextField = ({
         {isPrintMode && (
           <>
             {type === "signature" ? (
-           <div className="w-full h-full border-b-2 border-b-black dark:border-b-white pb-1">
-               <img
-                src={value}
-                alt="signature"
-                className="w-[50%]"
-              />
-           </div>
+              <div className="w-full h-full border-b-2 border-b-black dark:border-b-white pb-1">
+                <img src={value} alt="signature" className="w-[50%]" />
+              </div>
             ) : (
               <p
                 className={clsx(
@@ -91,9 +99,11 @@ const RenderTextField = ({
                     : "border-b-2 border-b-black dark:border-b-white"
                 )}
               >
-                {type === 'date' ? dayjs(value).format('MM.DD.YYYY') : ''}
-                {type === 'date-time' ? dayjs(value).format('MM.DD.YYYY HH:mm') : ''}
-                {type === 'text' || type === 'textarea' ? value : ''}
+                {type === "date" ? dayjs(value).format("MM.DD.YYYY") : ""}
+                {type === "date-time"
+                  ? dayjs(value).format("MM.DD.YYYY HH:mm")
+                  : ""}
+                {type === "text" || type === "textarea" ? value : ""}
               </p>
             )}
           </>
@@ -117,12 +127,16 @@ const RenderTextField = ({
                   onChange?.(e.target.value);
                 }
               }}
+              value={value}
             />
           )}
           {type === "textarea" && (
             <TextArea
               placeholder="ბარათის ნომერი"
-              className={clsx("w-full input min-h-[180px]", error ? "border-red-500" : "")}
+              className={clsx(
+                "w-full input min-h-[180px]",
+                error ? "border-red-500" : ""
+              )}
               value={value}
               onChange={(e) => {
                 if (!disabled) {
@@ -157,8 +171,7 @@ const RenderTextField = ({
               onEnd={() => {
                 if (!disabled) {
                   const value =
-                    signatureCanvas.current?.getCanvas().toDataURL() ||
-                    "";
+                    signatureCanvas.current?.getCanvas().toDataURL() || "";
                   onChange?.(value);
                 }
               }}
@@ -258,8 +271,8 @@ const generateHtmlPdf = async () => {
         margin,
         contentWidth,
         sectionHeight,
-        '',
-        'FAST'
+        "",
+        "FAST"
       );
 
       position += sectionHeight;
@@ -267,19 +280,22 @@ const generateHtmlPdf = async () => {
       pageNumber++;
     }
 
-    doc.save("form-output.pdf");
+    return doc.output("blob");
   } catch (error) {
     console.error("PDF generation error:", error);
   }
 };
-const TestPage = ({
+const PrintCardForm = ({
   data,
-  onClose,
+  pending,
+  setPending,
 }: {
   data: RequestResponseModel["helpRequests"][number];
-  onClose: () => void;
+  pending: boolean;
+  setPending: (pending: boolean) => void;
 }) => {
   const [isPrintMode, setIsPrintMode] = useState(false);
+  const { mutateAsync: generateDocument } = useRequestDocumentGenerate();
   const {
     handleSubmit,
     watch,
@@ -295,7 +311,7 @@ const TestPage = ({
       customerParentName: data?.parentUser?.name,
       policeName: "",
       doctorName: "",
-      address: data?.secondaryUser?.address || "",
+      address: data?.secondaryUser?.address || data?.address || "",
       arriveTime: "",
       reason: "",
       finishTime: "",
@@ -305,24 +321,13 @@ const TestPage = ({
       date: new Date().toISOString(),
     },
   });
-  console.log(errors);
+  const queryClient = useQueryClient();
+
   return (
     <>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-md fixed"
-        onClick={
-          handleSubmit(async (data) => {
-            console.log(data);
-            setIsPrintMode(true);
-            await generateHtmlPdf();
-          }, errors => console.log(errors))
-        }
-      >
-        Generate PDF
-      </button>
       <div
         id="content-to-pdf"
-        className=" bg-white dark:bg-gray-900 rounded-lg"
+        className=" bg-white dark:bg-gray-900 max-h-[90vh] overflow-auto"
       >
         <section
           id="header"
@@ -382,7 +387,7 @@ const TestPage = ({
                   label="სახელი გვარი"
                   value={watch("customerName")}
                   id="name"
-                  disabled={isPrintMode}
+                  disabled={true}
                   onChange={(value) => {
                     setValue("customerName", value, { shouldValidate: true });
                   }}
@@ -394,7 +399,7 @@ const TestPage = ({
                   label="ასაკი"
                   value={watch("customerAge")}
                   id="age"
-                  disabled={isPrintMode}
+                  disabled={true}
                   onChange={(value) => {
                     setValue("customerAge", value, { shouldValidate: true });
                   }}
@@ -406,9 +411,11 @@ const TestPage = ({
                   label="მშობლის სახელი გვარი"
                   value={watch("customerParentName")}
                   id="parent-name"
-                  disabled={isPrintMode}
+                  disabled={true}
                   onChange={(value) => {
-                    setValue("customerParentName", value, { shouldValidate: true });
+                    setValue("customerParentName", value, {
+                      shouldValidate: true,
+                    });
                   }}
                   error={!!errors.customerParentName}
                 />
@@ -452,7 +459,7 @@ const TestPage = ({
                   label="შემთხვევის მისამართი"
                   value={watch("address")}
                   id="address"
-                  disabled={isPrintMode}
+                  disabled
                   onChange={(value) => {
                     setValue("address", value, { shouldValidate: true });
                   }}
@@ -525,7 +532,9 @@ const TestPage = ({
                   id="responsible-person-name"
                   disabled={isPrintMode}
                   onChange={(value) => {
-                    setValue("responsiblePersonName", value, { shouldValidate: true });
+                    setValue("responsiblePersonName", value, {
+                      shouldValidate: true,
+                    });
                   }}
                   error={!!errors.responsiblePersonName}
                 />
@@ -536,14 +545,21 @@ const TestPage = ({
                   value={watch("date")}
                   type="date"
                   id="date"
-                  disabled={isPrintMode}
+                  disabled={true}
                   onChange={(value) => {
                     setValue("date", value, { shouldValidate: true });
                   }}
                   error={!!errors.date}
                 />
               </div>
-              <div className={clsx("w-full pb-4 flex", isPrintMode ? "[&>div]:items-baseline mt-4" : "[&>div]:items-center mt-8")}>
+              <div
+                className={clsx(
+                  "w-full pb-4 flex",
+                  isPrintMode
+                    ? "[&>div]:items-baseline mt-4"
+                    : "[&>div]:items-center mt-8"
+                )}
+              >
                 <RenderTextField
                   isPrintMode={isPrintMode}
                   direction="row"
@@ -562,9 +578,42 @@ const TestPage = ({
             </CardWrapper>
           </section>
         </div>
+     {!isPrintMode &&   <div className="flex justify-end p-4 px-4 input">
+          <Button
+            className="ml-auto"
+            loading={pending}
+            onClick={handleSubmit(
+              async () => {
+                setPending(true);
+                try {
+                  setIsPrintMode(true);
+                  await new Promise((resolve) => setTimeout(resolve, 2000));
+                  const blob = await generateHtmlPdf();
+                  if (!blob) {
+                    throw new Error("მოხდა შეცდომა");
+                  }
+                  await generateDocument({
+                    HelpRequestId: data.id,
+                    Document: blob,
+                  });
+                  await queryClient.invalidateQueries({ queryKey: ["new-requests", "requests"] });
+                  toast.success("ბარათი წარმატებით გაგზავნილია");
+                } catch (error: any) {
+                  toast.error(error.error || "მოხდა შეცდომა");
+                } finally {
+                  setPending(false);
+                }
+              },
+              (errors) => console.log(errors)
+            )}
+            type="submit"
+          >
+            დასრულება
+          </Button>
+        </div>}
       </div>
     </>
   );
 };
 
-export default TestPage;
+export default PrintCardForm;

@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 import useAuthedUserStore from "../../store/client/useAuthedUserStore";
 import CommentBox from "../comment";
 import { CopyIcon } from "lucide-react";
-import PrintCard from "../print-card/PrintCard";
+import PrintCardModal from "../print-card/PrintCardModal";
 
 interface ListProps {
   data: RequestResponseModel["helpRequests"];
@@ -30,27 +30,13 @@ interface ListProps {
   pending: boolean;
 }
 
-
-const randomUsers = [
-  "ლაშა გებელაშვილი",
-  "ნიკა ლომიძე",
-  "თემო ბერიძე",
-  "ანა ქავთარაძე",
-  "ნინო ჯაფარიძე",
-  "გიორგი მიქელაძე",
-  "სოფო კუჭავავა",
-  "მარიამ შავლაძე",
-  "დავით ქობულაძე",
-  "ელენე ჭუმბურიძე"
-];
-
 const AnyReactComponent = ({ text }: { text: string }) => (
   <div className="text-white bg-gray-500 p-2 rounded-full size-14 flex items-center justify-center text-sm">
     {text}
   </div>
 );
 
-export default function List({ data, activeItems, pending }: ListProps) {
+export default function List({ data, activeItems }: ListProps) {
   const user = useAuthedUserStore((state) => state.user);
   const { t } = useTranslation();
   const reqStatusChangeMutation = useRequestStatusChange();
@@ -63,7 +49,9 @@ export default function List({ data, activeItems, pending }: ListProps) {
   const [statusChangeItem, setStatusChangeItem] = useState<
     ListProps["data"][0] | null
   >(null);
-  const [openCardData, setOpenCardData] = useState<RequestResponseModel["helpRequests"][number] | null>(null);
+  const [openCardData, setOpenCardData] = useState<
+    RequestResponseModel["helpRequests"][number] | null
+  >(null);
   const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
   const renderOptionsBasedOnStatus = (
     status: RequestResponseModel["helpRequests"][number]["status"]
@@ -117,40 +105,44 @@ export default function List({ data, activeItems, pending }: ListProps) {
     }
   }, [selectedItem, openModal, closeModal]);
 
-
   const copyDataToClipboard = (data) => {
     let text = "";
-  
+
     data.forEach((section, index) => {
       // Title / Type (with one space below)
       const sectionTitle = section.title || section.type;
       if (sectionTitle) {
         text += `${sectionTitle}:\n\n`; // space after title
       }
-  
+
       // Fields
       Object.entries(section).forEach(([key, field]) => {
-        if (typeof field === "object" && field.title && field.value !== undefined) {
+        if (
+          typeof field === "object" &&
+          field.title &&
+          field.value !== undefined
+        ) {
           text += `${field.title}: ${field.value || "-"}\n`;
         }
       });
-  
+
       // ⬇ Add **2 blank lines BETWEEN SECTIONS**, but NOT after last
       if (index < data.length - 1) {
         text += `\n\n`;
       }
     });
-  
-    navigator.clipboard.writeText(text)
+
+    navigator.clipboard
+      .writeText(text)
       .then(() => alert("ინფორმაცია დაკოპირდა!"))
       .catch((err) => console.error("Failed to copy:", err));
   };
-  
-  
-  const openCardModal = (data: RequestResponseModel["helpRequests"][number]) => {
+
+  const openCardModal = (
+    data: RequestResponseModel["helpRequests"][number]
+  ) => {
     setOpenCardData(data);
   };
-  
 
   return (
     <>
@@ -163,57 +155,57 @@ export default function List({ data, activeItems, pending }: ListProps) {
         className="max-w-[700px] m-4"
       >
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
-       
           <div className="px-2 pr-14 flex justify-between items-center mb-2">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
               {t("home.requesetDetails.title")}
             </h4>
             <Button
-            variant="outline"
-            size="sm"
-            className=""
-            onClick={() => {
-              const data = [
-                {
-                  title: "შვილის ინფორმაცია",
-                  name: {
-                    title: "სახელი, გვარი",
-                    value: selectedItem?.secondaryUser?.name,
+              variant="outline"
+              size="sm"
+              className=""
+              onClick={() => {
+                const data = [
+                  {
+                    title: "შვილის ინფორმაცია",
+                    name: {
+                      title: "სახელი, გვარი",
+                      value: selectedItem?.secondaryUser?.name,
+                    },
+                    phone: {
+                      title: "ტელეფონის ნომერი",
+                      value: selectedItem?.secondaryUser?.phoneNumber,
+                    },
                   },
-                  phone: {
-                    title: "ტელეფონის ნომერი",
-                    value: selectedItem?.secondaryUser?.phoneNumber,
+                  {
+                    title: "მშობლის ინფორმაცია",
+                    name: {
+                      title: "სახელი, გვარი",
+                      value: selectedItem?.parentUser?.name,
+                    },
+                    phone: {
+                      title: "ტელეფონის ნომერი",
+                      value: selectedItem?.parentUser?.phoneNumber,
+                    },
                   },
-                },
-                {
-                  title: "მშობლის ინფორმაცია",
-                  name: {
-                    title: "სახელი, გვარი",
-                    value: selectedItem?.parentUser?.name,
-                  },
-                  phone: {
-                    title: "ტელეფონის ნომერი",
-                    value: selectedItem?.parentUser?.phoneNumber,
-                  },
-                },
-                {
-                  title: "მისამართი",
-                  name: {
-                    title: "Google Map",
-                    value: `http://www.google.com/maps/place/${selectedItem?.latitude},${selectedItem?.longitude}/@${selectedItem?.latitude},${selectedItem?.longitude},20z`,
-                  },
-                  latitude: {
+                  {
                     title: "მისამართი",
-                    value: selectedItem?.secondaryUser?.address ||
-                    selectedItem?.address,
+                    name: {
+                      title: "Google Map",
+                      value: `http://www.google.com/maps/place/${selectedItem?.latitude},${selectedItem?.longitude}/@${selectedItem?.latitude},${selectedItem?.longitude},20z`,
+                    },
+                    latitude: {
+                      title: "მისამართი",
+                      value:
+                        selectedItem?.secondaryUser?.address ||
+                        selectedItem?.address,
+                    },
                   },
-                },
-              ];
-              copyDataToClipboard(data)
-            }}
-          >
-            <CopyIcon className="size-5" />
-          </Button>
+                ];
+                copyDataToClipboard(data);
+              }}
+            >
+              <CopyIcon className="size-5" />
+            </Button>
           </div>
           <div className="space-y-6 w-full overflow-y-auto max-h-[60vh]">
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -443,7 +435,12 @@ export default function List({ data, activeItems, pending }: ListProps) {
           </div>
         </div>
       </Modal>
-   {openCardData &&   <PrintCard data={openCardData} onClose={() => setOpenCardData(null)} />}
+      {openCardData && (
+        <PrintCardModal
+          data={openCardData}
+          onClose={() => setOpenCardData(null)}
+        />
+      )}
       <div className="overflow-hidden bg-white dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
           <Table>
@@ -683,29 +680,28 @@ export default function List({ data, activeItems, pending }: ListProps) {
                     } `}
                   >
                     <div className="flex gap-2">
-                    <Button
-                      className="min-w-max"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedItem(request)}
-                    >
-                      {t("home.table.viewDetails")}
-                    </Button>
-                    <Button
-                      className="min-w-max"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if(!request.document) {
-                          openCardModal(request);
-                        }
-                        else {
-                          window.open(request.document, "_blank");
-                        }
-                      }}
-                    >
-                      ბარათი
-                    </Button>
+                      <Button
+                        className="min-w-max"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedItem(request)}
+                      >
+                        {t("home.table.viewDetails")}
+                      </Button>
+                      <Button
+                        className="min-w-max"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (!request.document) {
+                            openCardModal(request);
+                          } else {
+                            window.open(request.document, "_blank");
+                          }
+                        }}
+                      >
+                        ბარათი
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -779,29 +775,28 @@ export default function List({ data, activeItems, pending }: ListProps) {
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <div className="flex flex-col gap-2">
-                    <Button
-                      className="min-w-max"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedItem(request)}
-                    >
-                      {t("home.table.viewDetails")}
-                    </Button>
-                    <Button
-                      className="min-w-max"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if(!request.document) {
-                          openCardModal(request);
-                        }
-                        else {
-                          window.open(request.document, "_blank");
-                        }
-                      }}
-                    >
-                      ბარათი
-                    </Button>
+                      <Button
+                        className="min-w-max"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedItem(request)}
+                      >
+                        {t("home.table.viewDetails")}
+                      </Button>
+                      <Button
+                        className="min-w-max"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (!request.document) {
+                            openCardModal(request);
+                          } else {
+                            window.open(request.document, "_blank");
+                          }
+                        }}
+                      >
+                        ბარათი
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
