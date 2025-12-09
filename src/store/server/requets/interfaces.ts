@@ -77,6 +77,7 @@ export interface UsersListResponseModel {
     acceptedSosRequestsByParent: number;
     acceptedSosRequestsByOperator: number;
     kids: ChildModel[];
+    timeStamp: Date;
 }
 
 export interface UsersListResponseModel {

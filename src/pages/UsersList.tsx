@@ -13,6 +13,7 @@ import { Modal } from "../components/ui/modal";
 import Button from "../components/ui/button";
 import { ChildModel } from "../store/server/requets/interfaces";
 import Input from "../components/form/input/InputField";
+import dayjs from "dayjs";
 
 const UsersList = () => {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -140,6 +141,12 @@ const UsersList = () => {
                   >
                     პირადი ნომერი
                   </TableCell>
+                   <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    რეგისტრაციის თარიღი
+                  </TableCell>
                   <TableCell
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
@@ -171,6 +178,9 @@ const UsersList = () => {
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.personalNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm')}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       <Button
