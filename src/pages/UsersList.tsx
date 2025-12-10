@@ -170,6 +170,13 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
+                    კამპანია
+                  </TableCell>
+               
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
                     შვილები
                   </TableCell>
                   <TableCell
@@ -182,13 +189,13 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Subscription
+                    გამოწერა
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Campaign
+                    კამპანია სრული
                   </TableCell>
                 </TableRow>
               </TableHeader>
@@ -206,6 +213,9 @@ const UsersList = () => {
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm')}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {user.attribution?.trackerName}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       <Button
@@ -268,12 +278,12 @@ const UsersList = () => {
                       </Button>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      <Button
+                     {user.attribution && <Button
                         variant="outline"
                         onClick={() => setCampaignModal(user.attribution)}
                       >
                         გახსნა
-                      </Button>
+                      </Button>}
                     </TableCell>
                   </TableRow>
                 ))}
