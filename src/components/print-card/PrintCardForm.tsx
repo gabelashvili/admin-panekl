@@ -327,7 +327,7 @@ const PrintCardForm = ({
     <>
       <div
         id="content-to-pdf"
-        className=" bg-white dark:bg-gray-900 max-h-[90vh] overflow-auto"
+        className={clsx(" bg-white dark:bg-gray-900 o", !pending && "max-h-[90vh] overflow-auto")}
       >
         <section
           id="header"
@@ -578,7 +578,7 @@ const PrintCardForm = ({
             </CardWrapper>
           </section>
         </div>
-     {!isPrintMode &&   <div className="flex justify-end p-4 px-4 input">
+     {isPrintMode &&   <div className="flex justify-end p-4 px-4 input">
           <Button
             className="ml-auto"
             loading={pending}
