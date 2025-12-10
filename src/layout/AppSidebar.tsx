@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router";
 import { ChevronDownIcon, HorizontaLDots, TableIcon, TaskIcon, UserIcon } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import useAuthedUserStore from "../store/client/useAuthedUserStore";
+import { DatabaseIcon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -52,6 +53,11 @@ const AppSidebar: React.FC = () => {
             icon: <TaskIcon />,
             name: "გადახდები",
             path: "/payments",
+          },
+          {
+            icon: <DatabaseIcon />,
+            name: "სტატისტიკა",
+            path: "/statistics",
           },
         ]
       : []),

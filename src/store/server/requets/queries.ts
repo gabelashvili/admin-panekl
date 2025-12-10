@@ -17,6 +17,7 @@ const useRequestsQuery = (filters: RequestsFiltersModel) => {
         const { data } = await api.get(`help?${searchParams.toString()}`)
         return data
       },
+      refetchInterval: false
     })
 }
 

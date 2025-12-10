@@ -11,8 +11,9 @@ import {
 import ComponentCard from "../components/common/ComponentCard";
 import { Modal } from "../components/ui/modal";
 import Button from "../components/ui/button";
-import { ChildModel } from "../store/server/requets/interfaces";
+import { ChildModel, UsersListResponseModel } from "../store/server/requets/interfaces";
 import Input from "../components/form/input/InputField";
+import dayjs from "dayjs";
 
 const UsersList = () => {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -28,6 +29,7 @@ const UsersList = () => {
     title: string;
   } | null>(null);
   const [childrenModal, setChildrenModal] = useState<ChildModel[] | null>(null);
+  const [campaignModal, setCampaignModal] = useState<UsersListResponseModel['attribution']>(null);
 
   const { data: allData } = useUsersListQuery({
     Page: page + 1,
@@ -37,6 +39,24 @@ const UsersList = () => {
 
   return (
     <>
+    <Modal
+        isOpen={!!campaignModal}
+        onClose={() => setCampaignModal(null)}
+        className="max-w-md mx-auto"
+      >
+        <div className="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
+          <h3 className="text-lg font-semibold mb-4">Campaign</h3>
+
+            <div className="mt-10">
+              {Object.keys(campaignModal || {}).map((key) => (
+                <div className="flex justify-between border-b py-3 px-2 hover:bg-gray-100">
+                  <span className="text-gray-600">{key}</span>
+                  <span className="font-medium">{campaignModal?.[key as keyof typeof campaignModal]}</span>
+                </div>
+              ))}
+            </div>
+        </div>
+      </Modal>
       <Modal
         isOpen={!!modal}
         onClose={() => setModal(null)}
@@ -140,6 +160,19 @@ const UsersList = () => {
                   >
                     პირადი ნომერი
                   </TableCell>
+                   <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    რეგისტრაციის თარიღი
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    კამპანია
+                  </TableCell>
+               
                   <TableCell
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
@@ -156,7 +189,13 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
-                    Subscription
+                    გამოწერა
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    კამპანია სრული
                   </TableCell>
                 </TableRow>
               </TableHeader>
@@ -171,6 +210,12 @@ const UsersList = () => {
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.personalNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm')}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {user.attribution?.trackerName}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       <Button
@@ -231,6 +276,14 @@ const UsersList = () => {
                       >
                         გახსნა
                       </Button>
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                     {user.attribution && <Button
+                        variant="outline"
+                        onClick={() => setCampaignModal(user.attribution)}
+                      >
+                        გახსნა
+                      </Button>}
                     </TableCell>
                   </TableRow>
                 ))}

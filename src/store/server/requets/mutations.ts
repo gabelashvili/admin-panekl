@@ -19,6 +19,19 @@ const useRequestStatusComplete = () => {
   })
 }
 
+const useRequestDocumentGenerate = () => {
+  return useMutation({
+    mutationFn: async (values: {HelpRequestId: string, Document: Blob}): Promise<any> => {
+      const formData = new FormData()
+      formData.append('HelpRequestId', values.HelpRequestId)
+      console.log(values.Document);
+      formData.append("Document", values.Document, "document.pdf");
+      const { data } = await api.post('help/upload-document', formData)
+      return data
+    }
+  })
+}
 
 
-export { useRequestStatusChange, useRequestStatusComplete }
+
+export { useRequestStatusChange, useRequestStatusComplete, useRequestDocumentGenerate }

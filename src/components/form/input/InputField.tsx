@@ -1,5 +1,6 @@
 import type React from "react";
 import type { FC } from "react";
+import clsx from "clsx";
 
 interface InputProps {
   type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
@@ -16,6 +17,7 @@ interface InputProps {
   success?: boolean;
   error?: boolean;
   hint?: string;
+  rootClassName?: string;
 }
 
 const Input: FC<InputProps> = ({
@@ -33,6 +35,7 @@ const Input: FC<InputProps> = ({
   success = false,
   error = false,
   hint,
+  rootClassName = "",
 }) => {
   let inputClasses = ` h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
 
@@ -47,7 +50,7 @@ const Input: FC<InputProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className={clsx("relative", rootClassName)}>
       <input
         type={type}
         id={id}

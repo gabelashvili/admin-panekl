@@ -10,7 +10,6 @@ export default function AuthLayout({
 }) {
   const navigate = useNavigate()
   const {user} = useAuthedUserStore()
-  console.log(user)
 
   useEffect(() => {
     if(user) {
