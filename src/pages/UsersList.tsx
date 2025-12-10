@@ -11,7 +11,7 @@ import {
 import ComponentCard from "../components/common/ComponentCard";
 import { Modal } from "../components/ui/modal";
 import Button from "../components/ui/button";
-import { ChildModel } from "../store/server/requets/interfaces";
+import { ChildModel, UsersListResponseModel } from "../store/server/requets/interfaces";
 import Input from "../components/form/input/InputField";
 import dayjs from "dayjs";
 
@@ -29,6 +29,7 @@ const UsersList = () => {
     title: string;
   } | null>(null);
   const [childrenModal, setChildrenModal] = useState<ChildModel[] | null>(null);
+  const [campaignModal, setCampaignModal] = useState<UsersListResponseModel['attribution']>(null);
 
   const { data: allData } = useUsersListQuery({
     Page: page + 1,
@@ -38,6 +39,24 @@ const UsersList = () => {
 
   return (
     <>
+    <Modal
+        isOpen={!!campaignModal}
+        onClose={() => setCampaignModal(null)}
+        className="max-w-md mx-auto"
+      >
+        <div className="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
+          <h3 className="text-lg font-semibold mb-4">Campaign</h3>
+
+            <div className="mt-10">
+              {Object.keys(campaignModal || {}).map((key) => (
+                <div className="flex justify-between border-b py-3 px-2 hover:bg-gray-100">
+                  <span className="text-gray-600">{key}</span>
+                  <span className="font-medium">{campaignModal?.[key as keyof typeof campaignModal]}</span>
+                </div>
+              ))}
+            </div>
+        </div>
+      </Modal>
       <Modal
         isOpen={!!modal}
         onClose={() => setModal(null)}
@@ -165,6 +184,12 @@ const UsersList = () => {
                   >
                     Subscription
                   </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    Campaign
+                  </TableCell>
                 </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-gray-100 cursor-pointer dark:divide-white/[0.05] [&>tr]:even:bg-gray-50 dark:[&>tr]:even:bg-gray-900/50 [&>tr]:hover:bg-gray-200 dark:[&>tr]:hover:bg-gray-900">
@@ -238,6 +263,14 @@ const UsersList = () => {
                             title: "Subscription",
                           })
                         }
+                      >
+                        გახსნა
+                      </Button>
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      <Button
+                        variant="outline"
+                        onClick={() => setCampaignModal(user.attribution)}
                       >
                         გახსნა
                       </Button>

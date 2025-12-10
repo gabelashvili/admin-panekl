@@ -696,7 +696,7 @@ export default function List({ data, activeItems }: ListProps) {
                           if (!request.document) {
                             openCardModal(request);
                           } else {
-                            window.open(request.document, "_blank");
+                            window.open(request.document.url, "_blank");
                           }
                         }}
                       >
@@ -791,7 +791,7 @@ export default function List({ data, activeItems }: ListProps) {
                           if (!request.document) {
                             openCardModal(request);
                           } else {
-                            window.open(request.document, "_blank");
+                            window.open(request.document.url, "_blank");
                           }
                         }}
                       >

@@ -30,7 +30,13 @@ export interface RequestModel {
     updatedTimestamp: string;
     expirationDate: string;
     secondaryNumber: string | null;
-    document: string | null;
+    document: {
+        "id": "cfa6408d-2268-4460-b0b2-25a2e93de27c",
+        "url": "https://lumex.fra1.cdn.digitaloceanspaces.com/lumex-dev/documents/1fbe75a8-0483-4046-9f2e-761f03a0d0f2.pdf",
+        "timestamp": "2025-12-08T11:24:47.892924Z",
+        "documentType": "HelpRequestCompletion",
+        "adminUserId": "650bde53-75eb-47db-ac6e-f987bc82692a"
+    } | null;
 }
 
 export interface RequestResponseModel {
@@ -78,6 +84,15 @@ export interface UsersListResponseModel {
     acceptedSosRequestsByOperator: number;
     kids: ChildModel[];
     timeStamp: Date;
+    attribution: {
+        trackerToken: string | null;
+        trackerName: string;
+        network: string;
+        campaign: string;
+        adgroup: string | null;
+        creative: string | null;
+        clickLabel: string | null;
+    } | null;
 }
 
 export interface UsersListResponseModel {
