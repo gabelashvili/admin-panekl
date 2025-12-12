@@ -1,3 +1,4 @@
+import type React from "react";
 import { useRef, useState } from "react";
 import { useUsersListQuery } from "../store/server/requets/queries";
 import Pagination from "../components/ui/pagination";
@@ -16,103 +17,161 @@ import Input from "../components/form/input/InputField";
 import dayjs from "dayjs";
 
 const UsersList = () => {
+  const CollapsibleSection = ({
+    title,
+    children,
+    defaultOpen = false,
+  }: {
+    title: string;
+    children: React.ReactNode;
+    defaultOpen?: boolean;
+  }) => {
+    const [open, setOpen] = useState(defaultOpen);
+    return (
+      <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-900/60 shadow-sm">
+        <button
+          className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-800/60 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          onClick={() => setOpen((o) => !o)}
+        >
+          <span className="font-medium text-gray-900 dark:text-white">{title}</span>
+          <span className="text-gray-500 dark:text-gray-400 text-sm">
+            {open ? "ჩაკეცვა" : "გახსნა"}
+          </span>
+        </button>
+        {open && <div className="p-4">{children}</div>}
+      </div>
+    );
+  };
+
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
-  const [modal, setModal] = useState<{
-    data: {
-      [key: string]: {
-        label: string;
-        value: string | number;
-      };
-    };
+  const [detailModal, setDetailModal] = useState<{
     title: string;
+    rows: { label: string; value: string | number | React.ReactNode }[];
+    children?: ChildModel[];
+    campaign?: UsersListResponseModel["attribution"] | null;
   } | null>(null);
-  const [childrenModal, setChildrenModal] = useState<ChildModel[] | null>(null);
-  const [campaignModal, setCampaignModal] = useState<UsersListResponseModel['attribution']>(null);
 
   const { data: allData } = useUsersListQuery({
     Page: page + 1,
     PageSize: 10,
     SearchTerm: search || null,
   });
+  
 
   return (
     <>
-    <Modal
-        isOpen={!!campaignModal}
-        onClose={() => setCampaignModal(null)}
-        className="max-w-md mx-auto"
-      >
-        <div className="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
-          <h3 className="text-lg font-semibold mb-4">Campaign</h3>
-
-            <div className="mt-10">
-              {Object.keys(campaignModal || {}).map((key) => (
-                <div className="flex justify-between border-b py-3 px-2 hover:bg-gray-100">
-                  <span className="text-gray-600">{key}</span>
-                  <span className="font-medium">{campaignModal?.[key as keyof typeof campaignModal]}</span>
-                </div>
-              ))}
-            </div>
-        </div>
-      </Modal>
       <Modal
-        isOpen={!!modal}
-        onClose={() => setModal(null)}
-        className="max-w-md mx-auto"
+        isOpen={!!detailModal}
+        onClose={() => setDetailModal(null)}
+        className="max-w-3xl mx-auto"
+        showCloseButton={false}
       >
-        <div className="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
-          <h3 className="text-lg font-semibold mb-4">{modal?.title}</h3>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 sm:p-8 max-w-3xl mx-auto space-y-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{detailModal?.title}</h3>
+            </div>
+            <button
+              className="rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1 text-sm"
+              onClick={() => setDetailModal(null)}
+            >
+              დახურვა
+            </button>
+          </div>
 
-          {modal && (
-            <div className="mt-10">
-              {Object.keys(modal.data).map((key) => (
-                <div className="flex justify-between border-b py-3 px-2 hover:bg-gray-100">
-                  <span className="text-gray-600">{modal.data[key].label}</span>
-                  <span className="font-medium">{modal.data[key].value}</span>
+          {detailModal && (
+            <div className="space-y-4  max-h-[80vh] overflow-y-auto">
+              <CollapsibleSection title="მშობლის ინფორმაცია">
+                <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                  {detailModal.rows
+                    .filter((row) =>
+                      [
+                        "ტელეფონი",
+                        "ელ.ფოსტა",
+                        "პირადი ნომერი",
+                        "რეგისტრაცია",
+                        "კამპანია",
+                        "პაკეტი",
+                        "სტატუსი",
+                        "ტიპი",
+                      ].includes(row.label)
+                    )
+                    .map((row) => (
+                      <div
+                        key={row.label}
+                        className="flex justify-between gap-4 px-4 py-3 bg-gray-50 dark:bg-gray-800/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <span className="text-sm text-gray-600 dark:text-gray-300">{row.label}</span>
+                        <span className="font-medium text-gray-900 dark:text-white text-right">{row.value}</span>
+                      </div>
+                    ))}
                 </div>
-              ))}
+              </CollapsibleSection>
+
+              {detailModal.campaign && (
+                <CollapsibleSection title="კამპანია">
+                  <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+                    {Object.entries(detailModal.campaign).map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex justify-between gap-4 px-4 py-3 bg-gray-50 dark:bg-gray-800/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <span className="text-sm text-gray-600 dark:text-gray-300">{key}</span>
+                        <span className="font-medium text-gray-900 dark:text-white text-right">{String(value ?? "—")}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleSection>
+              )}
+
+              <CollapsibleSection title="გამოძახების სტატისტიკა">
+                <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                  {detailModal.rows
+                    .filter((row) =>
+                      [
+                        "ავტომატური თანხმობა",
+                        "მშობლის თანხმობა",
+                        "უარყოფილი მოთხოვნები",
+                      ].includes(row.label)
+                    )
+                    .map((row) => (
+                      <div
+                        key={row.label}
+                        className="flex justify-between gap-4 px-4 py-3 bg-gray-50 dark:bg-gray-800/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <span className="text-sm text-gray-600 dark:text-gray-300">{row.label}</span>
+                        <span className="font-medium text-gray-900 dark:text-white text-right">{row.value}</span>
+                      </div>
+                    ))}
+                </div>
+              </CollapsibleSection>
+
+              {detailModal.children && (
+                <CollapsibleSection title="შვილები">
+                  <div className="grid gap-4">
+                    {detailModal.children.map((child) => (
+                      <div
+                        key={child.kidId}
+                        className="rounded-xl border border-gray-100 dark:border-gray-800 p-4 bg-white dark:bg-gray-900/60 shadow-sm"
+                      >
+                        <div className="grid sm:grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-200">
+                          <div><span className="text-gray-500 dark:text-gray-400">სახელი:</span> <span className="font-medium">{child.kidName}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">პირადი ნომერი:</span> <span className="font-medium">{child.kidPersonalNumber}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">ტელეფონის ნომერი:</span> <span className="font-medium">{child.kidPhoneNumber}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">დაბადების თარიღი:</span> <span className="font-medium">{dayjs(child.birthdate).format('MM/DD/YYYY')}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">ასაკი:</span> <span className="font-medium">{dayjs().diff(dayjs(child.birthdate), 'year')}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">სქესი:</span> <span className="font-medium">{child.gender === 'Male' ? 'მამრობითი' : 'მდედრობითი'}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">გამოძახების სტატისტიკა:</span> <span className="font-medium">{child.kidNumberOfSosRequestsSent}</span></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleSection>
+              )}
             </div>
           )}
-        </div>
-      </Modal>
-      <Modal
-        isOpen={!!childrenModal}
-        onClose={() => setChildrenModal(null)}
-        className="max-w-md mx-auto"
-      >
-        <div className="bg-white rounded-lg shadow p-6 max-w-2xl mx-auto">
-          <h3 className="text-lg font-semibold mb-4">შვილები</h3>
-
-          <div className="space-y-4">
-            <div className="border-b pb-3">
-              {childrenModal?.map((child) => (
-                <div className="grid grid-cols-1 gap-4" key={child.kidId}>
-                  <div>
-                    <span className="text-sm text-gray-500">სახელი:</span>
-                    <span className="ml-2 font-medium">{child.kidName}</span>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">
-                      პირადი ნომერი:
-                    </span>
-                    <span className="ml-2 font-medium">
-                      {child.kidPersonalNumber}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">
-                      ტელეფონის ნომერი:
-                    </span>
-                    <span className="ml-2 font-medium">
-                      {child.kidPhoneNumber}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </Modal>
       <ComponentCard
@@ -158,7 +217,19 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
+                    სარეზერვო ტელეფონის ნომერი
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
                     პირადი ნომერი
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    ელექტრონული ფოსტა
                   </TableCell>
                    <TableCell
                     isHeader
@@ -170,26 +241,7 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
-                    კამპანია
-                  </TableCell>
-               
-                  <TableCell
-                    isHeader
-                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    შვილები
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    გამოძახების სტატისტიკა
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    გამოწერა
+                    დეტალები
                   </TableCell>
                   <TableCell
                     isHeader
@@ -209,7 +261,13 @@ const UsersList = () => {
                       {user.parentNumber}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {user.secondaryNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.personalNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {user.email}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm')}
@@ -220,70 +278,29 @@ const UsersList = () => {
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       <Button
                         variant="outline"
-                        onClick={() => setChildrenModal(user.kids)}
-                      >
-                        გახსნა
-                      </Button>
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      <Button
-                        variant="outline"
                         onClick={() =>
-                          setModal({
-                            data: {
-                              acceptedSosRequestsByOperator: {
-                                label: "ავტომატური თანხმობა",
-                                value: user.acceptedSosRequestsByOperator,
-                              },
-                              acceptedSosRequestsByParent: {
-                                label: "მშობლის თანხმობა",
-                                value: user.acceptedSosRequestsByParent,
-                              },
-                              rejectedSosRequests: {
-                                label: "უარყოფილი მოთხოვნები",
-                                value: user.rejectedSosRequests,
-                              },
-                            },
-                            title: "სტატისტიკა",
+                          setDetailModal({
+                            title: `${user.parentName} - დეტალები`,
+                            rows: [
+                              { label: "ტელეფონი", value: user.parentNumber },
+                              { label: "ელ.ფოსტა", value: user.email || "—" },
+                              { label: "პირადი ნომერი", value: user.personalNumber },
+                              { label: "რეგისტრაცია", value: dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm') },
+                              { label: "კამპანია", value: user.attribution?.trackerName || "—" },
+                              { label: "პაკეტი", value: user.subscriptionPlan },
+                              { label: "სტატუსი", value: user.subscriptionStatus },
+                              { label: "ტიპი", value: user.subscriptionType },
+                              { label: "ავტომატური თანხმობა", value: user.acceptedSosRequestsByOperator },
+                              { label: "მშობლის თანხმობა", value: user.acceptedSosRequestsByParent },
+                              { label: "უარყოფილი მოთხოვნები", value: user.rejectedSosRequests },
+                            ],
+                            children: user.kids,
+                            campaign: user.attribution || null,
                           })
                         }
                       >
                         გახსნა
                       </Button>
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          setModal({
-                            data: {
-                              subscriptionPlan: {
-                                label: "პაკეტი",
-                                value: user.subscriptionPlan,
-                              },
-                              subscriptionStatus: {
-                                label: "სტატუსი",
-                                value: user.subscriptionStatus,
-                              },
-                              subscriptionType: {
-                                label: "ტიპი",
-                                value: user.subscriptionType,
-                              },
-                            },
-                            title: "Subscription",
-                          })
-                        }
-                      >
-                        გახსნა
-                      </Button>
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                     {user.attribution && <Button
-                        variant="outline"
-                        onClick={() => setCampaignModal(user.attribution)}
-                      >
-                        გახსნა
-                      </Button>}
                     </TableCell>
                   </TableRow>
                 ))}

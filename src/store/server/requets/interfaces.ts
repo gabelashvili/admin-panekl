@@ -67,6 +67,9 @@ export interface ChildModel {
     kidPhoneNumber: string;
     kidPersonalNumber: string;
     kidNumberOfSosRequestsSent: number;
+    gender: 'Male' | 'Female';
+    timeStamp: Date;
+    birthdate: string;
 }
 
 export interface UsersListResponseModel {
@@ -82,6 +85,7 @@ export interface UsersListResponseModel {
     rejectedSosRequests: number;
     acceptedSosRequestsByParent: number;
     acceptedSosRequestsByOperator: number;
+    email: string | null;
     kids: ChildModel[];
     timeStamp: Date;
     attribution: {
