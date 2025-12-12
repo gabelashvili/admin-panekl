@@ -89,6 +89,7 @@ const UsersList = () => {
                     .filter((row) =>
                       [
                         "ტელეფონი",
+                        "სარეზერვო ტელეფონი",
                         "ელ.ფოსტა",
                         "პირადი ნომერი",
                         "რეგისტრაცია",
@@ -201,6 +202,12 @@ const UsersList = () => {
             <Table>
               <TableHeader className="border-b border-gray-100 bg-gray-100 dark:border-white/[0.05] dark:bg-gray-900">
                 <TableRow>
+                <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
+                    რეგისტრაციის თარიღი
+                  </TableCell>
                   <TableCell
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
@@ -217,37 +224,20 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
-                    სარეზერვო ტელეფონის ნომერი
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
-                  >
                     პირადი ნომერი
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
-                    ელექტრონული ფოსტა
-                  </TableCell>
-                   <TableCell
-                    isHeader
-                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    რეგისტრაციის თარიღი
+                    კამპანია
+                    
                   </TableCell>
                   <TableCell
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
-                    დეტალები
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
-                  >
-                    კამპანია სრული
+                     დეტალები
                   </TableCell>
                 </TableRow>
               </TableHeader>
@@ -255,22 +245,16 @@ const UsersList = () => {
                 {allData?.users.map((user) => (
                   <TableRow key={user.userId}>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm')}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.parentName}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.parentNumber}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {user.secondaryNumber}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.personalNumber}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {user.email}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm')}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.attribution?.trackerName}
@@ -283,6 +267,7 @@ const UsersList = () => {
                             title: `${user.parentName} - დეტალები`,
                             rows: [
                               { label: "ტელეფონი", value: user.parentNumber },
+                              { label: "სარეზერვო ტელეფონი", value: user.secondaryNumber || "—" },
                               { label: "ელ.ფოსტა", value: user.email || "—" },
                               { label: "პირადი ნომერი", value: user.personalNumber },
                               { label: "რეგისტრაცია", value: dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm') },
