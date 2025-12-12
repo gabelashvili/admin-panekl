@@ -217,6 +217,12 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
+                    სარეზერვო ტელეფონის ნომერი
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
                     პირადი ნომერი
                   </TableCell>
                   <TableCell
@@ -253,6 +259,9 @@ const UsersList = () => {
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.parentNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {user.secondaryNumber}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.personalNumber}
