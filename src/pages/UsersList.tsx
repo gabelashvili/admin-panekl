@@ -230,6 +230,12 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
+                    გამოწერის სტატუსი
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
                     კამპანია
                     
                   </TableCell>
@@ -255,6 +261,9 @@ const UsersList = () => {
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.personalNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {user.subscriptionStatus === "Active" ? "აქტიური" : "არაქტიური"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.attribution?.trackerName}
