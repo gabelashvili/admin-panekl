@@ -16,8 +16,6 @@ import Button from "../ui/button";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 
-
-
 const schema = z.object({
   cardNumber: z.string().min(1, { message: "ბარათის ნომერი აუცილებელია" }),
   customerName: z.string().min(1, { message: "სახელი გვარი აუცილებელია" }),
@@ -327,7 +325,10 @@ const PrintCardForm = ({
     <>
       <div
         id="content-to-pdf"
-        className={clsx(" bg-white dark:bg-gray-900 o", !pending && "max-h-[90vh] overflow-auto")}
+        className={clsx(
+          " bg-white dark:bg-gray-900 o",
+          !pending && "max-h-[90vh] overflow-auto"
+        )}
       >
         <section
           id="header"
@@ -578,39 +579,43 @@ const PrintCardForm = ({
             </CardWrapper>
           </section>
         </div>
-     {isPrintMode &&   <div className="flex justify-end p-4 px-4 input">
-          <Button
-            className="ml-auto"
-            loading={pending}
-            onClick={handleSubmit(
-              async () => {
-                setPending(true);
-                try {
-                  setIsPrintMode(true);
-                  await new Promise((resolve) => setTimeout(resolve, 2000));
-                  const blob = await generateHtmlPdf();
-                  if (!blob) {
-                    throw new Error("მოხდა შეცდომა");
+        {!isPrintMode && (
+          <div className="flex justify-end p-4 px-4 input">
+            <Button
+              className="ml-auto"
+              loading={pending}
+              onClick={handleSubmit(
+                async () => {
+                  setPending(true);
+                  try {
+                    setIsPrintMode(true);
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
+                    const blob = await generateHtmlPdf();
+                    if (!blob) {
+                      throw new Error("მოხდა შეცდომა");
+                    }
+                    await generateDocument({
+                      HelpRequestId: data.id,
+                      Document: blob,
+                    });
+                    await queryClient.invalidateQueries({
+                      queryKey: ["new-requests", "requests"],
+                    });
+                    toast.success("ბარათი წარმატებით გაგზავნილია");
+                  } catch (error: any) {
+                    toast.error(error.error || "მოხდა შეცდომა");
+                  } finally {
+                    setPending(false);
                   }
-                  await generateDocument({
-                    HelpRequestId: data.id,
-                    Document: blob,
-                  });
-                  await queryClient.invalidateQueries({ queryKey: ["new-requests", "requests"] });
-                  toast.success("ბარათი წარმატებით გაგზავნილია");
-                } catch (error: any) {
-                  toast.error(error.error || "მოხდა შეცდომა");
-                } finally {
-                  setPending(false);
-                }
-              },
-              (errors) => console.log(errors)
-            )}
-            type="submit"
-          >
-            დასრულება
-          </Button>
-        </div>}
+                },
+                (errors) => console.log(errors)
+              )}
+              type="submit"
+            >
+              დასრულება
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );
