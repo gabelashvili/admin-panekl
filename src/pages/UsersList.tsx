@@ -130,7 +130,7 @@ const UsersList = () => {
                       სქესი:
                     </span>
                     <span className="ml-2 font-medium">
-                      {child.gender === 'Male' ? 'მამრობითი' : 'მომწონს'}
+                      {child.gender === 'Male' ? 'მამრობითი' : 'მდედრობითი'}
                     </span>
                   </div>
                   <div>
