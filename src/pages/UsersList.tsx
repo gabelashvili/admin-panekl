@@ -109,6 +109,38 @@ const UsersList = () => {
                       {child.kidPhoneNumber}
                     </span>
                   </div>
+                  <div>
+                    <span className="text-sm text-gray-500">
+                      დაბადების თარიღი:
+                    </span>
+                    <span className="ml-2 font-medium">
+                      {dayjs(child.birthdate).format('MM/DD/YYYY')}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-500">
+                      ასაკი:
+                    </span>
+                    <span className="ml-2 font-medium">
+                      {dayjs().diff(dayjs(child.birthdate), 'year')}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-500">
+                      სქესი:
+                    </span>
+                    <span className="ml-2 font-medium">
+                      {child.gender === 'Male' ? 'მამრობითი' : 'მომწონს'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-sm text-gray-500">
+                      გამოძახების სტატისტიკა:
+                    </span>
+                    <span className="ml-2 font-medium">
+                      {child.kidNumberOfSosRequestsSent}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
