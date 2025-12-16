@@ -263,7 +263,7 @@ const UsersList = () => {
                       {user.personalNumber}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {user.subscriptionStatus === "Active" ? "აქტიური" : "არაქტიური"}
+                      {user.subscriptionStatus === "Active" ? "აქტიური" : "არააქტიური"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.attribution?.trackerName}

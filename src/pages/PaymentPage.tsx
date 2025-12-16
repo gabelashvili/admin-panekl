@@ -120,7 +120,7 @@ const PaymentPage = () => {
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
                       {user.subscription?.status === "Active"
                         ? "აქტიური"
-                        : "არაქტიური"}
+                        : "არააქტიური"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
                       {user.subscription
