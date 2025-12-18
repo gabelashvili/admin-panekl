@@ -126,7 +126,7 @@ const UserPaymentsTable = ({ userId }: { userId: string }) => {
                       {transaction.amount}₾
                     </TableCell>
                     <TableCell className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400" align="center">
-                      {new Date(transaction.gracePeriodEndDate).toLocaleDateString("ka-GE")}
+                      {transaction.gracePeriodEndDate ? new Date(transaction.gracePeriodEndDate).toLocaleDateString("ka-GE") : "-"}
                     </TableCell>
                     <TableCell className="px-4 py-3" align="center">
                       <span
