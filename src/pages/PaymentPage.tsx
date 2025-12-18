@@ -79,6 +79,31 @@ const PaymentPage = () => {
                   align="center"
 
                 >
+                  დავალიანება
+                </TableCell>
+                
+                <TableCell
+                  isHeader
+                  className="px-4 py-3  text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  align="center"
+
+                >
+                  შემდეგი გადახდის თარიღი
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-4 py-3  text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  align="center"
+
+                >
+                  ბოლოს წარუმატებელი გადახდა
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-4 py-3  text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  align="center"
+
+                >
                   ბოლო გადახდა (სტატუსი)
                 </TableCell>
                 <TableCell
@@ -134,6 +159,16 @@ const PaymentPage = () => {
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
                       {user.lastPayment ? `${user.lastPayment.amount}₾` : "-"}
                     </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
+                      {user.totalOwed}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
+                      {user.subscription?.endDate ? new Date(user.subscription.endDate).toLocaleDateString() : "-"}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
+                      {user.paymentRequiredTransactions?.length > 0 ? new Date(user.paymentRequiredTransactions[0]!.timestamp!).toLocaleDateString() : "-"}
+                    </TableCell>
+                   
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
                       {user.lastPayment
                         ? user.lastPayment.status === "SUCCESS"

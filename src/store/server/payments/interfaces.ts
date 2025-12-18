@@ -28,7 +28,18 @@ export interface PaymentModel  {
         } | null;
     },
     "hasPaymentRequired": false,
-    "paymentRequiredTransactions": []
+    "paymentRequiredTransactions": Array<{
+        "transactionId": string;
+        "amount": number;
+        "status": "SUCCESS" | "FAILED" | "PENDING";
+        "timestamp": Date;
+        "description": string;
+        "card": {
+            "cardId": string;
+            "cardType": "VISA" | "Mastercard" | "American Express" | "Discover";
+        } | null;
+    }>,
+    "totalOwed": number;
 }
 
 export interface PaymentResponseModel {
@@ -45,6 +56,7 @@ export interface TransactionsResponseModel {
         "status": "string",
         "timestamp": Date,
         "description": "string",
+        gracePeriodEndDate: Date,
         "card": {
           "cardId": string,
           "cardType": "string"

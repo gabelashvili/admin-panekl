@@ -22,6 +22,7 @@ const UserPaymentsTable = ({ userId }: { userId: string }) => {
               <TableCell>გადახდის ID</TableCell>
               <TableCell>გადახდის ტიპი</TableCell>
               <TableCell>თანხა</TableCell>
+              <TableCell>Grace period</TableCell>
               <TableCell>შედეგი</TableCell>
               <TableCell>ბარათის ტიპი</TableCell>
             </TableRow>
@@ -36,6 +37,7 @@ const UserPaymentsTable = ({ userId }: { userId: string }) => {
                 <TableCell>{transaction.transactionId}</TableCell>
                 <TableCell>{transaction.description || "N/A"}</TableCell>
                 <TableCell>{transaction.amount}</TableCell>
+                <TableCell>{new Date(transaction.gracePeriodEndDate).toLocaleDateString()}</TableCell>
                 <TableCell>{transaction.status === "SUCCESS" ? "წარმატებული" : "შეცდომა"}</TableCell>
                 <TableCell>{transaction?.card?.cardType || "N/A"}</TableCell>
               </TableRow>
