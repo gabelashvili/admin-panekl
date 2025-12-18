@@ -194,7 +194,7 @@ const RenderTextField = ({
           {(type === "date" || type === "date-time") && (
             <DatePicker
               id={id}
-              placeholder="ბარათის ნომერი"
+              placeholder={label}
               className={clsx("w-full input", error ? "border-red-500" : "")}
               enableTime={type === "date-time"}
               defaultDate={value}
