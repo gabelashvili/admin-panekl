@@ -48,6 +48,8 @@ const RenderTextField = ({
   disabled = false,
   onChange,
   error,
+  minDate,
+  maxDate,
 }: {
   isPrintMode?: boolean;
   direction?: "row" | "column";
@@ -59,6 +61,8 @@ const RenderTextField = ({
   disabled?: boolean;
   onChange?: (value: string) => void;
   error?: boolean;
+  minDate?: Date;
+  maxDate?: Date;
 }) => {
   const signatureCanvas = useRef<SignatureCanvas>(null);
 
@@ -156,6 +160,8 @@ const RenderTextField = ({
                   onChange?.(e[0].toISOString());
                 }
               }}
+              minDate={minDate}
+              maxDate={maxDate}
             />
           )}
           {type === "signature" && (
@@ -432,6 +438,10 @@ const PrintCardForm = ({
                   id="security-name"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("policeName", value, { shouldValidate: true });
                   }}
                   error={!!errors.policeName}
@@ -444,6 +454,10 @@ const PrintCardForm = ({
                   id="doctor-name"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("doctorName", value, { shouldValidate: true });
                   }}
                   error={!!errors.doctorName}
@@ -491,6 +505,8 @@ const PrintCardForm = ({
                       setValue("arriveTime", value, { shouldValidate: true });
                     }}
                     error={!!errors.arriveTime}
+                    minDate={new Date(new Date().setDate(new Date().getDate() - 1))}
+                    maxDate={new Date(new Date().setDate(new Date().getDate()))}
                   />
                   <RenderTextField
                     isPrintMode={isPrintMode}
@@ -504,6 +520,8 @@ const PrintCardForm = ({
                       setValue("finishTime", value, { shouldValidate: true });
                     }}
                     error={!!errors.finishTime}
+                    minDate={new Date(new Date().setDate(new Date().getDate() - 1))}
+                    maxDate={new Date(new Date().setDate(new Date().getDate()))}
                   />
                 </div>
                 <RenderTextField
@@ -544,6 +562,7 @@ const PrintCardForm = ({
                   direction="column"
                   label="თარიღი"
                   value={watch("date")}
+                  inputClassName="pointer-events-none"
                   type="date"
                   id="date"
                   disabled={true}
