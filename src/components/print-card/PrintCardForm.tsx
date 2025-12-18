@@ -2,7 +2,7 @@ import clsx from "clsx";
 import Input from "../../components/form/input/InputField";
 import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import DatePicker from "../../components/form/date-picker";
 import TextArea from "../../components/form/input/TextArea";
 import SignatureCanvas from "react-signature-canvas";
@@ -65,6 +65,49 @@ const RenderTextField = ({
   maxDate?: Date;
 }) => {
   const signatureCanvas = useRef<SignatureCanvas>(null);
+  const canvasContainer = useRef<HTMLDivElement>(null);
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 600, height: 150 });
+  const previousWidth = useRef<number>(600);
+
+  useEffect(() => {
+    if (type !== "signature" || !canvasContainer.current) return;
+
+    const updateCanvasSize = () => {
+      if (canvasContainer.current) {
+        const width = canvasContainer.current.offsetWidth;
+        const height = 150;
+        
+        // Only update if width actually changed
+        if (Math.abs(width - previousWidth.current) > 5) {
+          setCanvasDimensions({ width, height });
+          previousWidth.current = width;
+          
+          // Clear canvas on resize to avoid coordinate mismatch
+          if (signatureCanvas.current) {
+            signatureCanvas.current.clear();
+            onChange?.("");
+          }
+        }
+      }
+    };
+
+    // Set initial size
+    const initialWidth = canvasContainer.current.offsetWidth;
+    setCanvasDimensions({ width: initialWidth, height: 150 });
+    previousWidth.current = initialWidth;
+
+    // Listen for window resize and zoom
+    window.addEventListener("resize", updateCanvasSize);
+
+    // Use ResizeObserver for more responsive updates
+    const resizeObserver = new ResizeObserver(updateCanvasSize);
+    resizeObserver.observe(canvasContainer.current);
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize);
+      resizeObserver.disconnect();
+    };
+  }, [type]);
 
   return (
     <div
@@ -165,21 +208,28 @@ const RenderTextField = ({
             />
           )}
           {type === "signature" && (
-            <SignatureCanvas
-              penColor="black"
-              ref={signatureCanvas}
-              canvasProps={{
-                height: 150,
-                className: "bg-gray-100 w-full h-[150px]",
-              }}
-              onEnd={() => {
-                if (!disabled) {
-                  const value =
-                    signatureCanvas.current?.getCanvas().toDataURL() || "";
-                  onChange?.(value);
-                }
-              }}
-            />
+            <div 
+              ref={canvasContainer}
+              className="relative w-full bg-gray-100 dark:bg-gray-800 rounded-md border-2 border-gray-300 dark:border-gray-600"
+            >
+              <SignatureCanvas
+                penColor="black"
+                ref={signatureCanvas}
+                canvasProps={{
+                  width: canvasDimensions.width,
+                  height: canvasDimensions.height,
+                  className: "w-full h-[150px]",
+                }}
+                onEnd={() => {
+                  if (!disabled) {
+                    const value =
+                      signatureCanvas.current?.getCanvas().toDataURL() || "";
+                    onChange?.(value);
+                  }
+                }}
+              />
+           
+            </div>
           )}
         </div>
       </div>
