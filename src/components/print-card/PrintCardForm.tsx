@@ -446,6 +446,10 @@ const PrintCardForm = ({
                   id="name"
                   disabled={true}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("customerName", value, { shouldValidate: true });
                   }}
                   error={!!errors.customerName}
@@ -458,6 +462,10 @@ const PrintCardForm = ({
                   id="age"
                   disabled={true}
                   onChange={(value) => {
+                    if(Number(value) > 99) {
+                      toast.error("ასაკი მაქსიმალური ზღვარია 99");
+                      return;
+                    }
                     setValue("customerAge", value, { shouldValidate: true });
                   }}
                   error={!!errors.customerAge}
@@ -470,6 +478,10 @@ const PrintCardForm = ({
                   id="parent-name"
                   disabled={true}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("customerParentName", value, {
                       shouldValidate: true,
                     });
@@ -524,8 +536,12 @@ const PrintCardForm = ({
                   label="შემთხვევის მისამართი"
                   value={watch("address")}
                   id="address"
-                  disabled
+                  disabled={!!data?.secondaryUser?.address || !!data?.address}
                   onChange={(value) => {
+                    if(value.length > 100) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 100");
+                      return;
+                    }
                     setValue("address", value, { shouldValidate: true });
                   }}
                   error={!!errors.address}
@@ -538,6 +554,10 @@ const PrintCardForm = ({
                   id="reason"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 500) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 500");
+                      return;
+                    }
                     setValue("reason", value, { shouldValidate: true });
                   }}
                   error={!!errors.reason}
@@ -583,6 +603,10 @@ const PrintCardForm = ({
                   id="description"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 1000) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 1000");
+                      return;
+                    }
                     setValue("description", value, { shouldValidate: true });
                   }}
                   error={!!errors.description}
@@ -601,6 +625,10 @@ const PrintCardForm = ({
                   id="responsible-person-name"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("responsiblePersonName", value, {
                       shouldValidate: true,
                     });
