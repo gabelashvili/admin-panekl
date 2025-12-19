@@ -17,6 +17,7 @@ const PrintCardModal = ({ data, onClose }: { data: RequestResponseModel["helpReq
       <Modal
         isOpen={true}
         onClose={onClose}
+        showCloseButton={false}
         className={clsx("max-w-6xl m-4", pending && "opacity-0")}
       >
         <PrintCardForm data={data} pending={pending} setPending={setPending} />
