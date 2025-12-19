@@ -693,11 +693,15 @@ export default function List({ data, activeItems }: ListProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          if (!request.document) {
+                          if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly") {
                             openCardModal(request);
-                          } else {
-                            window.open(request.document.url, "_blank");
+                            return
                           }
+                          if(!request.document?.url && user?.userType !== "SecurityPoliceReadOnly") {
+                            toast.error("ბარათი მითითებული არ არის");
+                            return;
+                          }
+                          window.open(request.document!.url, "_blank");
                         }}
                       >
                         ბარათი
