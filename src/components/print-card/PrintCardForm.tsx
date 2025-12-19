@@ -572,6 +572,11 @@ const PrintCardForm = ({
                     id="arrival-time"
                     disabled={isPrintMode}
                     onChange={(value) => {
+                      const finishTime = watch("finishTime");
+                      if (finishTime && new Date(value) >= new Date(finishTime)) {
+                        toast.error("მისვლის დრო უნდა იყოს დასრულების დროზე ადრე");
+                        return;
+                      }
                       setValue("arriveTime", value, { shouldValidate: true });
                     }}
                     error={!!errors.arriveTime}
@@ -587,10 +592,15 @@ const PrintCardForm = ({
                     id="finish-time"
                     disabled={isPrintMode}
                     onChange={(value) => {
+                      const arriveTime = watch("arriveTime");
+                      if (arriveTime && new Date(value) <= new Date(arriveTime)) {
+                        toast.error("დასრულების დრო უნდა იყოს მისვლის დროზე გვიან");
+                        return;
+                      }
                       setValue("finishTime", value, { shouldValidate: true });
                     }}
                     error={!!errors.finishTime}
-                    minDate={new Date(new Date().setDate(new Date().getDate() - 1))}
+                    minDate={watch("arriveTime") ? new Date(watch("arriveTime")) : new Date(new Date().setDate(new Date().getDate() - 1))}
                     maxDate={new Date(new Date().setDate(new Date().getDate()))}
                   />
                 </div>
