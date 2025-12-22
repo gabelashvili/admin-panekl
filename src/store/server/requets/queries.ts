@@ -52,8 +52,42 @@ const useUsersListQuery = (filters: UsersListFiltersModel) => {
   })
 }
 
+const useFeedbackSummaryQuery = (filters: FeedbackSummaryFilters) => {
+  return useQuery({
+    queryKey: ["feedback-summary", filters],
+    queryFn: async (): Promise<FeedbackSummaryResponse> => {
+      const searchParams = new URLSearchParams();
+      Object.keys(filters).forEach((key) => {
+        const value = filters[key as keyof typeof filters];
+        if (!value && value !== 0) return;
+        searchParams.set(key, typeof value === "string" ? value : value.toString());
+      });
 
-export { useRequestsQuery, useNewRequestsQuery, useUsersListQuery }
+      const { data } = await api.get(`feedback/summary?${searchParams.toString()}`);
+      return data;
+    },
+  });
+};
+
+const useFeedbacksQuery = (filters: FeedbacksFilters) => {
+  return useQuery({
+    queryKey: ["feedbacks", filters],
+    queryFn: async (): Promise<FeedbacksResponse> => {
+      const searchParams = new URLSearchParams();
+      Object.keys(filters).forEach((key) => {
+        const value = filters[key as keyof typeof filters];
+        if (!value && value !== 0) return;
+        searchParams.set(key, typeof value === "string" ? value : value.toString());
+      });
+
+      const { data } = await api.get(`feedback?${searchParams.toString()}`);
+      return data;
+    },
+  });
+};
+
+
+export { useRequestsQuery, useNewRequestsQuery, useUsersListQuery, useFeedbackSummaryQuery, useFeedbacksQuery }
 
 
 export function useDownloadCSV() {
