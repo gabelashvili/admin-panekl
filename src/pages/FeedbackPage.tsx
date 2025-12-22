@@ -80,14 +80,14 @@ const FeedbackPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Feedback</h1>
+      <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">უკუკავშირი</h1>
 
       {/* Summary widgets */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-100">Average Rating</p>
+          <p className="text-sm text-gray-500 dark:text-gray-100">საშუალო შეფასება</p>
           {summaryQuery.isLoading ? (
-            <p className="text-lg font-semibold mt-1">Loading...</p>
+            <p className="text-lg font-semibold mt-1">იტვირთება...</p>
           ) : summary ? (
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-2xl font-bold dark:text-white">{summary.averageRating?.toFixed(1) ?? "-"}</span>
@@ -98,16 +98,16 @@ const FeedbackPage = () => {
           )}
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-100">Total Feedbacks</p>
+          <p className="text-sm text-gray-500 dark:text-gray-100">ჯამური უკუკავშირები</p>
           {summaryQuery.isLoading ? (
-            <p className="text-2xl font-bold mt-1">Loading...</p>
+            <p className="text-2xl font-bold mt-1">იტვირთება...</p>
           ) : (
             <p className="text-2xl font-bold mt-1 dark:text-white">{summary?.totalFeedbacks ?? "-"}</p>
           )}
         </div>
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Rating Distribution</p>
-          {summaryQuery.isLoading && <p>Loading...</p>}
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">შეფასებების განაწილება</p>
+          {summaryQuery.isLoading && <p>იტვირთება...</p>}
           {!summaryQuery.isLoading && summary?.ratingDistribution?.length ? (
             <div className="space-y-1">
               {summary.ratingDistribution.map((item) => (
@@ -135,10 +135,10 @@ const FeedbackPage = () => {
       <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-4">
         <div className="flex flex-col md:flex-row gap-4 md:items-end">
           <div className="w-full md:w-1/3">
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Date Range (last 30 days by default)</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">თარიღის შუალედი (ნაგულისხმევი ბოლო 30 დღე)</p>
             <DatePicker
               id="feedback-date-range"
-              placeholder="Select date range"
+              placeholder="აირჩიე თარიღის შუალედი"
               mode="range"
               defaultDate={[dayjs(dateRange.from).toDate(), dayjs(dateRange.to).toDate()]}
               onChange={(dates) => onDateChange(dates as Date[])}
@@ -156,16 +156,16 @@ const FeedbackPage = () => {
                   setPage(1);
                 }}
               >
-                {opt ? `${opt}★` : "All"}
+                {opt ? `${opt}★` : "ყველა"}
               </Button>
             ))}
           </div>
           <div className="flex-1">
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Search by parent name</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">ძებნა მშობლის სახელით</p>
             <Input
               type="text"
               id="parent-name-search"
-              placeholder="Search by parent name"
+              placeholder="მშობლის სახელით ძიება"
               className="w-full input"
               rootClassName="w-full"
               value={parentName}
@@ -184,26 +184,26 @@ const FeedbackPage = () => {
           <Table>
             <TableHeader className="border-b border-gray-100 bg-gray-100 dark:border-white/[0.05] dark:bg-gray-900">
               <TableRow>
-                <TableCell isHeader className="text-start px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">Rating</TableCell>
-                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">Comment</TableCell>
-                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">Parent Name</TableCell>
-                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">Parent Phone</TableCell>
-                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">SOS Request ID</TableCell>
-                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">Date &amp; Time</TableCell>
+                <TableCell isHeader className="text-start px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">შეფასება</TableCell>
+                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">კომენტარი</TableCell>
+                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">მშობლის სახელი</TableCell>
+                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">მშობლის ნომერი</TableCell>
+                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">SOS მოთხოვნის ID</TableCell>
+                <TableCell isHeader className="text-center px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400">თარიღი და დრო</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {feedbacksQuery.isLoading && (
                 <TableRow>
                   <TableCell colSpan={6} className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
-                    Loading feedbacks...
+                    უკუკავშირები იტვირთება...
                   </TableCell>
                 </TableRow>
               )}
               {!feedbacksQuery.isLoading && feedbacks.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
-                    No feedbacks found for the selected filters.
+                    არჩეული ფილტრებისთვის უკუკავშირი ვერ მოიძებნა.
                   </TableCell>
                 </TableRow>
               )}
@@ -256,7 +256,7 @@ const CommentPreview = ({ text }: { text: string }) => {
           className="text-xs text-blue-600 dark:text-blue-400 font-medium"
           onClick={() => setExpanded((prev) => !prev)}
         >
-          {expanded ? "Show less" : "Show more"}
+          {expanded ? "ნაკლები ტექსტი" : "სრული ტექსტი"}
         </button>
       )}
     </div>
