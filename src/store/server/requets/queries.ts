@@ -48,7 +48,11 @@ const useUsersListQuery = (filters: UsersListFiltersModel) => {
       const { data } = await api.get(`user/list?${searchParams.toString()}`)
       return data
     },
-    refetchIntervalInBackground: false
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   })
 }
 

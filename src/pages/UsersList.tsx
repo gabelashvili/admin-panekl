@@ -51,6 +51,7 @@ const UsersList = () => {
     rows: { label: string; value: string | number | React.ReactNode }[];
     children?: ChildModel[];
     campaign?: UsersListResponseModel["attribution"] | null;
+    deviceInfo?: UsersListResponseModel["deviceInfo"] | null;
   } | null>(null);
 
   const { data: allData } = useUsersListQuery({
@@ -60,6 +61,24 @@ const UsersList = () => {
   });
   
 
+  if(allData?.users && !allData?.users?.[0]?.deviceInfo) {
+    console.log("no device info", allData)
+    allData!.users![0].deviceInfo =   {
+        "model": "string",
+        "manufacturer": "string",
+        "systemName": "string",
+        "systemVersion": "string",
+        "deviceId": "string",
+        "apiLevel": 0,
+        "isTablet": true,
+        "isEmulator": true,
+        "deviceType": "string",
+        "screenWidth": 0,
+        "screenHeight": 0,
+        "pixelDensity": 0,
+        "fontScale": 0
+    }
+  }
   return (
     <>
       <Modal
@@ -123,6 +142,45 @@ const UsersList = () => {
                         <span className="font-medium text-gray-900 dark:text-white text-right">{String(value ?? "—")}</span>
                       </div>
                     ))}
+                  </div>
+                </CollapsibleSection>
+              )}
+
+              {detailModal.deviceInfo && (
+                <CollapsibleSection title="მოწყობილობის ინფორმაცია">
+                  <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+                    {Object.entries(detailModal.deviceInfo).map(([key, value]) => {
+                      const labelMap: Record<string, string> = {
+                        model: "მოდელი",
+                        manufacturer: "მწარმოებელი",
+                        systemName: "სისტემის სახელი",
+                        systemVersion: "სისტემის ვერსია",
+                        deviceId: "მოწყობილობის ID",
+                        apiLevel: "API დონე",
+                        isTablet: "ტაბლეტი",
+                        isEmulator: "ემულატორი",
+                        deviceType: "მოწყობილობის ტიპი",
+                        screenWidth: "ეკრანის სიგანე",
+                        screenHeight: "ეკრანის სიმაღლე",
+                        pixelDensity: "პიქსელების სიმკვრივე",
+                        fontScale: "ფონტის მასშტაბი",
+                      };
+                      
+                      const displayValue = 
+                        typeof value === 'boolean' 
+                          ? value ? 'დიახ' : 'არა'
+                          : value ?? "—";
+                      
+                      return (
+                        <div
+                          key={key}
+                          className="flex justify-between gap-4 px-4 py-3 bg-gray-50 dark:bg-gray-800/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        >
+                          <span className="text-sm text-gray-600 dark:text-gray-300">{labelMap[key] || key}</span>
+                          <span className="font-medium text-gray-900 dark:text-white text-right">{String(displayValue)}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CollapsibleSection>
               )}
@@ -290,6 +348,7 @@ const UsersList = () => {
                             ],
                             children: user.kids,
                             campaign: user.attribution || null,
+                            deviceInfo: user.deviceInfo || null,
                           })
                         }
                       >
