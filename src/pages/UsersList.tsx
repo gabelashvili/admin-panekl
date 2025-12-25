@@ -224,7 +224,7 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
-                    პირადი ნომერი
+                    OS
                   </TableCell>
                   <TableCell
                     isHeader
@@ -260,7 +260,7 @@ const UsersList = () => {
                       {user.parentNumber}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {user.personalNumber}
+                      {user?.deviceInfo?.systemName}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user.subscriptionStatus === "Active" ? "აქტიური" : "არააქტიური"}
