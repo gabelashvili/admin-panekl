@@ -2,7 +2,7 @@ import clsx from "clsx";
 import Input from "../../components/form/input/InputField";
 import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import DatePicker from "../../components/form/date-picker";
 import TextArea from "../../components/form/input/TextArea";
 import SignatureCanvas from "react-signature-canvas";
@@ -48,6 +48,8 @@ const RenderTextField = ({
   disabled = false,
   onChange,
   error,
+  minDate,
+  maxDate,
 }: {
   isPrintMode?: boolean;
   direction?: "row" | "column";
@@ -59,8 +61,53 @@ const RenderTextField = ({
   disabled?: boolean;
   onChange?: (value: string) => void;
   error?: boolean;
+  minDate?: Date;
+  maxDate?: Date;
 }) => {
   const signatureCanvas = useRef<SignatureCanvas>(null);
+  const canvasContainer = useRef<HTMLDivElement>(null);
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 600, height: 150 });
+  const previousWidth = useRef<number>(600);
+
+  useEffect(() => {
+    if (type !== "signature" || !canvasContainer.current) return;
+
+    const updateCanvasSize = () => {
+      if (canvasContainer.current) {
+        const width = canvasContainer.current.offsetWidth;
+        const height = 150;
+        
+        // Only update if width actually changed
+        if (Math.abs(width - previousWidth.current) > 5) {
+          setCanvasDimensions({ width, height });
+          previousWidth.current = width;
+          
+          // Clear canvas on resize to avoid coordinate mismatch
+          if (signatureCanvas.current) {
+            signatureCanvas.current.clear();
+            onChange?.("");
+          }
+        }
+      }
+    };
+
+    // Set initial size
+    const initialWidth = canvasContainer.current.offsetWidth;
+    setCanvasDimensions({ width: initialWidth, height: 150 });
+    previousWidth.current = initialWidth;
+
+    // Listen for window resize and zoom
+    window.addEventListener("resize", updateCanvasSize);
+
+    // Use ResizeObserver for more responsive updates
+    const resizeObserver = new ResizeObserver(updateCanvasSize);
+    resizeObserver.observe(canvasContainer.current);
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize);
+      resizeObserver.disconnect();
+    };
+  }, [type]);
 
   return (
     <div
@@ -147,7 +194,7 @@ const RenderTextField = ({
           {(type === "date" || type === "date-time") && (
             <DatePicker
               id={id}
-              placeholder="ბარათის ნომერი"
+              placeholder={label}
               className={clsx("w-full input", error ? "border-red-500" : "")}
               enableTime={type === "date-time"}
               defaultDate={value}
@@ -156,24 +203,33 @@ const RenderTextField = ({
                   onChange?.(e[0].toISOString());
                 }
               }}
+              minDate={minDate}
+              maxDate={maxDate}
             />
           )}
           {type === "signature" && (
-            <SignatureCanvas
-              penColor="black"
-              ref={signatureCanvas}
-              canvasProps={{
-                height: 150,
-                className: "bg-gray-100 w-full h-[150px]",
-              }}
-              onEnd={() => {
-                if (!disabled) {
-                  const value =
-                    signatureCanvas.current?.getCanvas().toDataURL() || "";
-                  onChange?.(value);
-                }
-              }}
-            />
+            <div 
+              ref={canvasContainer}
+              className="relative w-full bg-gray-100 dark:bg-gray-800 rounded-md border-2 border-gray-300 dark:border-gray-600"
+            >
+              <SignatureCanvas
+                penColor="black"
+                ref={signatureCanvas}
+                canvasProps={{
+                  width: canvasDimensions.width,
+                  height: canvasDimensions.height,
+                  className: "w-full h-[150px]",
+                }}
+                onEnd={() => {
+                  if (!disabled) {
+                    const value =
+                      signatureCanvas.current?.getCanvas().toDataURL() || "";
+                    onChange?.(value);
+                  }
+                }}
+              />
+           
+            </div>
           )}
         </div>
       </div>
@@ -390,6 +446,10 @@ const PrintCardForm = ({
                   id="name"
                   disabled={true}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("customerName", value, { shouldValidate: true });
                   }}
                   error={!!errors.customerName}
@@ -402,6 +462,10 @@ const PrintCardForm = ({
                   id="age"
                   disabled={true}
                   onChange={(value) => {
+                    if(Number(value) > 99) {
+                      toast.error("ასაკი მაქსიმალური ზღვარია 99");
+                      return;
+                    }
                     setValue("customerAge", value, { shouldValidate: true });
                   }}
                   error={!!errors.customerAge}
@@ -414,6 +478,10 @@ const PrintCardForm = ({
                   id="parent-name"
                   disabled={true}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("customerParentName", value, {
                       shouldValidate: true,
                     });
@@ -432,6 +500,10 @@ const PrintCardForm = ({
                   id="security-name"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("policeName", value, { shouldValidate: true });
                   }}
                   error={!!errors.policeName}
@@ -444,6 +516,10 @@ const PrintCardForm = ({
                   id="doctor-name"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("doctorName", value, { shouldValidate: true });
                   }}
                   error={!!errors.doctorName}
@@ -460,8 +536,12 @@ const PrintCardForm = ({
                   label="შემთხვევის მისამართი"
                   value={watch("address")}
                   id="address"
-                  disabled
+                  disabled={!!data?.secondaryUser?.address || !!data?.address}
                   onChange={(value) => {
+                    if(value.length > 100) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 100");
+                      return;
+                    }
                     setValue("address", value, { shouldValidate: true });
                   }}
                   error={!!errors.address}
@@ -474,6 +554,10 @@ const PrintCardForm = ({
                   id="reason"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 500) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 500");
+                      return;
+                    }
                     setValue("reason", value, { shouldValidate: true });
                   }}
                   error={!!errors.reason}
@@ -488,9 +572,16 @@ const PrintCardForm = ({
                     id="arrival-time"
                     disabled={isPrintMode}
                     onChange={(value) => {
+                      const finishTime = watch("finishTime");
+                      if (finishTime && new Date(value) >= new Date(finishTime)) {
+                        toast.error("მისვლის დრო უნდა იყოს დასრულების დროზე ადრე");
+                        return;
+                      }
                       setValue("arriveTime", value, { shouldValidate: true });
                     }}
                     error={!!errors.arriveTime}
+                    minDate={new Date(new Date().setDate(new Date().getDate() - 1))}
+                    maxDate={new Date(new Date().setDate(new Date().getDate()))}
                   />
                   <RenderTextField
                     isPrintMode={isPrintMode}
@@ -501,9 +592,16 @@ const PrintCardForm = ({
                     id="finish-time"
                     disabled={isPrintMode}
                     onChange={(value) => {
+                      const arriveTime = watch("arriveTime");
+                      if (arriveTime && new Date(value) <= new Date(arriveTime)) {
+                        toast.error("დასრულების დრო უნდა იყოს მისვლის დროზე გვიან");
+                        return;
+                      }
                       setValue("finishTime", value, { shouldValidate: true });
                     }}
                     error={!!errors.finishTime}
+                    minDate={watch("arriveTime") ? new Date(watch("arriveTime")) : new Date(new Date().setDate(new Date().getDate() - 1))}
+                    maxDate={new Date(new Date().setDate(new Date().getDate()))}
                   />
                 </div>
                 <RenderTextField
@@ -515,6 +613,10 @@ const PrintCardForm = ({
                   id="description"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 1000) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 1000");
+                      return;
+                    }
                     setValue("description", value, { shouldValidate: true });
                   }}
                   error={!!errors.description}
@@ -533,6 +635,10 @@ const PrintCardForm = ({
                   id="responsible-person-name"
                   disabled={isPrintMode}
                   onChange={(value) => {
+                    if(value.length > 30) {
+                      toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 30");
+                      return;
+                    }
                     setValue("responsiblePersonName", value, {
                       shouldValidate: true,
                     });
@@ -544,6 +650,7 @@ const PrintCardForm = ({
                   direction="column"
                   label="თარიღი"
                   value={watch("date")}
+                  inputClassName="pointer-events-none"
                   type="date"
                   id="date"
                   disabled={true}

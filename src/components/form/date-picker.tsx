@@ -17,6 +17,8 @@ type PropsType = {
   error?: boolean;
   className?: string;
   disabled?: boolean;
+  minDate?: Date;
+  maxDate?: Date;
 };
 
 export default function DatePicker({
@@ -31,6 +33,8 @@ export default function DatePicker({
   error,
   className,
   disabled,
+  minDate,
+  maxDate,
 }: PropsType) {
   
 
@@ -46,6 +50,8 @@ export default function DatePicker({
       locale: {
         rangeSeparator: " - ",
       },
+      minDate: minDate,
+      maxDate: maxDate,
       closeOnSelect: mode === "single",
       onClose: function(selectedDates, dateStr, instance) {
         if(selectedDates.length == 1){

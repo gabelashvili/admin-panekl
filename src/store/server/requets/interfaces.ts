@@ -97,6 +97,21 @@ export interface UsersListResponseModel {
         creative: string | null;
         clickLabel: string | null;
     } | null;
+    "deviceInfo": {
+        "model": string,
+        "manufacturer": "string",
+        "systemName": string,
+        "systemVersion": string,
+        "deviceId": string,
+        "apiLevel": number,
+        "isTablet": boolean,
+        "isEmulator": boolean,
+        "deviceType": string,
+        "screenWidth": number,
+        "screenHeight": number,
+        "pixelDensity": number,
+        "fontScale": number
+    } | null;
 }
 
 export interface UsersListResponseModel {
