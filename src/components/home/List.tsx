@@ -699,7 +699,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white"
                     } `}
                   >
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2">
                       <Button
                         className="min-w-max"
                         variant="outline"
