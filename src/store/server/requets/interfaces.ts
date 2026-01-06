@@ -9,15 +9,37 @@ export interface RequestUser {
   }
 
 
-export interface RequestModel {
-    id: string;
-    secondaryUser: RequestUser & { age: number };
-    parentUser: RequestUser;
-    longitude: string;
-    latitude: string;
-    address?: string;
-    timestamp: string; // ISO date string
-    parentRespondedTimestamp: string;
+ interface RequestModel {
+    "id": string,
+    "child": {
+        "id": string,
+        "name": string,
+        "phoneNumber": string,
+        "secondaryNumber": string,
+        "personalNumber": string,
+        "longitude": string,
+        "latitude": "",
+        "address": string,
+        "userType": string,
+        "age": number
+    },
+    "responderParentUser": {
+        "id": string,
+        "name": string,
+        "phoneNumber": string,
+        "secondaryNumber": string,
+        "personalNumber": string,
+        "longitude": string,
+        "latitude": string,
+        "address": string,
+        "userType": string,
+        "age": number
+    },
+    "longitude": string,
+    "latitude": string,
+    "address": string,
+    "timestamp": string,
+    "parentRespondedTimestamp": string | null,
     status: | "Pending"
     | "Rejected"
     | "Accepted"
@@ -27,17 +49,19 @@ export interface RequestModel {
     | "Completed"
     | "Expired"
     | "Cancelled";
-    updatedTimestamp: string;
-    expirationDate: string;
-    secondaryNumber: string | null;
-    document: {
-        "id": "cfa6408d-2268-4460-b0b2-25a2e93de27c",
-        "url": "https://lumex.fra1.cdn.digitaloceanspaces.com/lumex-dev/documents/1fbe75a8-0483-4046-9f2e-761f03a0d0f2.pdf",
-        "timestamp": "2025-12-08T11:24:47.892924Z",
+    "updatedTimestamp": "2025-12-31T09:05:15.140949Z",
+    "expirationDate": string,
+    "dispatcherRespondedTimestamp": string,
+    "completedTimestamp": string | null,
+    "document": {
+        "id": string;
+        "url": string,
+        "timestamp": string,
         "documentType": "HelpRequestCompletion",
-        "adminUserId": "650bde53-75eb-47db-ac6e-f987bc82692a"
-    } | null;
+        "adminUserId": string
+    }
 }
+
 
 export interface RequestResponseModel {
     "helpRequests": Array<RequestModel>;
@@ -86,7 +110,7 @@ export interface UsersListResponseModel {
     acceptedSosRequestsByParent: number;
     acceptedSosRequestsByOperator: number;
     email: string | null;
-    kids: ChildModel[];
+    child: ChildModel;
     timeStamp: Date;
     attribution: {
         trackerToken: string | null;
@@ -120,3 +144,5 @@ export interface UsersListResponseModel {
     "totalPages": number;
     "currentPage": number;
 }
+
+
