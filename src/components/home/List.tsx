@@ -30,11 +30,24 @@ interface ListProps {
   pending: boolean;
 }
 
-const AnyReactComponent = ({ text }: { text: string }) => (
+const AnyReactComponent = ({
+  text,
+}: {
+  text: string;
+  lat?: number;
+  lng?: number;
+}) => (
   <div className="text-white bg-gray-500 p-2 rounded-full size-14 flex items-center justify-center text-sm">
     {text}
   </div>
 );
+
+type ClipboardField = { title?: string; value?: string | number | null | undefined };
+type ClipboardSection = {
+  title?: string;
+  type?: string;
+  [key: string]: ClipboardField | string | number | null | undefined;
+};
 
 export default function List({ data, activeItems }: ListProps) {
   const user = useAuthedUserStore((state) => state.user);
@@ -105,7 +118,7 @@ export default function List({ data, activeItems }: ListProps) {
     }
   }, [selectedItem, openModal, closeModal]);
 
-  const copyDataToClipboard = (data) => {
+  const copyDataToClipboard = (data: ClipboardSection[]) => {
     let text = "";
 
     data.forEach((section, index) => {
@@ -116,13 +129,12 @@ export default function List({ data, activeItems }: ListProps) {
       }
 
       // Fields
-      Object.entries(section).forEach(([key, field]) => {
-        if (
-          typeof field === "object" &&
-          field.title &&
-          field.value !== undefined
-        ) {
-          text += `${field.title}: ${field.value || "-"}\n`;
+      Object.values(section).forEach((field) => {
+        if (field && typeof field === "object" && "title" in field) {
+          const { title, value } = field as ClipboardField;
+          if (title !== undefined) {
+            text += `${title}: ${value ?? "-"}\n`;
+          }
         }
       });
 
@@ -169,22 +181,26 @@ export default function List({ data, activeItems }: ListProps) {
                     title: "შვილის ინფორმაცია",
                     name: {
                       title: "სახელი, გვარი",
-                      value: selectedItem?.secondaryUser?.name,
+                      value: selectedItem?.child?.name,
+                    },
+                    age: {
+                      title: "ასაკი",
+                      value: selectedItem?.child?.age,
                     },
                     phone: {
                       title: "ტელეფონის ნომერი",
-                      value: selectedItem?.secondaryUser?.phoneNumber,
+                      value: selectedItem?.child?.phoneNumber,
                     },
                   },
                   {
                     title: "მშობლის ინფორმაცია",
                     name: {
                       title: "სახელი, გვარი",
-                      value: selectedItem?.parentUser?.name,
+                      value: selectedItem?.responderParentUser?.name,
                     },
                     phone: {
                       title: "ტელეფონის ნომერი",
-                      value: selectedItem?.parentUser?.phoneNumber,
+                      value: selectedItem?.responderParentUser?.phoneNumber,
                     },
                   },
                   {
@@ -193,11 +209,10 @@ export default function List({ data, activeItems }: ListProps) {
                       title: "Google Map",
                       value: `http://www.google.com/maps/place/${selectedItem?.latitude},${selectedItem?.longitude}/@${selectedItem?.latitude},${selectedItem?.longitude},20z`,
                     },
-                    latitude: {
+                    address: {
                       title: "მისამართი",
                       value:
-                        selectedItem?.secondaryUser?.address ||
-                        selectedItem?.address,
+                        selectedItem?.child?.address || selectedItem?.address,
                     },
                   },
                 ];
@@ -221,16 +236,23 @@ export default function List({ data, activeItems }: ListProps) {
                         სახელი, გვარი
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.secondaryUser?.name}
+                        {selectedItem?.child?.name}
                       </p>
                     </div>
-
+                    <div>
+                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                        ასაკი
+                      </p>
+                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                        {selectedItem?.child?.age}
+                      </p>
+                    </div>
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                         {t("common.phoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.secondaryUser?.phoneNumber}
+                        {selectedItem?.child?.phoneNumber}
                       </p>
                     </div>
                   </div>
@@ -250,7 +272,7 @@ export default function List({ data, activeItems }: ListProps) {
                         სახელი, გვარი
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.parentUser.name}
+                        {selectedItem?.responderParentUser?.name}
                       </p>
                     </div>
 
@@ -259,7 +281,7 @@ export default function List({ data, activeItems }: ListProps) {
                         {t("common.phoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.parentUser.phoneNumber}
+                        {selectedItem?.responderParentUser?.phoneNumber}
                       </p>
                     </div>
 
@@ -268,7 +290,7 @@ export default function List({ data, activeItems }: ListProps) {
                         {t("common.backupPhoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.parentUser.secondaryNumber || "N/A"}
+                        {selectedItem?.responderParentUser?.secondaryNumber || "N/A"}
                       </p>
                     </div>
                   </div>
@@ -278,23 +300,22 @@ export default function List({ data, activeItems }: ListProps) {
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
               <div className="">
                 <div>
-                  {selectedItem?.secondaryUser?.address ||
-                    (selectedItem?.address && (
+                  {(selectedItem?.child?.address ||
+                    selectedItem?.address) && (
                       <>
                         <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
                           {t("home.requesetDetails.location")}
                         </h4>
                         <div className="mb-4">
                           <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                            {t("home.requesetDetails.address")}
+                            მისამართი
                           </p>
                           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                            {selectedItem?.secondaryUser?.address ||
-                              selectedItem?.address}
+                            {selectedItem?.child?.address || selectedItem?.address}
                           </p>
                         </div>
                       </>
-                    ))}
+                    )}
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
                     <div>
                       <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
@@ -343,10 +364,9 @@ export default function List({ data, activeItems }: ListProps) {
                           <AnyReactComponent
                             lat={Number(selectedItem?.latitude) || 0}
                             lng={Number(selectedItem?.longitude) || 0}
-                            text={`${selectedItem?.secondaryUser?.name[0]} ${
-                              selectedItem?.secondaryUser?.name?.split(
-                                " "
-                              )?.[1]?.[0] || ""
+                            text={`${selectedItem?.child?.name?.[0] ?? ""} ${
+                              selectedItem?.child?.name
+                                ?.split(" ")?.[1]?.[0] || ""
                             }`}
                           />
                         </GoogleMapReact>
@@ -369,8 +389,8 @@ export default function List({ data, activeItems }: ListProps) {
               </div>
             </div>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
-              {selectedItem?.parentUser.id && (
-                <CommentBox parentUserId={selectedItem.parentUser.id} />
+              {selectedItem?.responderParentUser.id && (
+                <CommentBox parentUserId={selectedItem.responderParentUser.id} />
               )}
             </div>
           </div>
@@ -394,7 +414,7 @@ export default function List({ data, activeItems }: ListProps) {
               options={renderOptionsBasedOnStatus(
                 statusChangeItem?.status as any
               )}
-              value={selectedStatus}
+              defaultValue={selectedStatus ?? ""}
               onChange={(value) => setSelectedStatus(value as any)}
             />
           )}
@@ -547,7 +567,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request?.secondaryUser?.name}
+                    {request?.child?.name}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -556,7 +576,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request?.secondaryUser?.phoneNumber}
+                    {request?.child?.phoneNumber}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -565,7 +585,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.parentUser?.name}
+                    {request.responderParentUser?.name}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -574,7 +594,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.parentUser?.phoneNumber}
+                    {request.responderParentUser?.phoneNumber}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -583,7 +603,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.parentUser?.secondaryNumber || "N/A"}
+                    {request.responderParentUser?.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -716,19 +736,19 @@ export default function List({ data, activeItems }: ListProps) {
                     {request.id}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request?.secondaryUser?.name}
+                    {request?.child?.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request?.secondaryUser?.phoneNumber}
+                    {request?.child?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.parentUser?.name}
+                    {request.responderParentUser?.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.parentUser?.phoneNumber}
+                    {request.responderParentUser?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.parentUser.secondaryNumber || "N/A"}
+                    {request.responderParentUser.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
