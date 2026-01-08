@@ -70,7 +70,7 @@ const RenderTextField = ({
   const previousWidth = useRef<number>(600);
 
   useEffect(() => {
-    if (type !== "signature" || !canvasContainer.current) return;
+    if (type !== "signature" || !canvasContainer.current || isPrintMode) return;
 
     const updateCanvasSize = () => {
       if (canvasContainer.current) {
@@ -107,7 +107,7 @@ const RenderTextField = ({
       window.removeEventListener("resize", updateCanvasSize);
       resizeObserver.disconnect();
     };
-  }, [type]);
+  }, [type, isPrintMode]);
 
   return (
     <div
@@ -677,7 +677,6 @@ const PrintCardForm = ({
                   id="signature"
                   disabled={isPrintMode}
                   onChange={(value) => {
-                    console.log(value);
                     setValue("signature", value, { shouldValidate: true });
                   }}
                   error={!!errors.signature}
@@ -710,6 +709,7 @@ const PrintCardForm = ({
                     });
                     toast.success("ბარათი წარმატებით გაგზავნილია");
                   } catch (error: any) {
+                    setIsPrintMode(false);
                     toast.error(error.error || "მოხდა შეცდომა");
                   } finally {
                     setPending(false);
