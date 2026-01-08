@@ -713,6 +713,10 @@ export default function List({ data, activeItems }: ListProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
+                          if(!request.document && !(request.status ==='SecurityDispatched' || request.status === 'Completed')) {
+                            toast.error("გამოძახება გაუქმებულია");
+                            return;
+                          }
                           if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly") {
                             openCardModal(request);
                             return
@@ -812,6 +816,10 @@ export default function List({ data, activeItems }: ListProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
+                          if(!request.document && !(request.status ==='SecurityDispatched' || request.status === 'Completed')) {
+                            toast.error("გამოძახება გაუქმებულია");
+                            return;
+                          }
                           if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly") {
                             openCardModal(request);
                             return
