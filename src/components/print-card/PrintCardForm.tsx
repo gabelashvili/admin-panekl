@@ -15,6 +15,7 @@ import { useRequestDocumentGenerate } from "../../store/server/requets/mutations
 import Button from "../ui/button";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTheme } from "../../context/ThemeContext";
 
 const schema = z.object({
   cardNumber: z.string().min(1, { message: "ბარათის ნომერი აუცილებელია" }),
@@ -333,7 +334,6 @@ const generateHtmlPdf = async () => {
       pdfHeightRemaining = pageHeight - margin * 2;
       pageNumber++;
     }
-
     return doc.output("blob");
   } catch (error) {
     console.error("PDF generation error:", error);
@@ -350,6 +350,8 @@ const PrintCardForm = ({
 }) => {
   const [isPrintMode, setIsPrintMode] = useState(false);
   const { mutateAsync: generateDocument } = useRequestDocumentGenerate();
+  const { toggleTheme, theme } = useTheme();
+
   const {
     handleSubmit,
     watch,
@@ -536,7 +538,7 @@ const PrintCardForm = ({
                   label="შემთხვევის მისამართი"
                   value={watch("address")}
                   id="address"
-                  disabled={!!data?.secondaryUser?.address || !!data?.address}
+                  disabled={!!data?.address || !!data?.child?.address}
                   onChange={(value) => {
                     if(value.length > 100) {
                       toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 100");
@@ -695,7 +697,12 @@ const PrintCardForm = ({
                   setPending(true);
                   try {
                     setIsPrintMode(true);
+                   
                     await new Promise((resolve) => setTimeout(resolve, 2000));
+                    if(theme === "dark") {
+                      toggleTheme();
+                      await new Promise((resolve) => setTimeout(resolve, 300));
+                    }
                     const blob = await generateHtmlPdf();
                     if (!blob) {
                       throw new Error("მოხდა შეცდომა");
@@ -704,6 +711,7 @@ const PrintCardForm = ({
                       HelpRequestId: data.id,
                       Document: blob,
                     });
+                    
                     await queryClient.invalidateQueries({
                       queryKey: ["new-requests", "requests"],
                     });

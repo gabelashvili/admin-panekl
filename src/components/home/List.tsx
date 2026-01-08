@@ -752,7 +752,7 @@ export default function List({ data, activeItems }: ListProps) {
                     {request.responderParentUser?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser.secondaryNumber || "N/A"}
+                    {request.responderParentUser?.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
