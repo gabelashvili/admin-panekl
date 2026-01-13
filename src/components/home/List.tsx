@@ -688,7 +688,7 @@ export default function List({ data, activeItems }: ListProps) {
                       >
                         {t("home.table.viewDetails")}
                       </Button>
-                      <Button
+                      {/* <Button
                         className="min-w-max"
                         variant="outline"
                         size="sm"
@@ -705,7 +705,7 @@ export default function List({ data, activeItems }: ListProps) {
                         }}
                       >
                         ბარათი
-                      </Button>
+                      </Button> */}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -787,7 +787,7 @@ export default function List({ data, activeItems }: ListProps) {
                       >
                         {t("home.table.viewDetails")}
                       </Button>
-                      <Button
+                      {/* <Button
                         className="min-w-max"
                         variant="outline"
                         size="sm"
@@ -804,7 +804,7 @@ export default function List({ data, activeItems }: ListProps) {
                         }}
                       >
                         ბარათი
-                      </Button>
+                      </Button> */}
                     </div>
                   </TableCell>
                 </TableRow>
