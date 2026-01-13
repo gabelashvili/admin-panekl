@@ -12,7 +12,8 @@ import { Modal } from "./components/ui/modal";
 import PaymentPage from "./pages/PaymentPage";
 import StatisticsPage from "./pages/StatisticsPage";
 import FeedbackPage from "./pages/FeedbackPage";
-  
+import FreeTrialPage from "./pages/FreeTrialPage";
+
 export default function App() {
   const { user, setAuthedUser } = useAuthedUserStore()
   const authedUserQuery = useAuthedUserQuery(!!localStorage.getItem('token') && !user)
@@ -70,6 +71,7 @@ export default function App() {
             {user?.userType === "Admin" && <Route index path="/payments" element={<PaymentPage />} />}
             {user?.userType === "Admin" && <Route index path="/statistics" element={<StatisticsPage />} />}
             {user?.userType === "Admin" && <Route index path="/feedbacks" element={<FeedbackPage />} />}
+            {user?.userType === "Admin" && <Route index path="/free-trial" element={<FreeTrialPage />} />}
 
             {/* Others Page */}
             {/* <Route path="/profile" element={<UserProfiles />} /> */}
