@@ -61,24 +61,6 @@ const UsersList = () => {
   });
   
 
-  if(allData?.users && !allData?.users?.[0]?.deviceInfo) {
-    console.log("no device info", allData)
-    allData!.users![0].deviceInfo =   {
-        "model": "string",
-        "manufacturer": "string",
-        "systemName": "string",
-        "systemVersion": "string",
-        "deviceId": "string",
-        "apiLevel": 0,
-        "isTablet": true,
-        "isEmulator": true,
-        "deviceType": "string",
-        "screenWidth": 0,
-        "screenHeight": 0,
-        "pixelDensity": 0,
-        "fontScale": 0
-    }
-  }
   return (
     <>
       <Modal
