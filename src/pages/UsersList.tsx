@@ -61,24 +61,6 @@ const UsersList = () => {
   });
   
 
-  if(allData?.users && !allData?.users?.[0]?.deviceInfo) {
-    console.log("no device info", allData)
-    allData!.users![0].deviceInfo =   {
-        "model": "string",
-        "manufacturer": "string",
-        "systemName": "string",
-        "systemVersion": "string",
-        "deviceId": "string",
-        "apiLevel": 0,
-        "isTablet": true,
-        "isEmulator": true,
-        "deviceType": "string",
-        "screenWidth": 0,
-        "screenHeight": 0,
-        "pixelDensity": 0,
-        "fontScale": 0
-    }
-  }
   return (
     <>
       <Modal
@@ -146,7 +128,7 @@ const UsersList = () => {
                 </CollapsibleSection>
               )}
 
-              {detailModal.deviceInfo && (
+              {detailModal?.deviceInfo && (
                 <CollapsibleSection title="მოწყობილობის ინფორმაცია">
                   <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
                     {Object.entries(detailModal.deviceInfo).map(([key, value]) => {
@@ -346,9 +328,9 @@ const UsersList = () => {
                               { label: "მშობლის თანხმობა", value: user.acceptedSosRequestsByParent },
                               { label: "უარყოფილი მოთხოვნები", value: user.rejectedSosRequests },
                             ],
-                            children: user.kids,
+                            children: user.child ? [user.child] : [],
                             campaign: user.attribution || null,
-                            deviceInfo: user.deviceInfo || null,
+                            deviceInfo: user?.deviceInfo || null,
                           })
                         }
                       >
