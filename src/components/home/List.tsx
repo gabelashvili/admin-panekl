@@ -391,7 +391,7 @@ export default function List({ data, activeItems }: ListProps) {
               </div>
             </div>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
-              {selectedItem?.responderParentUser.id && (
+              {selectedItem?.responderParentUser?.id && (
                 <CommentBox parentUserId={selectedItem.responderParentUser.id} />
               )}
             </div>
@@ -693,7 +693,7 @@ export default function List({ data, activeItems }: ListProps) {
                           {t("home.table.changeStatus")}
                         </Button>
                       )}
-                      {["AutoAccepted", "Pending", "Accepted", "SecurityDispatched"].includes(request.status) && (
+                      {user?.userType === "Admin" && ["AutoAccepted", "Pending", "Accepted", "SecurityDispatched"].includes(request.status) && (
                         <Button
                           variant="outline"
                           size="sm"
