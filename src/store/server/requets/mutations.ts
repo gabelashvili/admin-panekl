@@ -1,5 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../../utils/axios-config";
+import requestsTags from "./tags";
 
 const useRequestStatusChange = () => {
     return useMutation({
@@ -32,6 +33,21 @@ const useRequestDocumentGenerate = () => {
   })
 }
 
+const useRequestCancel = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (values: { helpRequestId: string }): Promise<any> => {
+      const { data } = await api.post('help/cancel', values)
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [requestsTags.requests] });
+      queryClient.invalidateQueries({ queryKey: ['new-requests'] });
+    }
+  })
+}
 
 
-export { useRequestStatusChange, useRequestStatusComplete, useRequestDocumentGenerate }
+
+export { useRequestStatusChange, useRequestStatusComplete, useRequestDocumentGenerate, useRequestCancel }

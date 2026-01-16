@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { RequestResponseModel } from "../../store/server/requets/interfaces";
 import Select from "../form/Select";
 import {
+  useRequestCancel,
   useRequestStatusChange,
   useRequestStatusComplete,
 } from "../../store/server/requets/mutations";
@@ -54,6 +55,7 @@ export default function List({ data, activeItems }: ListProps) {
   const { t } = useTranslation();
   const reqStatusChangeMutation = useRequestStatusChange();
   const reqStatusCompleteMutation = useRequestStatusComplete();
+  const reqCancelMutation = useRequestCancel();
   const { isOpen, openModal, closeModal } = useModal();
   const [tableData, setTableData] = useState<ListProps["data"]>([]);
   const [selectedItem, setSelectedItem] = useState<ListProps["data"][0] | null>(
@@ -689,6 +691,26 @@ export default function List({ data, activeItems }: ListProps) {
                           }}
                         >
                           {t("home.table.changeStatus")}
+                        </Button>
+                      )}
+                      {["AutoAccepted", "Pending", "Accepted", "SecurityDispatched"].includes(request.status) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-max min-w-max"
+                          onClick={async () => {
+                            try {
+                              await reqCancelMutation.mutateAsync({
+                                helpRequestId: request.id,
+                              });
+                              toast.success("გამოძახება გაუქმებულია");
+                            } catch (error: any) {
+                              console.log(error);
+                              toast.error(error?.error || "მოხდა შეცდომა");
+                            }
+                          }}
+                        >
+                          გაუქმება
                         </Button>
                       )}
                   </TableCell>
