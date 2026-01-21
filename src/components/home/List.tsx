@@ -736,7 +736,7 @@ export default function List({ data, activeItems }: ListProps) {
                         size="sm"
                         onClick={() => {
                           if(!request.document && !(request.status ==='SecurityDispatched' || request.status === 'Completed')) {
-                            toast.error("გამოძახება გაუქმებულია");
+                            toast.error("ბარათის მიბმა შესაძლებელია როცა გამოძახება დასრულდება ან დაცვის გუნდი გზაშია");
                             return;
                           }
                           if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly") {
@@ -839,7 +839,7 @@ export default function List({ data, activeItems }: ListProps) {
                         size="sm"
                         onClick={() => {
                           if(!request.document && !(request.status ==='SecurityDispatched' || request.status === 'Completed')) {
-                            toast.error("გამოძახება გაუქმებულია");
+                            toast.error("ბარათის მიბმა შესაძლებელია როცა გამოძახება დასრულდება ან დაცვის გუნდი გზაშია");
                             return;
                           }
                           if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly") {
