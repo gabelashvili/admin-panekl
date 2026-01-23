@@ -759,9 +759,15 @@ export default function List({ data, activeItems }: ListProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly" && ['SecurityDispatched', 'Completed'].includes(request.status)) {
-                            openCardModal(request);
-                            return
+                          if(user?.userType === "SecurityPoliceReadOnly") {
+                            if(!request.document?.url && ['SecurityDispatched', 'Completed'].includes(request.status)) {
+                              openCardModal(request);
+                              return
+                            }
+                            if(!request.document?.url && !['SecurityDispatched', 'Completed'].includes(request.status)) {
+                              toast.error("მიმდინარე სტატუსზე ბარათის მიბმა შეუძლებელია");
+                              return
+                            }
                           }
                           if(!request.document?.url) {
                             toast.error("ბარათი მითითებული არ არის");
@@ -860,8 +866,12 @@ export default function List({ data, activeItems }: ListProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly" && ['SecurityDispatched', 'Completed'].includes(request.status)) {
-                            openCardModal(request);
+                          if(user?.userType === "SecurityPoliceReadOnly") {
+                            if(!request.document?.url && ['SecurityDispatched', 'Completed'].includes(request.status)) {
+                              openCardModal(request);
+                              return
+                            }
+                            toast.error("მიმდინარე სტატუსზე ბარათის მიბმა შეუძლებელია");
                             return
                           }
                           if(!request.document?.url) {

@@ -364,7 +364,7 @@ const PrintCardForm = ({
       cardNumber: "",
       customerName: data?.child?.name,
       customerAge: data?.child?.age.toString(),
-      customerParentName: data?.responderParentUser?.name,
+      customerParentName: data?.responderParentUser?.name || data?.parents?.[0]?.name || '',
       policeName: "",
       doctorName: "",
       address: data?.child?.address || data?.address || "",

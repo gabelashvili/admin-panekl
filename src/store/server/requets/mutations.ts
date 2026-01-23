@@ -21,6 +21,8 @@ const useRequestStatusComplete = () => {
 }
 
 const useRequestDocumentGenerate = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (values: {HelpRequestId: string, Document: Blob}): Promise<any> => {
       const formData = new FormData()
@@ -29,6 +31,10 @@ const useRequestDocumentGenerate = () => {
       formData.append("Document", values.Document, "document.pdf");
       const { data } = await api.post('help/upload-document', formData)
       return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [requestsTags.requests] });
+      queryClient.invalidateQueries({ queryKey: ['new-requests'] });
     }
   })
 }
