@@ -22,7 +22,7 @@ import {
 import { toast } from "react-toastify";
 import useAuthedUserStore from "../../store/client/useAuthedUserStore";
 import CommentBox from "../comment";
-import { CopyIcon } from "lucide-react";
+import { CopyIcon, CheckCircle2 } from "lucide-react";
 import PrintCardModal from "../print-card/PrintCardModal";
 
 interface ListProps {
@@ -198,11 +198,11 @@ export default function List({ data, activeItems }: ListProps) {
                     title: "მშობლის ინფორმაცია",
                     name: {
                       title: "სახელი, გვარი",
-                      value: selectedItem?.responderParentUser?.name,
+                      value: selectedItem?.responderParentUser ? selectedItem?.responderParentUser?.name : selectedItem?.parents?.[0]?.name,
                     },
                     phone: {
                       title: "ტელეფონის ნომერი",
-                      value: selectedItem?.responderParentUser?.phoneNumber,
+                      value: selectedItem?.responderParentUser ? selectedItem?.responderParentUser?.phoneNumber : selectedItem?.parents?.[0]?.phoneNumber,
                     },
                   },
                   {
@@ -263,38 +263,61 @@ export default function List({ data, activeItems }: ListProps) {
             </div>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                <div>
+                <div className="w-full">
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
                     {t("home.requesetDetails.parentInfo")}
                   </h4>
 
-                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
-                    <div>
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        სახელი, გვარი
-                      </p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.responderParentUser?.name}
-                      </p>
-                    </div>
+                  <div className="grid grid-cols-2 gap-4 w-full">
+                    {(selectedItem?.parents && selectedItem.parents.length > 0
+                      ? selectedItem.parents
+                      : selectedItem?.responderParentUser
+                      ? [selectedItem.responderParentUser]
+                      : []
+                    ).map((parent, index) => {
+                      const isResponderParent =
+                        !!selectedItem?.responderParentUser &&
+                        parent?.id === selectedItem?.responderParentUser?.id;
 
-                    <div>
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t("common.phoneNumber")}
-                      </p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.responderParentUser?.phoneNumber}
-                      </p>
-                    </div>
+                      return (
+                        <div
+                          key={parent.id ?? index}
+                          className={`relative p-3 rounded-xl border w-full ${
+                            isResponderParent
+                              ? "border-green-500 bg-green-50 dark:bg-green-900/20"
+                              : "border-gray-200 dark:border-gray-800"
+                          }`}
+                        >
+                          {isResponderParent && (
+                            <div className="absolute right-3 top-3 flex items-center gap-1 text-green-600 dark:text-green-400 text-xs font-medium">
+                              <CheckCircle2 className="w-4 h-4" />
+                              {/* <span>გამოძახების მიმღები</span> */}
+                            </div>
+                          )}
 
-                    <div>
-                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                        {t("common.backupPhoneNumber")}
-                      </p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.responderParentUser?.secondaryNumber || "N/A"}
-                      </p>
-                    </div>
+                          <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                            სახელი, გვარი
+                          </p>
+                          <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                            {parent.name}
+                          </p>
+
+                          <p className="mt-3 mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                            {t("common.phoneNumber")}
+                          </p>
+                          <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                            {parent.phoneNumber}
+                          </p>
+
+                          <p className="mt-3 mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                            {t("common.backupPhoneNumber")}
+                          </p>
+                          <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                            {parent.secondaryNumber || "N/A"}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -587,7 +610,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.responderParentUser?.name}
+                    {request.responderParentUser ? request.responderParentUser?.name : request.parents?.[0]?.name}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -596,7 +619,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.responderParentUser?.phoneNumber}
+                    {request.responderParentUser ? request.responderParentUser?.phoneNumber : request.parents?.[0]?.phoneNumber}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -605,7 +628,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.responderParentUser?.secondaryNumber || "N/A"}
+                    {request.responderParentUser ? request.responderParentUser?.secondaryNumber : request.parents?.[0]?.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -768,13 +791,13 @@ export default function List({ data, activeItems }: ListProps) {
                     {request?.child?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser?.name}
+                    {request.responderParentUser ? request.responderParentUser?.name : request.parents?.[0]?.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser?.phoneNumber}
+                    {request.responderParentUser ? request.responderParentUser?.phoneNumber : request.parents?.[0]?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser?.secondaryNumber || "N/A"}
+                    {request.responderParentUser ? request.responderParentUser?.secondaryNumber : request.parents?.[0]?.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">

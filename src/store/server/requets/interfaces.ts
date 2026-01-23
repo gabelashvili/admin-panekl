@@ -59,7 +59,19 @@ export interface RequestUser {
         "timestamp": string,
         "documentType": "HelpRequestCompletion",
         "adminUserId": string
-    }
+    },
+    parents?: Array<{
+        "id": string,
+        "name": string,
+        "phoneNumber": string,
+        "secondaryNumber": string | null,
+        "personalNumber": string,
+        "longitude": string,
+        "latitude": string,
+        "address": string,
+        "userType": string,
+        "age": number
+    }>
 }
 
 
