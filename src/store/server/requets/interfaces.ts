@@ -122,7 +122,17 @@ export interface UsersListResponseModel {
     acceptedSosRequestsByParent: number;
     acceptedSosRequestsByOperator: number;
     email: string | null;
-    child: ChildModel;
+    children: Array<{
+        "id": string,
+        "name": string,
+        "phoneNumber": string,
+        "personalNumber": string,
+        "birthdate": string,
+        "gender": "Male" | "Female",
+        "numberOfSosRequestsSent": number,
+        "numberOfSosRequestsReceived": number,
+        "timeStamp": string
+    }>;
     timeStamp: Date;
     attribution: {
         trackerToken: string | null;

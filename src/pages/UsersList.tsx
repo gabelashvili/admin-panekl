@@ -12,7 +12,7 @@ import {
 import ComponentCard from "../components/common/ComponentCard";
 import { Modal } from "../components/ui/modal";
 import Button from "../components/ui/button";
-import { ChildModel, UsersListResponseModel } from "../store/server/requets/interfaces";
+import { UsersListResponseModel } from "../store/server/requets/interfaces";
 import Input from "../components/form/input/InputField";
 import dayjs from "dayjs";
 
@@ -49,7 +49,7 @@ const UsersList = () => {
   const [detailModal, setDetailModal] = useState<{
     title: string;
     rows: { label: string; value: string | number | React.ReactNode }[];
-    children?: ChildModel[];
+    children?: UsersListResponseModel["children"];
     campaign?: UsersListResponseModel["attribution"] | null;
     deviceInfo?: UsersListResponseModel["deviceInfo"] | null;
   } | null>(null);
@@ -194,17 +194,17 @@ const UsersList = () => {
                   <div className="grid gap-4">
                     {detailModal.children.map((child) => (
                       <div
-                        key={child.kidId}
+                        key={child.id}
                         className="rounded-xl border border-gray-100 dark:border-gray-800 p-4 bg-white dark:bg-gray-900/60 shadow-sm"
                       >
                         <div className="grid sm:grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-200">
-                          <div><span className="text-gray-500 dark:text-gray-400">სახელი:</span> <span className="font-medium">{child.kidName}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">პირადი ნომერი:</span> <span className="font-medium">{child.kidPersonalNumber}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">ტელეფონის ნომერი:</span> <span className="font-medium">{child.kidPhoneNumber}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">სახელი:</span> <span className="font-medium">{child.name}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">პირადი ნომერი:</span> <span className="font-medium">{child.personalNumber}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">ტელეფონის ნომერი:</span> <span className="font-medium">{child.phoneNumber}</span></div>
                           <div><span className="text-gray-500 dark:text-gray-400">დაბადების თარიღი:</span> <span className="font-medium">{dayjs(child.birthdate).format('MM/DD/YYYY')}</span></div>
                           <div><span className="text-gray-500 dark:text-gray-400">ასაკი:</span> <span className="font-medium">{dayjs().diff(dayjs(child.birthdate), 'year')}</span></div>
                           <div><span className="text-gray-500 dark:text-gray-400">სქესი:</span> <span className="font-medium">{child.gender === 'Male' ? 'მამრობითი' : 'მდედრობითი'}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">გამოძახების სტატისტიკა:</span> <span className="font-medium">{child.kidNumberOfSosRequestsSent}</span></div>
+                          <div><span className="text-gray-500 dark:text-gray-400">გამოძახების სტატისტიკა:</span> <span className="font-medium">{child.numberOfSosRequestsSent}</span></div>
                         </div>
                       </div>
                     ))}
@@ -328,7 +328,7 @@ const UsersList = () => {
                               { label: "მშობლის თანხმობა", value: user.acceptedSosRequestsByParent },
                               { label: "უარყოფილი მოთხოვნები", value: user.rejectedSosRequests },
                             ],
-                            children: user.child ? [user.child] : [],
+                            children: user.children || [],
                             campaign: user.attribution || null,
                             deviceInfo: user?.deviceInfo || null,
                           })
