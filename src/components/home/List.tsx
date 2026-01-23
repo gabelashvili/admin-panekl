@@ -690,6 +690,7 @@ export default function List({ data, activeItems }: ListProps) {
                       "გამოძახება გააუქმა მშობელმა"}
                     {request.status === "RejectedByDispatcher" &&
                       "გამოძახება გააუქმა ოპერატორმა"}
+                    {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -758,15 +759,11 @@ export default function List({ data, activeItems }: ListProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          if(!request.document && !(request.status ==='SecurityDispatched' || request.status === 'Completed')) {
-                            toast.error("ბარათის მიბმა შესაძლებელია როცა გამოძახება დასრულდება ან დაცვის გუნდი გზაშია");
-                            return;
-                          }
-                          if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly") {
+                          if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly" && ['SecurityDispatched', 'Completed'].includes(request.status)) {
                             openCardModal(request);
                             return
                           }
-                          if(!request.document?.url && user?.userType !== "SecurityPoliceReadOnly") {
+                          if(!request.document?.url) {
                             toast.error("ბარათი მითითებული არ არის");
                             return;
                           }
@@ -842,6 +839,8 @@ export default function List({ data, activeItems }: ListProps) {
                       "გამოძახება გააუქმა მშობელმა"}
                     {request.status === "RejectedByDispatcher" &&
                       "გამოძახება გააუქმა ოპერატორმა"}
+                    {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
+
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
@@ -861,15 +860,11 @@ export default function List({ data, activeItems }: ListProps) {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          if(!request.document && !(request.status ==='SecurityDispatched' || request.status === 'Completed')) {
-                            toast.error("ბარათის მიბმა შესაძლებელია როცა გამოძახება დასრულდება ან დაცვის გუნდი გზაშია");
-                            return;
-                          }
-                          if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly") {
+                          if(!request.document?.url && user?.userType === "SecurityPoliceReadOnly" && ['SecurityDispatched', 'Completed'].includes(request.status)) {
                             openCardModal(request);
                             return
                           }
-                          if(!request.document?.url && user?.userType !== "SecurityPoliceReadOnly") {
+                          if(!request.document?.url) {
                             toast.error("ბარათი მითითებული არ არის");
                             return;
                           }
