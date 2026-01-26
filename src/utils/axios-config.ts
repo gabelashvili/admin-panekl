@@ -1,6 +1,7 @@
 // First we need to import axios.js
 import axios from 'axios';
 import useAuthedUserStore from '../store/client/useAuthedUserStore';
+import i18n from '../i18n/config';
 // Next we make an 'instance' of it
 const api = axios.create({
 // .. where we make our configurations
@@ -15,6 +16,7 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    config.headers['accept-language'] = i18n.language;
     return config;
   },
   (error) => {
