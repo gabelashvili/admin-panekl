@@ -610,7 +610,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.responderParentUser ? request.responderParentUser?.name : request.parents?.[0]?.name}
+                    {request.responderParentUser ? request.responderParentUser?.name : request.parents?.find(el => el.userType === 'MainParent')?.name}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -619,7 +619,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.responderParentUser ? request.responderParentUser?.phoneNumber : request.parents?.[0]?.phoneNumber}
+                    {request.responderParentUser ? request.responderParentUser?.phoneNumber : request.parents?.find(el => el.userType === 'MainParent')?.phoneNumber}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -628,7 +628,7 @@ export default function List({ data, activeItems }: ListProps) {
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
                     } `}
                   >
-                    {request.responderParentUser ? request.responderParentUser?.secondaryNumber : request.parents?.[0]?.secondaryNumber || "N/A"}
+                    {request.responderParentUser ? request.responderParentUser?.secondaryNumber : request.parents?.find(el => el.userType === 'MainParent')?.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell
                     className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -794,13 +794,13 @@ export default function List({ data, activeItems }: ListProps) {
                     {request?.child?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser ? request.responderParentUser?.name : request.parents?.[0]?.name}
+                    {request.responderParentUser ? request.responderParentUser?.name : request.parents?.find(el => el.userType === 'MainParent')?.name}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser ? request.responderParentUser?.phoneNumber : request.parents?.[0]?.phoneNumber}
+                    {request.responderParentUser ? request.responderParentUser?.phoneNumber : request.parents?.find(el => el.userType === 'MainParent')?.phoneNumber}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser ? request.responderParentUser?.secondaryNumber : request.parents?.[0]?.secondaryNumber || "N/A"}
+                    {request.responderParentUser ? request.responderParentUser?.secondaryNumber : request.parents?.find(el => el.userType === 'MainParent')?.secondaryNumber || "N/A"}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
