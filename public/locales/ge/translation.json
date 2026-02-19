@@ -43,6 +43,7 @@
             "description": "მოთხოვნის დეტალები",
             "childrenInfo": "ბავშვის ინფორმაცია",
             "parentInfo": "მშობლის ინფორმაცია",
+            "parentsInfo": "მშობლების ინფორმაცია",
             "location": "მდებარეობა",
             "latitude": "latitude",
             "longitude": "longitude",

@@ -265,7 +265,7 @@ export default function List({ data, activeItems }: ListProps) {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div className="w-full">
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    {t("home.requesetDetails.parentInfo")}
+                    {selectedItem?.parents?.length === 1 ? t("home.requesetDetails.parentInfo") : t("home.requesetDetails.parentsInfo")}
                   </h4>
 
                   <div className="grid grid-cols-2 gap-4 w-full">
@@ -307,13 +307,6 @@ export default function List({ data, activeItems }: ListProps) {
                           </p>
                           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                             {parent.phoneNumber}
-                          </p>
-
-                          <p className="mt-3 mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                            {t("common.backupPhoneNumber")}
-                          </p>
-                          <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                            {parent.secondaryNumber || "N/A"}
                           </p>
                         </div>
                       );
@@ -525,7 +518,7 @@ export default function List({ data, activeItems }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t("common.backupPhoneNumber")}
+                  მეორე მშობლის ნომერი
                 </TableCell>
                 <TableCell
                   isHeader
