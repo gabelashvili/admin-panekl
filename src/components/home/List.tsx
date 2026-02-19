@@ -554,249 +554,85 @@ export default function List({ data, activeItems }: ListProps) {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 cursor-pointer dark:divide-white/[0.05] [&>tr]:even:bg-gray-50 dark:[&>tr]:even:bg-gray-900/50 [&>tr]:hover:bg-gray-200 dark:[&>tr]:hover:bg-gray-900">
-              {activeItems.map((request) => (
-                <TableRow
-                  key={request.id}
-                  // className={`${
-                  //   order.isNew &&
-                  //   dayjs(order.requestTime).diff(dayjs(), "second") < 5
-                  //     ? "animate-[highlight_2s_ease-in-out_5]"
-                  //     : ""
-                  // }`}
-                  className={
-                    request.status === "Pending"
-                      ? "animate-[highlight_2s_ease-in-out_infinite]"
-                      : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                  }
-                >
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+              {activeItems.map((request) => {
+                const mainParent = request.responderParentUser || request.parents?.find(el => el.userType === 'MainParent');
+                const secondaryParent = request.parents?.find(el => el.id != mainParent?.id);
+                return (
+                  <TableRow
+                    key={request.id}
+                    // className={`${
+                    //   order.isNew &&
+                    //   dayjs(order.requestTime).diff(dayjs(), "second") < 5
+                    //     ? "animate-[highlight_2s_ease-in-out_5]"
+                    //     : ""
+                    // }`}
+                    className={
                       request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                        ? "animate-[highlight_2s_ease-in-out_infinite]"
                         : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
+                    }
                   >
-                    {request.id}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
-                  >
-                    {request?.child?.name}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
-                  >
-                    {request?.child?.phoneNumber}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
-                  >
-                    {request.responderParentUser ? request.responderParentUser?.name : request.parents?.find(el => el.userType === 'MainParent')?.name}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
-                  >
-                    {request.responderParentUser ? request.responderParentUser?.phoneNumber : request.parents?.find(el => el.userType === 'MainParent')?.phoneNumber}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
-                  >
-                    {request.responderParentUser ? request.responderParentUser?.secondaryNumber : request.parents?.find(el => el.userType === 'MainParent')?.secondaryNumber || "N/A"}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
-                  >
-                    {(request.status === "Rejected" ||
-                      request.status === "RejectedByDispatcher") &&
-                      t("home.table.cancelled")}
-                    {!(
-                      request.status === "Rejected" ||
-                      request.status === "RejectedByDispatcher"
-                    ) &&
-                      (request.status === "Accepted" ||
-                        !!request.parentRespondedTimestamp) &&
-                      t("home.table.acceptedByParent")}
-                    {!(
-                      request.status === "Rejected" ||
-                      request.status === "RejectedByDispatcher"
-                    ) &&
-                      (request.status === "AutoAccepted" ||
-                        request.status === "SecurityDispatched") &&
-                      !request.parentRespondedTimestamp &&
-                      t("home.table.acceptedBySystem")}
-                    {request.status === "Completed" &&
-                      request.parentRespondedTimestamp &&
-                      t("home.table.acceptedByParent")}
-                    {request.status === "Completed" &&
-                      !request.parentRespondedTimestamp &&
-                      t("home.table.acceptedBySystem")}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
-                  >
-                    {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                    } `}
-                  >
-                    {request.status === "Pending" && "გამოძახება მუშავდება"}
-                    {request.status === "Accepted" &&
-                      "მშობელმა დაადასტურა გამოძახება"}
-                    {request.status === "AutoAccepted" &&
-                      "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
-                    {request.status === "SecurityDispatched" &&
-                      "დაცვის გუნდი გზაშია"}
-                    {request.status === "Completed" && "გამოძახება დასრულდა"}
-                    {request.status === "Rejected" &&
-                      "გამოძახება გააუქმა მშობელმა"}
-                    {request.status === "RejectedByDispatcher" &&
-                      "გამოძახება გააუქმა ოპერატორმა"}
-                    {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white"
-                    } `}
-                  >
-                    {[
-                      "Pending",
-                      "SecurityDispatched",
-                      "Accepted",
-                      "AutoAccepted",
-                    ].includes(request.status) &&
-                      user?.userType === "Dispatcher" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-max min-w-max"
-                          onClick={() => {
-                            setStatusChangeItem(request);
-                          }}
-                        >
-                          {t("home.table.changeStatus")}
-                        </Button>
-                      )}
-                      {user?.userType === "Admin" && ["AutoAccepted", "Pending", "Accepted", "SecurityDispatched"].includes(request.status) && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-max min-w-max"
-                          onClick={async () => {
-                            try {
-                              await reqCancelMutation.mutateAsync({
-                                helpRequestId: request.id,
-                              });
-                              toast.success("გამოძახება გაუქმებულია");
-                            } catch (error: any) {
-                              console.log(error);
-                              toast.error(error?.error || "მოხდა შეცდომა");
-                            }
-                          }}
-                        >
-                          გაუქმება
-                        </Button>
-                      )}
-                  </TableCell>
-                  <TableCell
-                    className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                      request.status === "Pending"
-                        ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                        : "bg-[rgb(144,_10,_22)] text-white"
-                    } `}
-                  >
-                    <div className="flex flex-col gap-2">
-                      <Button
-                        className="min-w-max"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedItem(request)}
-                      >
-                        {t("home.table.viewDetails")}
-                      </Button>
-                      <Button
-                        className="min-w-max"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          if(user?.userType === "SecurityPoliceReadOnly") {
-                            if(!request.document?.url && ['SecurityDispatched', 'Completed'].includes(request.status)) {
-                              openCardModal(request);
-                              return
-                            }
-                            if(!request.document?.url && !['SecurityDispatched', 'Completed'].includes(request.status)) {
-                              toast.error("მიმდინარე სტატუსზე ბარათის მიბმა შეუძლებელია");
-                              return
-                            }
-                          }
-                          if(!request.document?.url) {
-                            toast.error("ბარათი მითითებული არ არის");
-                            return;
-                          }
-                          window.open(request.document!.url, "_blank");
-                        }}
-                      >
-                        ბარათი
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {tableData.map((request) => (
-                <TableRow key={request.id}>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.id}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request?.child?.name}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request?.child?.phoneNumber}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser ? request.responderParentUser?.name : request.parents?.find(el => el.userType === 'MainParent')?.name}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser ? request.responderParentUser?.phoneNumber : request.parents?.find(el => el.userType === 'MainParent')?.phoneNumber}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.responderParentUser ? request.responderParentUser?.secondaryNumber : request.parents?.find(el => el.userType === 'MainParent')?.secondaryNumber || "N/A"}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
+                      {request.id}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
+                      {request?.child?.name}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
+                      {request?.child?.phoneNumber}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
+                      {mainParent?.name}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
+                      {mainParent?.phoneNumber}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
+                      {secondaryParent?.phoneNumber || "N/A"}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
                       {(request.status === "Rejected" ||
                         request.status === "RejectedByDispatcher") &&
                         t("home.table.cancelled")}
@@ -805,9 +641,7 @@ export default function List({ data, activeItems }: ListProps) {
                         request.status === "RejectedByDispatcher"
                       ) &&
                         (request.status === "Accepted" ||
-                          !!request.parentRespondedTimestamp ||
-                          (request.status === "Completed" &&
-                            request.parentRespondedTimestamp)) &&
+                          !!request.parentRespondedTimestamp) &&
                         t("home.table.acceptedByParent")}
                       {!(
                         request.status === "Rejected" ||
@@ -818,68 +652,242 @@ export default function List({ data, activeItems }: ListProps) {
                         !request.parentRespondedTimestamp &&
                         t("home.table.acceptedBySystem")}
                       {request.status === "Completed" &&
+                        request.parentRespondedTimestamp &&
+                        t("home.table.acceptedByParent")}
+                      {request.status === "Completed" &&
                         !request.parentRespondedTimestamp &&
                         t("home.table.acceptedBySystem")}
                     </TableCell>
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {request.status === "Pending" && "გამოძახება მუშავდება"}
-                    {request.status === "Accepted" &&
-                      "მშობელმა დაადასტურა გამოძახება"}
-                    {request.status === "AutoAccepted" &&
-                      "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
-                    {request.status === "SecurityDispatched" &&
-                      "დაცვის გუნდი გზაშია"}
-                    {request.status === "Completed" && "გამოძახება დასრულდა"}
-                    {request.status === "Rejected" &&
-                      "გამოძახება გააუქმა მშობელმა"}
-                    {request.status === "RejectedByDispatcher" &&
-                      "გამოძახება გააუქმა ოპერატორმა"}
-                    {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
-
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                    <div className="flex flex-col gap-2">
-                      <Button
-                        className="min-w-max"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedItem(request)}
-                      >
-                        {t("home.table.viewDetails")}
-                      </Button>
-                      <Button
-                        className="min-w-max"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          if(user?.userType === "SecurityPoliceReadOnly") {
-                            if(!request.document?.url && ['SecurityDispatched', 'Completed'].includes(request.status)) {
-                              openCardModal(request);
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
+                      {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
+                      {request.status === "Pending" && "გამოძახება მუშავდება"}
+                      {request.status === "Accepted" &&
+                        "მშობელმა დაადასტურა გამოძახება"}
+                      {request.status === "AutoAccepted" &&
+                        "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
+                      {request.status === "SecurityDispatched" &&
+                        "დაცვის გუნდი გზაშია"}
+                      {request.status === "Completed" && "გამოძახება დასრულდა"}
+                      {request.status === "Rejected" &&
+                        "გამოძახება გააუქმა მშობელმა"}
+                      {request.status === "RejectedByDispatcher" &&
+                        "გამოძახება გააუქმა ოპერატორმა"}
+                      {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white"
+                      } `}
+                    >
+                      {[
+                        "Pending",
+                        "SecurityDispatched",
+                        "Accepted",
+                        "AutoAccepted",
+                      ].includes(request.status) &&
+                        user?.userType === "Dispatcher" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-max min-w-max"
+                            onClick={() => {
+                              setStatusChangeItem(request);
+                            }}
+                          >
+                            {t("home.table.changeStatus")}
+                          </Button>
+                        )}
+                        {user?.userType === "Admin" && ["AutoAccepted", "Pending", "Accepted", "SecurityDispatched"].includes(request.status) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-max min-w-max"
+                            onClick={async () => {
+                              try {
+                                await reqCancelMutation.mutateAsync({
+                                  helpRequestId: request.id,
+                                });
+                                toast.success("გამოძახება გაუქმებულია");
+                              } catch (error: any) {
+                                console.log(error);
+                                toast.error(error?.error || "მოხდა შეცდომა");
+                              }
+                            }}
+                          >
+                            გაუქმება
+                          </Button>
+                        )}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white"
+                      } `}
+                    >
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          className="min-w-max"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedItem(request)}
+                        >
+                          {t("home.table.viewDetails")}
+                        </Button>
+                        <Button
+                          className="min-w-max"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if(user?.userType === "SecurityPoliceReadOnly") {
+                              if(!request.document?.url && ['SecurityDispatched', 'Completed'].includes(request.status)) {
+                                openCardModal(request);
+                                return
+                              }
+                              if(!request.document?.url && !['SecurityDispatched', 'Completed'].includes(request.status)) {
+                                toast.error("მიმდინარე სტატუსზე ბარათის მიბმა შეუძლებელია");
+                                return
+                              }
+                            }
+                            if(!request.document?.url) {
+                              toast.error("ბარათი მითითებული არ არის");
+                              return;
+                            }
+                            window.open(request.document!.url, "_blank");
+                          }}
+                        >
+                          ბარათი
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+              {tableData.map((request) => {
+                const mainParent = request.responderParentUser || request.parents?.find(el => el.userType === 'MainParent');
+                const secondaryParent = request.parents?.find(el => el.id != mainParent.id);
+                return (
+                  <TableRow key={request.id}>
+                    <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                      {request.id}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                      {request?.child?.name}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                      {request?.child?.phoneNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                      {mainParent?.name}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                      {mainParent?.phoneNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {secondaryParent?.phoneNumber || "N/A"}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                        {(request.status === "Rejected" ||
+                          request.status === "RejectedByDispatcher") &&
+                          t("home.table.cancelled")}
+                        {!(
+                          request.status === "Rejected" ||
+                          request.status === "RejectedByDispatcher"
+                        ) &&
+                          (request.status === "Accepted" ||
+                            !!request.parentRespondedTimestamp ||
+                            (request.status === "Completed" &&
+                              request.parentRespondedTimestamp)) &&
+                          t("home.table.acceptedByParent")}
+                        {!(
+                          request.status === "Rejected" ||
+                          request.status === "RejectedByDispatcher"
+                        ) &&
+                          (request.status === "AutoAccepted" ||
+                            request.status === "SecurityDispatched") &&
+                          !request.parentRespondedTimestamp &&
+                          t("home.table.acceptedBySystem")}
+                        {request.status === "Completed" &&
+                          !request.parentRespondedTimestamp &&
+                          t("home.table.acceptedBySystem")}
+                      </TableCell>
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {request.status === "Pending" && "გამოძახება მუშავდება"}
+                      {request.status === "Accepted" &&
+                        "მშობელმა დაადასტურა გამოძახება"}
+                      {request.status === "AutoAccepted" &&
+                        "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
+                      {request.status === "SecurityDispatched" &&
+                        "დაცვის გუნდი გზაშია"}
+                      {request.status === "Completed" && "გამოძახება დასრულდა"}
+                      {request.status === "Rejected" &&
+                        "გამოძახება გააუქმა მშობელმა"}
+                      {request.status === "RejectedByDispatcher" &&
+                        "გამოძახება გააუქმა ოპერატორმა"}
+                      {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
+  
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          className="min-w-max"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedItem(request)}
+                        >
+                          {t("home.table.viewDetails")}
+                        </Button>
+                        <Button
+                          className="min-w-max"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if(user?.userType === "SecurityPoliceReadOnly") {
+                              if(!request.document?.url && ['SecurityDispatched', 'Completed'].includes(request.status)) {
+                                openCardModal(request);
+                                return
+                              }
+                              toast.error("მიმდინარე სტატუსზე ბარათის მიბმა შეუძლებელია");
                               return
                             }
-                            toast.error("მიმდინარე სტატუსზე ბარათის მიბმა შეუძლებელია");
-                            return
-                          }
-                          if(!request.document?.url) {
-                            toast.error("ბარათი მითითებული არ არის");
-                            return;
-                          }
-                          window.open(request.document!.url, "_blank");
-                        }}
-                      >
-                        ბარათი
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                            if(!request.document?.url) {
+                              toast.error("ბარათი მითითებული არ არის");
+                              return;
+                            }
+                            window.open(request.document!.url, "_blank");
+                          }}
+                        >
+                          ბარათი
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </div>
