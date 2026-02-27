@@ -95,6 +95,7 @@ export interface UsersListFiltersModel {
     Page: number | null;
     PageSize: number | null;
     SearchTerm: string | null;
+    hasActiveSubscription?: boolean | null;
 }
 
 export interface ChildModel {

@@ -14,6 +14,9 @@ import { Modal } from "../components/ui/modal";
 import Button from "../components/ui/button";
 import { UsersListResponseModel } from "../store/server/requets/interfaces";
 import Input from "../components/form/input/InputField";
+import Checkbox from "../components/form/input/Checkbox";
+import api from "../utils/axios-config";
+import { DownloadIcon } from "../icons";
 import dayjs from "dayjs";
 
 const UsersList = () => {
@@ -46,6 +49,8 @@ const UsersList = () => {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
+  const [onlyActive, setOnlyActive] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [detailModal, setDetailModal] = useState<{
     title: string;
     rows: { label: string; value: string | number | React.ReactNode }[];
@@ -58,8 +63,43 @@ const UsersList = () => {
     Page: page + 1,
     PageSize: 10,
     SearchTerm: search || null,
+    hasActiveSubscription: onlyActive ? true : null,
   });
-  
+
+  const handleExportUsers = async () => {
+    try {
+      setIsExporting(true);
+
+      const params: Record<string, string | boolean> = {};
+      if (search) {
+        params.SearchTerm = search;
+      }
+      if (onlyActive) {
+        params.hasActiveSubscription = true;
+      }
+
+      const response = await api.get("user/export", {
+        responseType: "blob",
+        params,
+      });
+
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "users.csv";
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <>
@@ -220,7 +260,24 @@ const UsersList = () => {
         bodyClassName="sm:p-0"
         renderHeader={() => {
           return (
-            <div className="flex items-center gap-2 w-fit pr-6">
+            <div className="flex items-center gap-4 w-fit pr-6">
+              <Button
+                loading={isExporting}
+                onClick={handleExportUsers}
+                variant="outline"
+                size="sm"
+                className="w-max min-w-max"
+              >
+                ექსპორტი <DownloadIcon className="size-5" />
+              </Button>
+              <Checkbox
+                label="მხოლოდ აქტიური გამოწერა"
+                checked={onlyActive}
+                onChange={(checked) => {
+                  setPage(0);
+                  setOnlyActive(checked);
+                }}
+              />
               <Input
                 placeholder="ძებნა"
                 onChange={(e) => {
