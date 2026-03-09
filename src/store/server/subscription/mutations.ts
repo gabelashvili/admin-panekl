@@ -21,7 +21,7 @@ const useActivateFreeTrial = () => {
 const useCancelSubscription = () => {
   return useMutation({
     mutationFn: async (values: CancelSubscriptionRequest): Promise<any> => {
-      const { data } = await api.post("admin/subscription/cancel", values);
+      const { data } = await api.post("subscription/cancel", values);
       return data;
     },
   });
