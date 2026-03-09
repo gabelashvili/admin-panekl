@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router";
 import { ChevronDownIcon, HorizontaLDots, TableIcon, TaskIcon, UserIcon } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import useAuthedUserStore from "../store/client/useAuthedUserStore";
-import { DatabaseIcon, MessageCircleIcon, GiftIcon } from "lucide-react";
+import { CircleX, DatabaseIcon, MessageCircleIcon, GiftIcon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -68,6 +68,11 @@ const AppSidebar: React.FC = () => {
             icon: <GiftIcon />,
             name: "უფასო საცდელი ვერსია",
             path: "/free-trial",
+          },
+          {
+            icon: <CircleX />,
+            name: "გამოწერის გაუქმება",
+            path: "/subscription-cancel",
           },
         ]
       : []),

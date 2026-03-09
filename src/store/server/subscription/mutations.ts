@@ -5,6 +5,10 @@ interface ActivateFreeTrialRequest {
   phoneNumbers: string[];
 }
 
+interface CancelSubscriptionRequest {
+  phoneNumber: string;
+}
+
 const useActivateFreeTrial = () => {
   return useMutation({
     mutationFn: async (values: ActivateFreeTrialRequest): Promise<any> => {
@@ -14,5 +18,14 @@ const useActivateFreeTrial = () => {
   });
 };
 
-export { useActivateFreeTrial };
-export type { ActivateFreeTrialRequest };
+const useCancelSubscription = () => {
+  return useMutation({
+    mutationFn: async (values: CancelSubscriptionRequest): Promise<any> => {
+      const { data } = await api.post("admin/subscription/cancel", values);
+      return data;
+    },
+  });
+};
+
+export { useActivateFreeTrial, useCancelSubscription };
+export type { ActivateFreeTrialRequest, CancelSubscriptionRequest };
