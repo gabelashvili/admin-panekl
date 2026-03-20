@@ -245,6 +245,28 @@ const UsersList = () => {
                           <div><span className="text-gray-500 dark:text-gray-400">ასაკი:</span> <span className="font-medium">{dayjs().diff(dayjs(child.birthdate), 'year')}</span></div>
                           <div><span className="text-gray-500 dark:text-gray-400">სქესი:</span> <span className="font-medium">{child.gender === 'Male' ? 'მამრობითი' : 'მდედრობითი'}</span></div>
                           <div><span className="text-gray-500 dark:text-gray-400">გამოძახების სტატისტიკა:</span> <span className="font-medium">{child.numberOfSosRequestsSent}</span></div>
+                          {child.deviceInfo && (
+                            <>
+                              <div className="sm:col-span-2 col-span-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                <span className="text-sm uppercase text-black dark:text-gray-400 font-semibold">
+                                  მოწყობილობის ინფორმაცია:
+                                </span>
+                              </div>
+                              <div><span className="text-gray-500 dark:text-gray-400">მოდელი:</span> <span className="font-medium">{child.deviceInfo.model}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">მწარმოებელი:</span> <span className="font-medium">{child.deviceInfo.manufacturer}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">სისტემის სახელი:</span> <span className="font-medium">{child.deviceInfo.systemName}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">სისტემის ვერსია:</span> <span className="font-medium">{child.deviceInfo.systemVersion}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">მოწყობილობის ID:</span> <span className="font-medium">{child.deviceInfo.deviceId}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">API დონე:</span> <span className="font-medium">{child.deviceInfo.apiLevel}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">ტაბლეტი:</span> <span className="font-medium">{child.deviceInfo.isTablet ? 'დიახ' : 'არა'}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">ემულატორი:</span> <span className="font-medium">{child.deviceInfo.isEmulator ? 'დიახ' : 'არა'}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">მოწყობილობის ტიპი:</span> <span className="font-medium">{child.deviceInfo.deviceType}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">ეკრანის სიგანე:</span> <span className="font-medium">{child.deviceInfo.screenWidth}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">ეკრანის სიმაღლე:</span> <span className="font-medium">{child.deviceInfo.screenHeight}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">პიქსელების სიმკვრივე:</span> <span className="font-medium">{child.deviceInfo.pixelDensity}</span></div>
+                              <div><span className="text-gray-500 dark:text-gray-400">ფონტის მასშტაბი:</span> <span className="font-medium">{child.deviceInfo.fontScale}</span></div>
+                            </>
+                          )}
                         </div>
                       </div>
                     ))}

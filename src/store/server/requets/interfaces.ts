@@ -132,7 +132,22 @@ export interface UsersListResponseModel {
         "gender": "Male" | "Female",
         "numberOfSosRequestsSent": number,
         "numberOfSosRequestsReceived": number,
-        "timeStamp": string
+        "timeStamp": string,
+        "deviceInfo": {
+            "model": string,
+            "manufacturer": "string",
+            "systemName": string,
+            "systemVersion": string,
+            "deviceId": string,
+            "apiLevel": number,
+            "isTablet": boolean,
+            "isEmulator": boolean,
+            "deviceType": string,
+            "screenWidth": number,
+            "screenHeight": number,
+            "pixelDensity": number,
+            "fontScale": number
+        } | null;
     }>;
     timeStamp: Date;
     attribution: {
