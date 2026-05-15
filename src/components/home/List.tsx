@@ -67,6 +67,9 @@ export default function List({ data, activeItems }: ListProps) {
   const [openCardData, setOpenCardData] = useState<
     RequestResponseModel["helpRequests"][number] | null
   >(null);
+  const [cancelItem, setCancelItem] = useState<
+    RequestResponseModel["helpRequests"][number] | null
+  >(null);
   const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
   const renderOptionsBasedOnStatus = (
     status: RequestResponseModel["helpRequests"][number]["status"]
@@ -473,6 +476,35 @@ export default function List({ data, activeItems }: ListProps) {
           </div>
         </div>
       </Modal>
+      <Modal
+        isOpen={!!cancelItem}
+        onClose={() => setCancelItem(null)}
+        className="max-w-[400px] m-4"
+      >
+        <div className="space-y-4 relative w-full max-w-[400px] rounded-3xl bg-white p-6 dark:bg-gray-900">
+          <h1 className="font-medium text-xl dark:text-white">გაუქმების დადასტურება</h1>
+          <p className="text-gray-600 dark:text-gray-400">დარწმუნებული ხართ, რომ გსურთ გამოძახების გაუქმება?</p>
+          <div className="flex gap-2 justify-end mt-4">
+            <Button variant="outline" onClick={() => setCancelItem(null)}>
+              არა
+            </Button>
+            <Button
+              onClick={async () => {
+                try {
+                  await reqCancelMutation.mutateAsync({ helpRequestId: cancelItem!.id });
+                  toast.success("გამოძახება გაუქმებულია");
+                } catch (error: any) {
+                  console.log(error);
+                  toast.error(error?.error || "მოხდა შეცდომა");
+                }
+                setCancelItem(null);
+              }}
+            >
+              დიახ, გაუქმება
+            </Button>
+          </div>
+        </div>
+      </Modal>
       {openCardData && (
         <PrintCardModal
           data={openCardData}
@@ -718,17 +750,7 @@ export default function List({ data, activeItems }: ListProps) {
                             variant="outline"
                             size="sm"
                             className="w-max min-w-max"
-                            onClick={async () => {
-                              try {
-                                await reqCancelMutation.mutateAsync({
-                                  helpRequestId: request.id,
-                                });
-                                toast.success("გამოძახება გაუქმებულია");
-                              } catch (error: any) {
-                                console.log(error);
-                                toast.error(error?.error || "მოხდა შეცდომა");
-                              }
-                            }}
+                            onClick={() => setCancelItem(request)}
                           >
                             გაუქმება
                           </Button>
