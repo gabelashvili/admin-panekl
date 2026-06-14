@@ -8,70 +8,49 @@ export interface RequestUser {
     address?: string | null;
   }
 
+interface RequestMemberModel {
+    id: string;
+    name: string;
+    phoneNumber: string;
+    secondaryNumber: string | null;
+    personalNumber: string;
+    longitude: string;
+    latitude: string;
+    address: string;
+    userType: string;
+    age: number;
+}
 
  interface RequestModel {
-    "id": string,
-    "child": {
-        "id": string,
-        "name": string,
-        "phoneNumber": string,
-        "secondaryNumber": string,
-        "personalNumber": string,
-        "longitude": string,
-        "latitude": "",
-        "address": string,
-        "userType": string,
-        "age": number
-    },
-    "responderParentUser": {
-        "id": string,
-        "name": string,
-        "phoneNumber": string,
-        "secondaryNumber": string,
-        "personalNumber": string,
-        "longitude": string,
-        "latitude": string,
-        "address": string,
-        "userType": string,
-        "age": number
-    },
-    "longitude": string,
-    "latitude": string,
-    "address": string,
-    "timestamp": string,
-    "parentRespondedTimestamp": string | null,
+    id: string;
+    requestingUser: RequestMemberModel;
+    circleMembers: Array<RequestMemberModel>;
+    longitude: string;
+    latitude: string;
+    address: string;
+    timestamp: string;
+    parentRespondedTimestamp?: string | null;
     status: | "Pending"
     | "Rejected"
     | "Accepted"
     | "AutoAccepted"
     | "SecurityDispatched"
     | "RejectedByDispatcher"
+    | "CancelledByDispatcher"
     | "Completed"
     | "Expired"
     | "Cancelled";
-    "updatedTimestamp": "2025-12-31T09:05:15.140949Z",
-    "expirationDate": string,
-    "dispatcherRespondedTimestamp": string,
-    "completedTimestamp": string | null,
-    "document": {
-        "id": string;
-        "url": string,
-        "timestamp": string,
-        "documentType": "HelpRequestCompletion",
-        "adminUserId": string
-    },
-    parents?: Array<{
-        "id": string,
-        "name": string,
-        "phoneNumber": string,
-        "secondaryNumber": string | null,
-        "personalNumber": string,
-        "longitude": string,
-        "latitude": string,
-        "address": string,
-        "userType": string,
-        "age": number
-    }>
+    updatedTimestamp: string;
+    expirationDate: string;
+    dispatcherRespondedTimestamp: string | null;
+    completedTimestamp: string | null;
+    document: {
+        id: string;
+        url: string;
+        timestamp: string;
+        documentType: "HelpRequestCompletion";
+        adminUserId: string;
+    } | null;
 }
 
 

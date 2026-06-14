@@ -362,12 +362,12 @@ const PrintCardForm = ({
     mode: "onChange",
     defaultValues: {
       cardNumber: "",
-      customerName: data?.child?.name,
-      customerAge: data?.child?.age.toString(),
-      customerParentName: data?.responderParentUser?.name || data?.parents?.[0]?.name || '',
+      customerName: data?.requestingUser?.name,
+      customerAge: data?.requestingUser?.age.toString(),
+      customerParentName: data?.circleMembers?.find(m => m.id !== data.requestingUser.id)?.name || '',
       policeName: "",
       doctorName: "",
-      address: data?.child?.address || data?.address || "",
+      address: data?.requestingUser?.address || data?.address || "",
       arriveTime: "",
       reason: "",
       finishTime: "",
@@ -538,7 +538,7 @@ const PrintCardForm = ({
                   label="შემთხვევის მისამართი"
                   value={watch("address")}
                   id="address"
-                  disabled={!!data?.address || !!data?.child?.address}
+                  disabled={!!data?.address || !!data?.requestingUser?.address}
                   onChange={(value) => {
                     if(value.length > 100) {
                       toast.error("სიმბოლოების მაქსიმალური რაოდენობა არის 100");

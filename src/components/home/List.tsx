@@ -22,7 +22,7 @@ import {
 import { toast } from "react-toastify";
 import useAuthedUserStore from "../../store/client/useAuthedUserStore";
 import CommentBox from "../comment";
-import { CopyIcon, CheckCircle2 } from "lucide-react";
+import { CopyIcon } from "lucide-react";
 import PrintCardModal from "../print-card/PrintCardModal";
 
 interface ListProps {
@@ -80,6 +80,10 @@ export default function List({ data, activeItems }: ListProps) {
           label: t("home.table.cancel"),
           value: "Cancelled",
         },
+         {
+          label: t("home.table.securityDispatched"),
+          value: "SecurityDispatched",
+        },
       ];
     }
     if (
@@ -90,16 +94,16 @@ export default function List({ data, activeItems }: ListProps) {
       return [];
     }
 
-    if (status === "Accepted" || status === "AutoAccepted") {
-      return [
-        {
-          label: t("home.table.securityDispatched"),
-          value: "SecurityDispatched",
-        },
-      ];
-    }
+    // if (status === "Accepted" || status === "AutoAccepted") {
+    //   return [
+    //     {
+    //       label: t("home.table.securityDispatched"),
+    //       value: "SecurityDispatched",
+    //     },
+    //   ];
+    // }
 
-    if (status === "SecurityDispatched") {
+    if (status === "Accepted") {
       return [
         {
           label: t("home.table.finish"),
@@ -183,29 +187,29 @@ export default function List({ data, activeItems }: ListProps) {
               onClick={() => {
                 const data = [
                   {
-                    title: "შვილის ინფორმაცია",
+                    title: t("home.requesetDetails.childrenInfo"),
                     name: {
                       title: "სახელი, გვარი",
-                      value: selectedItem?.child?.name,
+                      value: selectedItem?.requestingUser?.name,
                     },
                     age: {
                       title: "ასაკი",
-                      value: selectedItem?.child?.age,
+                      value: selectedItem?.requestingUser?.age,
                     },
                     phone: {
                       title: "ტელეფონის ნომერი",
-                      value: selectedItem?.child?.phoneNumber,
+                      value: selectedItem?.requestingUser?.phoneNumber,
                     },
                   },
                   {
-                    title: "მშობლის ინფორმაცია",
+                    title: t("home.requesetDetails.parentInfo"),
                     name: {
                       title: "სახელი, გვარი",
-                      value: selectedItem?.responderParentUser ? selectedItem?.responderParentUser?.name : selectedItem?.parents?.[0]?.name,
+                      value: selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.name,
                     },
                     phone: {
                       title: "ტელეფონის ნომერი",
-                      value: selectedItem?.responderParentUser ? selectedItem?.responderParentUser?.phoneNumber : selectedItem?.parents?.[0]?.phoneNumber,
+                      value: selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.phoneNumber,
                     },
                   },
                   {
@@ -217,7 +221,7 @@ export default function List({ data, activeItems }: ListProps) {
                     address: {
                       title: "მისამართი",
                       value:
-                        selectedItem?.child?.address || selectedItem?.address,
+                        selectedItem?.requestingUser?.address || selectedItem?.address,
                     },
                   },
                 ];
@@ -241,7 +245,7 @@ export default function List({ data, activeItems }: ListProps) {
                         სახელი, გვარი
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.child?.name}
+                        {selectedItem?.requestingUser?.name}
                       </p>
                     </div>
                     <div>
@@ -249,7 +253,7 @@ export default function List({ data, activeItems }: ListProps) {
                         ასაკი
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.child?.age}
+                        {selectedItem?.requestingUser?.age}
                       </p>
                     </div>
                     <div>
@@ -257,7 +261,7 @@ export default function List({ data, activeItems }: ListProps) {
                         {t("common.phoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.child?.phoneNumber}
+                        {selectedItem?.requestingUser?.phoneNumber}
                       </p>
                     </div>
                   </div>
@@ -268,35 +272,17 @@ export default function List({ data, activeItems }: ListProps) {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div className="w-full">
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    {selectedItem?.parents?.length === 1 ? t("home.requesetDetails.parentInfo") : t("home.requesetDetails.parentsInfo")}
+                    {(selectedItem?.circleMembers?.filter(m => m.id !== selectedItem.requestingUser.id)?.length ?? 0) === 1 ? t("home.requesetDetails.parentInfo") : t("home.requesetDetails.parentsInfo")}
                   </h4>
 
                   <div className="grid grid-cols-2 gap-4 w-full">
-                    {(selectedItem?.parents && selectedItem.parents.length > 0
-                      ? selectedItem.parents
-                      : selectedItem?.responderParentUser
-                      ? [selectedItem.responderParentUser]
-                      : []
-                    ).map((parent, index) => {
-                      const isResponderParent =
-                        !!selectedItem?.responderParentUser &&
-                        parent?.id === selectedItem?.responderParentUser?.id;
-
+                    {(selectedItem?.circleMembers?.filter(m => m.id !== selectedItem.requestingUser.id) ?? []).map((parent, index) => {
                       return (
                         <div
                           key={parent.id ?? index}
-                          className={`relative p-3 rounded-xl border w-full ${
-                            isResponderParent
-                              ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                              : "border-gray-200 dark:border-gray-800"
-                          }`}
+                          className="relative p-3 rounded-xl border w-full border-gray-200 dark:border-gray-800"
                         >
-                          {isResponderParent && (
-                            <div className="absolute right-3 top-3 flex items-center gap-1 text-green-600 dark:text-green-400 text-xs font-medium">
-                              <CheckCircle2 className="w-4 h-4" />
-                              {/* <span>გამოძახების მიმღები</span> */}
-                            </div>
-                          )}
+
 
                           <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                             სახელი, გვარი
@@ -321,7 +307,7 @@ export default function List({ data, activeItems }: ListProps) {
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
               <div className="">
                 <div>
-                  {(selectedItem?.child?.address ||
+                  {(selectedItem?.requestingUser?.address ||
                     selectedItem?.address) && (
                       <>
                         <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
@@ -332,7 +318,7 @@ export default function List({ data, activeItems }: ListProps) {
                             მისამართი
                           </p>
                           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                            {selectedItem?.child?.address || selectedItem?.address}
+                            {selectedItem?.requestingUser?.address || selectedItem?.address}
                           </p>
                         </div>
                       </>
@@ -385,8 +371,8 @@ export default function List({ data, activeItems }: ListProps) {
                           <AnyReactComponent
                             lat={Number(selectedItem?.latitude) || 0}
                             lng={Number(selectedItem?.longitude) || 0}
-                            text={`${selectedItem?.child?.name?.[0] ?? ""} ${
-                              selectedItem?.child?.name
+                            text={`${selectedItem?.requestingUser?.name?.[0] ?? ""} ${
+                              selectedItem?.requestingUser?.name
                                 ?.split(" ")?.[1]?.[0] || ""
                             }`}
                           />
@@ -410,8 +396,8 @@ export default function List({ data, activeItems }: ListProps) {
               </div>
             </div>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
-              {selectedItem?.responderParentUser?.id && (
-                <CommentBox parentUserId={selectedItem.responderParentUser.id} />
+              {selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.id && (
+                <CommentBox parentUserId={selectedItem.circleMembers.find(m => m.id !== selectedItem.requestingUser.id)!.id} />
               )}
             </div>
           </div>
@@ -550,7 +536,7 @@ export default function List({ data, activeItems }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  მეორე მშობლის ნომერი
+                  {t("home.table.secondCircleMemberPhoneNumber")}
                 </TableCell>
                 <TableCell
                   isHeader
@@ -587,8 +573,9 @@ export default function List({ data, activeItems }: ListProps) {
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 cursor-pointer dark:divide-white/[0.05] [&>tr]:even:bg-gray-50 dark:[&>tr]:even:bg-gray-900/50 [&>tr]:hover:bg-gray-200 dark:[&>tr]:hover:bg-gray-900">
               {activeItems.map((request) => {
-                const mainParent = request.responderParentUser || request.parents?.find(el => el.userType === 'MainParent');
-                const secondaryParent = request.parents?.find(el => el.id != mainParent?.id);
+                const nonRequestingMembers = request.circleMembers?.filter(m => m.id !== request.requestingUser.id) ?? [];
+                const mainParent = nonRequestingMembers[0];
+                const secondaryParent = nonRequestingMembers[1];
                 return (
                   <TableRow
                     key={request.id}
@@ -620,7 +607,7 @@ export default function List({ data, activeItems }: ListProps) {
                           : "bg-[rgb(144,_10,_22)] text-white font-medium"
                       } `}
                     >
-                      {request?.child?.name}
+                      {request?.requestingUser?.name}
                     </TableCell>
                     <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -629,7 +616,7 @@ export default function List({ data, activeItems }: ListProps) {
                           : "bg-[rgb(144,_10,_22)] text-white font-medium"
                       } `}
                     >
-                      {request?.child?.phoneNumber}
+                      {request?.requestingUser?.phoneNumber}
                     </TableCell>
                     <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -719,6 +706,7 @@ export default function List({ data, activeItems }: ListProps) {
                       {request.status === "RejectedByDispatcher" &&
                         "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
+                      {request.status === "CancelledByDispatcher" && "გამოძახება გააუქმა დისპეჩერმა"}
                     </TableCell>
                     <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -802,18 +790,19 @@ export default function List({ data, activeItems }: ListProps) {
                 )
               })}
               {tableData.map((request) => {
-                const mainParent = request.responderParentUser || request.parents?.find(el => el.userType === 'MainParent');
-                const secondaryParent = request.parents?.find(el => el.id != mainParent.id);
+                const nonRequestingMembers = request.circleMembers?.filter(m => m.id !== request.requestingUser.id) ?? [];
+                const mainParent = nonRequestingMembers[0];
+                const secondaryParent = nonRequestingMembers[1];
                 return (
                   <TableRow key={request.id}>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                       {request.id}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                      {request?.child?.name}
+                      {request?.requestingUser?.name}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                      {request?.child?.phoneNumber}
+                      {request?.requestingUser?.phoneNumber}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                       {mainParent?.name}
@@ -868,7 +857,7 @@ export default function List({ data, activeItems }: ListProps) {
                       {request.status === "RejectedByDispatcher" &&
                         "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
-  
+                      {request.status === "CancelledByDispatcher" && "გამოძახება გააუქმა დისპეჩერმა"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
