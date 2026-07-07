@@ -12,7 +12,7 @@ import {
 import ComponentCard from "../components/common/ComponentCard";
 import { Modal } from "../components/ui/modal";
 import Button from "../components/ui/button";
-import { UsersListResponseModel } from "../store/server/requets/interfaces";
+import { UsersListUserModel } from "../store/server/requets/interfaces";
 import Input from "../components/form/input/InputField";
 import Checkbox from "../components/form/input/Checkbox";
 import api from "../utils/axios-config";
@@ -54,9 +54,8 @@ const UsersList = () => {
   const [detailModal, setDetailModal] = useState<{
     title: string;
     rows: { label: string; value: string | number | React.ReactNode }[];
-    children?: UsersListResponseModel["children"];
-    campaign?: UsersListResponseModel["attribution"] | null;
-    deviceInfo?: UsersListResponseModel["deviceInfo"] | null;
+    campaign?: UsersListUserModel["attribution"] | null;
+    deviceInfo?: UsersListUserModel["deviceInfo"] | null;
   } | null>(null);
 
   const { data: allData } = useUsersListQuery({
@@ -124,18 +123,20 @@ const UsersList = () => {
 
           {detailModal && (
             <div className="space-y-4  max-h-[80vh] overflow-y-auto">
-              <CollapsibleSection title="მშობლის ინფორმაცია">
+              <CollapsibleSection title="დამატებითი ინფორმაცია">
                 <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
                   {detailModal.rows
                     .filter((row) =>
                       [
                         "ტელეფონი",
-                        "სარეზერვო ტელეფონი",
+                        "წრის წევრის ნომერი",
                         "ელ.ფოსტა",
                         "პირადი ნომერი",
+                        "მომხმარებლის ტიპი",
+                        "დაბადების თარიღი",
+                        "სქესი",
                         "რეგისტრაცია",
                         "კამპანია",
-                        "პაკეტი",
                         "სტატუსი",
                         "ტიპი",
                       ].includes(row.label)
@@ -152,21 +153,28 @@ const UsersList = () => {
                 </div>
               </CollapsibleSection>
 
-              {detailModal.campaign && (
-                <CollapsibleSection title="კამპანია">
-                  <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
-                    {Object.entries(detailModal.campaign).map(([key, value]) => (
+              <CollapsibleSection title="გამოძახების სტატისტიკა">
+                <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                  {detailModal.rows
+                    .filter((row) =>
+                      [
+                        "დასრულებული გამოძახებები",
+                        "უარყოფილი მოთხოვნები",
+                        "უფასო გამოძახებები",
+                        "ფასიანი გამოძახებები",
+                      ].includes(row.label)
+                    )
+                    .map((row) => (
                       <div
-                        key={key}
+                        key={row.label}
                         className="flex justify-between gap-4 px-4 py-3 bg-gray-50 dark:bg-gray-800/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       >
-                        <span className="text-sm text-gray-600 dark:text-gray-300">{key}</span>
-                        <span className="font-medium text-gray-900 dark:text-white text-right">{String(value ?? "—")}</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">{row.label}</span>
+                        <span className="font-medium text-gray-900 dark:text-white text-right">{row.value}</span>
                       </div>
                     ))}
-                  </div>
-                </CollapsibleSection>
-              )}
+                </div>
+              </CollapsibleSection>
 
               {detailModal?.deviceInfo && (
                 <CollapsibleSection title="მოწყობილობის ინფორმაცია">
@@ -207,67 +215,16 @@ const UsersList = () => {
                 </CollapsibleSection>
               )}
 
-              <CollapsibleSection title="გამოძახების სტატისტიკა">
-                <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-                  {detailModal.rows
-                    .filter((row) =>
-                      [
-                        "ავტომატური თანხმობა",
-                        "მშობლის თანხმობა",
-                        "უარყოფილი მოთხოვნები",
-                      ].includes(row.label)
-                    )
-                    .map((row) => (
+              {detailModal.campaign && (
+                <CollapsibleSection title="კამპანია">
+                  <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+                    {Object.entries(detailModal.campaign).map(([key, value]) => (
                       <div
-                        key={row.label}
+                        key={key}
                         className="flex justify-between gap-4 px-4 py-3 bg-gray-50 dark:bg-gray-800/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       >
-                        <span className="text-sm text-gray-600 dark:text-gray-300">{row.label}</span>
-                        <span className="font-medium text-gray-900 dark:text-white text-right">{row.value}</span>
-                      </div>
-                    ))}
-                </div>
-              </CollapsibleSection>
-
-              {detailModal.children && (
-                <CollapsibleSection title="შვილები">
-                  <div className="grid gap-4">
-                    {detailModal.children.map((child) => (
-                      <div
-                        key={child.id}
-                        className="rounded-xl border border-gray-100 dark:border-gray-800 p-4 bg-white dark:bg-gray-900/60 shadow-sm"
-                      >
-                        <div className="grid sm:grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-200">
-                          <div><span className="text-gray-500 dark:text-gray-400">სახელი:</span> <span className="font-medium">{child.name}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">პირადი ნომერი:</span> <span className="font-medium">{child.personalNumber}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">ტელეფონის ნომერი:</span> <span className="font-medium">{child.phoneNumber}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">დაბადების თარიღი:</span> <span className="font-medium">{dayjs(child.birthdate).format('MM/DD/YYYY')}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">ასაკი:</span> <span className="font-medium">{dayjs().diff(dayjs(child.birthdate), 'year')}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">სქესი:</span> <span className="font-medium">{child.gender === 'Male' ? 'მამრობითი' : 'მდედრობითი'}</span></div>
-                          <div><span className="text-gray-500 dark:text-gray-400">გამოძახების სტატისტიკა:</span> <span className="font-medium">{child.numberOfSosRequestsSent}</span></div>
-                          {child.deviceInfo && (
-                            <>
-                              <div className="sm:col-span-2 col-span-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                                <span className="text-sm uppercase text-black dark:text-gray-400 font-semibold">
-                                  მოწყობილობის ინფორმაცია:
-                                </span>
-                              </div>
-                              <div><span className="text-gray-500 dark:text-gray-400">მოდელი:</span> <span className="font-medium">{child.deviceInfo.model}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">მწარმოებელი:</span> <span className="font-medium">{child.deviceInfo.manufacturer}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">სისტემის სახელი:</span> <span className="font-medium">{child.deviceInfo.systemName}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">სისტემის ვერსია:</span> <span className="font-medium">{child.deviceInfo.systemVersion}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">მოწყობილობის ID:</span> <span className="font-medium">{child.deviceInfo.deviceId}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">API დონე:</span> <span className="font-medium">{child.deviceInfo.apiLevel}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">ტაბლეტი:</span> <span className="font-medium">{child.deviceInfo.isTablet ? 'დიახ' : 'არა'}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">ემულატორი:</span> <span className="font-medium">{child.deviceInfo.isEmulator ? 'დიახ' : 'არა'}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">მოწყობილობის ტიპი:</span> <span className="font-medium">{child.deviceInfo.deviceType}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">ეკრანის სიგანე:</span> <span className="font-medium">{child.deviceInfo.screenWidth}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">ეკრანის სიმაღლე:</span> <span className="font-medium">{child.deviceInfo.screenHeight}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">პიქსელების სიმკვრივე:</span> <span className="font-medium">{child.deviceInfo.pixelDensity}</span></div>
-                              <div><span className="text-gray-500 dark:text-gray-400">ფონტის მასშტაბი:</span> <span className="font-medium">{child.deviceInfo.fontScale}</span></div>
-                            </>
-                          )}
-                        </div>
+                        <span className="text-sm text-gray-600 dark:text-gray-300">{key}</span>
+                        <span className="font-medium text-gray-900 dark:text-white text-right">{String(value ?? "—")}</span>
                       </div>
                     ))}
                   </div>
@@ -337,6 +294,12 @@ const UsersList = () => {
                     isHeader
                     className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   >
+                    მომხმარებლის ტიპი
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-4 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
+                  >
                     ტელეფონის ნომერი
                   </TableCell>
                   <TableCell
@@ -373,10 +336,13 @@ const UsersList = () => {
                       {dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm')}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {user.parentName}
+                      {user.name}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {user.parentNumber}
+                      {user.isMinor ? "არასრულწლოვანი" : "სრულწლოვანი"}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {user.phoneNumber}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user?.deviceInfo?.systemName}
@@ -392,22 +358,24 @@ const UsersList = () => {
                         variant="outline"
                         onClick={() =>
                           setDetailModal({
-                            title: `${user.parentName} - დეტალები`,
+                            title: `${user.name} - დეტალები`,
                             rows: [
-                              { label: "ტელეფონი", value: user.parentNumber },
-                              { label: "სარეზერვო ტელეფონი", value: user.secondaryNumber || "—" },
+                              { label: "ტელეფონი", value: user.phoneNumber },
+                              { label: "წრის წევრის ნომერი", value: user.parentPhoneNumber || "—" },
                               { label: "ელ.ფოსტა", value: user.email || "—" },
                               { label: "პირადი ნომერი", value: user.personalNumber },
+                              { label: "მომხმარებლის ტიპი", value: user.isMinor ? "არასრულწლოვანი" : "სრულწლოვანი" },
+                              { label: "დაბადების თარიღი", value: user.birthdate ? dayjs(user.birthdate).format('MM/DD/YYYY') : "—" },
+                              { label: "სქესი", value: user.gender ? (user.gender === 'Male' ? 'მამრობითი' : 'მდედრობითი') : "—" },
                               { label: "რეგისტრაცია", value: dayjs(user.timeStamp).format('MM/DD/YYYY HH:mm') },
                               { label: "კამპანია", value: user.attribution?.trackerName || "—" },
-                              { label: "პაკეტი", value: user.subscriptionPlan },
                               { label: "სტატუსი", value: user.subscriptionStatus },
                               { label: "ტიპი", value: user.subscriptionType },
-                              { label: "ავტომატური თანხმობა", value: user.acceptedSosRequestsByOperator },
-                              { label: "მშობლის თანხმობა", value: user.acceptedSosRequestsByParent },
-                              { label: "უარყოფილი მოთხოვნები", value: user.rejectedSosRequests },
+                              { label: "დასრულებული გამოძახებები", value: user.completedHelpRequests },
+                              { label: "უარყოფილი მოთხოვნები", value: user.rejectedHelpRequests },
+                              { label: "უფასო გამოძახებები", value: user.freeHelpRequests },
+                              { label: "ფასიანი გამოძახებები", value: user.paidHelpRequests },
                             ],
-                            children: user.children || [],
                             campaign: user.attribution || null,
                             deviceInfo: user?.deviceInfo || null,
                           })

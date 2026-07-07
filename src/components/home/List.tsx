@@ -50,6 +50,11 @@ type ClipboardSection = {
   [key: string]: ClipboardField | string | number | null | undefined;
 };
 
+const getUserAgeType = (age?: number | null) => {
+  if (age === null || age === undefined) return "-";
+  return age >= 18 ? "სრულწლოვანი" : "არასრულწლოვანი";
+};
+
 export default function List({ data, activeItems }: ListProps) {
   const user = useAuthedUserStore((state) => state.user);
   const { t } = useTranslation();
@@ -187,10 +192,14 @@ export default function List({ data, activeItems }: ListProps) {
               onClick={() => {
                 const data = [
                   {
-                    title: t("home.requesetDetails.childrenInfo"),
+                    title: t("home.requesetDetails.userInfo"),
                     name: {
                       title: "სახელი, გვარი",
                       value: selectedItem?.requestingUser?.name,
+                    },
+                    userAgeType: {
+                      title: "მომხმარებლის ტიპი",
+                      value: getUserAgeType(selectedItem?.requestingUser?.age),
                     },
                     age: {
                       title: "ასაკი",
@@ -202,7 +211,7 @@ export default function List({ data, activeItems }: ListProps) {
                     },
                   },
                   {
-                    title: t("home.requesetDetails.parentInfo"),
+                    title: t("home.requesetDetails.circleMemberInfo"),
                     name: {
                       title: "სახელი, გვარი",
                       value: selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.name,
@@ -236,7 +245,7 @@ export default function List({ data, activeItems }: ListProps) {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    {t("home.requesetDetails.childrenInfo")}
+                    {t("home.requesetDetails.userInfo")}
                   </h4>
 
                   <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
@@ -246,6 +255,14 @@ export default function List({ data, activeItems }: ListProps) {
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                         {selectedItem?.requestingUser?.name}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                        მომხმარებლის ტიპი
+                      </p>
+                      <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                        {getUserAgeType(selectedItem?.requestingUser?.age)}
                       </p>
                     </div>
                     <div>
@@ -272,7 +289,7 @@ export default function List({ data, activeItems }: ListProps) {
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div className="w-full">
                   <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-                    {(selectedItem?.circleMembers?.filter(m => m.id !== selectedItem.requestingUser.id)?.length ?? 0) === 1 ? t("home.requesetDetails.parentInfo") : t("home.requesetDetails.parentsInfo")}
+                    {(selectedItem?.circleMembers?.filter(m => m.id !== selectedItem.requestingUser.id)?.length ?? 0) === 1 ? t("home.requesetDetails.circleMemberInfo") : t("home.requesetDetails.circleMembersInfo")}
                   </h4>
 
                   <div className="grid grid-cols-2 gap-4 w-full">
@@ -397,7 +414,7 @@ export default function List({ data, activeItems }: ListProps) {
             </div>
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
               {selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.id && (
-                <CommentBox parentUserId={selectedItem.circleMembers.find(m => m.id !== selectedItem.requestingUser.id)!.id} />
+                <CommentBox userId={selectedItem.circleMembers.find(m => m.id !== selectedItem.requestingUser.id)!.id} />
               )}
             </div>
           </div>
@@ -512,31 +529,25 @@ export default function List({ data, activeItems }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t("home.table.childName")}
+                  {t("home.table.userName")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t("home.table.childPhoneNumber")}
+                  მომხმარებლის ტიპი
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t("home.table.parentName")}
+                  {t("home.table.userPhoneNumber")}
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t("home.table.parentPhoneNumber")}
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
-                >
-                  {t("home.table.secondCircleMemberPhoneNumber")}
+                  {t("home.table.circleMemberName")}
                 </TableCell>
                 <TableCell
                   isHeader
@@ -574,8 +585,7 @@ export default function List({ data, activeItems }: ListProps) {
             <TableBody className="divide-y divide-gray-100 cursor-pointer dark:divide-white/[0.05] [&>tr]:even:bg-gray-50 dark:[&>tr]:even:bg-gray-900/50 [&>tr]:hover:bg-gray-200 dark:[&>tr]:hover:bg-gray-900">
               {activeItems.map((request) => {
                 const nonRequestingMembers = request.circleMembers?.filter(m => m.id !== request.requestingUser.id) ?? [];
-                const mainParent = nonRequestingMembers[0];
-                const secondaryParent = nonRequestingMembers[1];
+                const mainCircleMember = nonRequestingMembers[0];
                 return (
                   <TableRow
                     key={request.id}
@@ -616,6 +626,15 @@ export default function List({ data, activeItems }: ListProps) {
                           : "bg-[rgb(144,_10,_22)] text-white font-medium"
                       } `}
                     >
+                      {getUserAgeType(request?.requestingUser?.age)}
+                    </TableCell>
+                    <TableCell
+                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
+                        request.status === "Pending"
+                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
+                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
+                      } `}
+                    >
                       {request?.requestingUser?.phoneNumber}
                     </TableCell>
                     <TableCell
@@ -625,25 +644,7 @@ export default function List({ data, activeItems }: ListProps) {
                           : "bg-[rgb(144,_10,_22)] text-white font-medium"
                       } `}
                     >
-                      {mainParent?.name}
-                    </TableCell>
-                    <TableCell
-                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                        request.status === "Pending"
-                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                      } `}
-                    >
-                      {mainParent?.phoneNumber}
-                    </TableCell>
-                    <TableCell
-                      className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
-                        request.status === "Pending"
-                          ? "animate-[highlight-text_2s_ease-in-out_infinite]"
-                          : "bg-[rgb(144,_10,_22)] text-white font-medium"
-                      } `}
-                    >
-                      {secondaryParent?.phoneNumber || "N/A"}
+                      {mainCircleMember?.name}
                     </TableCell>
                     <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -661,7 +662,7 @@ export default function List({ data, activeItems }: ListProps) {
                       ) &&
                         (request.status === "Accepted" ||
                           !!request.parentRespondedTimestamp) &&
-                        t("home.table.acceptedByParent")}
+                        t("home.table.acceptedByCircleMember")}
                       {!(
                         request.status === "Rejected" ||
                         request.status === "RejectedByDispatcher"
@@ -672,7 +673,7 @@ export default function List({ data, activeItems }: ListProps) {
                         t("home.table.acceptedBySystem")}
                       {request.status === "Completed" &&
                         request.parentRespondedTimestamp &&
-                        t("home.table.acceptedByParent")}
+                        t("home.table.acceptedByCircleMember")}
                       {request.status === "Completed" &&
                         !request.parentRespondedTimestamp &&
                         t("home.table.acceptedBySystem")}
@@ -695,14 +696,14 @@ export default function List({ data, activeItems }: ListProps) {
                     >
                       {request.status === "Pending" && "გამოძახება მუშავდება"}
                       {request.status === "Accepted" &&
-                        "მშობელმა დაადასტურა გამოძახება"}
+                        "წრის წევრმა დაადასტურა გამოძახება"}
                       {request.status === "AutoAccepted" &&
                         "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
                       {request.status === "SecurityDispatched" &&
                         "დაცვის გუნდი გზაშია"}
                       {request.status === "Completed" && "გამოძახება დასრულდა"}
                       {request.status === "Rejected" &&
-                        "გამოძახება გააუქმა მშობელმა"}
+                        "გამოძახება გააუქმა წრის წევრმა"}
                       {request.status === "RejectedByDispatcher" &&
                         "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
@@ -791,8 +792,7 @@ export default function List({ data, activeItems }: ListProps) {
               })}
               {tableData.map((request) => {
                 const nonRequestingMembers = request.circleMembers?.filter(m => m.id !== request.requestingUser.id) ?? [];
-                const mainParent = nonRequestingMembers[0];
-                const secondaryParent = nonRequestingMembers[1];
+                const mainCircleMember = nonRequestingMembers[0];
                 return (
                   <TableRow key={request.id}>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
@@ -802,16 +802,13 @@ export default function List({ data, activeItems }: ListProps) {
                       {request?.requestingUser?.name}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                      {getUserAgeType(request?.requestingUser?.age)}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                       {request?.requestingUser?.phoneNumber}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                      {mainParent?.name}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                      {mainParent?.phoneNumber}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {secondaryParent?.phoneNumber || "N/A"}
+                      {mainCircleMember?.name}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
@@ -826,7 +823,7 @@ export default function List({ data, activeItems }: ListProps) {
                             !!request.parentRespondedTimestamp ||
                             (request.status === "Completed" &&
                               request.parentRespondedTimestamp)) &&
-                          t("home.table.acceptedByParent")}
+                          t("home.table.acceptedByCircleMember")}
                         {!(
                           request.status === "Rejected" ||
                           request.status === "RejectedByDispatcher"
@@ -846,14 +843,14 @@ export default function List({ data, activeItems }: ListProps) {
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {request.status === "Pending" && "გამოძახება მუშავდება"}
                       {request.status === "Accepted" &&
-                        "მშობელმა დაადასტურა გამოძახება"}
+                        "წრის წევრმა დაადასტურა გამოძახება"}
                       {request.status === "AutoAccepted" &&
                         "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
                       {request.status === "SecurityDispatched" &&
                         "დაცვის გუნდი გზაშია"}
                       {request.status === "Completed" && "გამოძახება დასრულდა"}
                       {request.status === "Rejected" &&
-                        "გამოძახება გააუქმა მშობელმა"}
+                        "გამოძახება გააუქმა წრის წევრმა"}
                       {request.status === "RejectedByDispatcher" &&
                         "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "Cancelled" && "გამოძახება გაუქმდა"}

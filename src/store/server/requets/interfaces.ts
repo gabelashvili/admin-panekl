@@ -77,58 +77,39 @@ export interface UsersListFiltersModel {
     hasActiveSubscription?: boolean | null;
 }
 
-export interface ChildModel {
-    kidId: string;
-    kidName: string;
-    kidPhoneNumber: string;
-    kidPersonalNumber: string;
-    kidNumberOfSosRequestsSent: number;
-    gender: 'Male' | 'Female';
-    timeStamp: Date;
-    birthdate: string;
+export interface DeviceInfoModel {
+    model: string;
+    manufacturer: string;
+    systemName: string;
+    systemVersion: string;
+    deviceId: string;
+    apiLevel: number;
+    isTablet: boolean;
+    isEmulator: boolean;
+    deviceType: string;
+    screenWidth: number;
+    screenHeight: number;
+    pixelDensity: number;
+    fontScale: number;
 }
 
-export interface UsersListResponseModel {
+export interface UsersListUserModel {
     userId: string;
-    parentName: string;
+    name: string;
+    isMinor: boolean;
+    phoneNumber: string;
+    parentPhoneNumber: string | null;
     personalNumber: string;
-    parentNumber: string;
-    secondaryNumber: string;
-    howManyKids: number;
-    subscriptionType: string;
-    subscriptionPlan: string;
-    subscriptionStatus: string;
-    rejectedSosRequests: number;
-    acceptedSosRequestsByParent: number;
-    acceptedSosRequestsByOperator: number;
     email: string | null;
-    children: Array<{
-        "id": string,
-        "name": string,
-        "phoneNumber": string,
-        "personalNumber": string,
-        "birthdate": string,
-        "gender": "Male" | "Female",
-        "numberOfSosRequestsSent": number,
-        "numberOfSosRequestsReceived": number,
-        "timeStamp": string,
-        "deviceInfo": {
-            "model": string,
-            "manufacturer": "string",
-            "systemName": string,
-            "systemVersion": string,
-            "deviceId": string,
-            "apiLevel": number,
-            "isTablet": boolean,
-            "isEmulator": boolean,
-            "deviceType": string,
-            "screenWidth": number,
-            "screenHeight": number,
-            "pixelDensity": number,
-            "fontScale": number
-        } | null;
-    }>;
-    timeStamp: Date;
+    birthdate: string;
+    gender: 'Male' | 'Female' | null;
+    subscriptionType: string;
+    subscriptionStatus: string;
+    completedHelpRequests: number;
+    rejectedHelpRequests: number;
+    freeHelpRequests: number;
+    paidHelpRequests: number;
+    deviceInfo: DeviceInfoModel | null;
     attribution: {
         trackerToken: string | null;
         trackerName: string;
@@ -138,25 +119,13 @@ export interface UsersListResponseModel {
         creative: string | null;
         clickLabel: string | null;
     } | null;
-    "deviceInfo": {
-        "model": string,
-        "manufacturer": "string",
-        "systemName": string,
-        "systemVersion": string,
-        "deviceId": string,
-        "apiLevel": number,
-        "isTablet": boolean,
-        "isEmulator": boolean,
-        "deviceType": string,
-        "screenWidth": number,
-        "screenHeight": number,
-        "pixelDensity": number,
-        "fontScale": number
-    } | null;
+    timeStamp: string;
+    isDeleted: boolean;
+    deletedTimestamp: string | null;
 }
 
 export interface UsersListResponseModel {
-    "users": Array<UsersListResponseModel>;
+    "users": Array<UsersListUserModel>;
     "totalCount": number;
     "totalPages": number;
     "currentPage": number;

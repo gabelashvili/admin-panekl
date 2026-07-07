@@ -5,9 +5,9 @@ import { CommentModel } from "../store/server/comments/interfaces";
 import useAuthedUserStore from "../store/client/useAuthedUserStore";
 
 
-export default function CommentBox({parentUserId}: {parentUserId: string}) {
+export default function CommentBox({userId}: {userId: string}) {
   const [text, setText] = useState("");
-  const { data } = useCommentsQuery(parentUserId);
+  const { data } = useCommentsQuery(userId);
   const { mutateAsync: createComment, isPending } = useCreateComment();
   const { user } = useAuthedUserStore()
 
@@ -15,7 +15,7 @@ export default function CommentBox({parentUserId}: {parentUserId: string}) {
     e.preventDefault();
     if (!text.trim() || isPending) return;
     await createComment({
-      userId: parentUserId,
+      userId,
       comment: text.trim(),
     });
     
