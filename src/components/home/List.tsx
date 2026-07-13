@@ -696,14 +696,14 @@ export default function List({ data, activeItems }: ListProps) {
                     >
                       {request.status === "Pending" && "გამოძახება მუშავდება"}
                       {request.status === "Accepted" &&
-                        "წრის წევრმა დაადასტურა გამოძახება"}
+                        "დაცვის გუნდი გზაშია"}
                       {request.status === "AutoAccepted" &&
                         "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
                       {request.status === "SecurityDispatched" &&
                         "დაცვის გუნდი გზაშია"}
                       {request.status === "Completed" && "გამოძახება დასრულდა"}
                       {request.status === "Rejected" &&
-                        "გამოძახება გააუქმა წრის წევრმა"}
+                        "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "RejectedByDispatcher" &&
                         "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
@@ -843,7 +843,7 @@ export default function List({ data, activeItems }: ListProps) {
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {request.status === "Pending" && "გამოძახება მუშავდება"}
                       {request.status === "Accepted" &&
-                        "წრის წევრმა დაადასტურა გამოძახება"}
+                        "მიმდინარე"}
                       {request.status === "AutoAccepted" &&
                         "სისტემამ ავტომატურად დაადასტურა გამოძახება"}
                       {request.status === "SecurityDispatched" &&
