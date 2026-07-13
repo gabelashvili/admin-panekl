@@ -850,7 +850,7 @@ export default function List({ data, activeItems }: ListProps) {
                         "დაცვის გუნდი გზაშია"}
                       {request.status === "Completed" && "გამოძახება დასრულდა"}
                       {request.status === "Rejected" &&
-                        "გამოძახება გააუქმა წრის წევრმა"}
+                        "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "RejectedByDispatcher" &&
                         "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
