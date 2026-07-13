@@ -549,12 +549,12 @@ export default function List({ data, activeItems }: ListProps) {
                 >
                   {t("home.table.circleMemberName")}
                 </TableCell>
-                <TableCell
+                {/* <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
                   {t("home.table.acceptedBy")}
-                </TableCell>
+                </TableCell> */}
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
@@ -646,7 +646,7 @@ export default function List({ data, activeItems }: ListProps) {
                     >
                       {mainCircleMember?.name}
                     </TableCell>
-                    <TableCell
+                    {/* <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                         request.status === "Pending"
                           ? "animate-[highlight-text_2s_ease-in-out_infinite]"
@@ -677,7 +677,7 @@ export default function List({ data, activeItems }: ListProps) {
                       {request.status === "Completed" &&
                         !request.parentRespondedTimestamp &&
                         t("home.table.acceptedBySystem")}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
                         request.status === "Pending"
@@ -708,6 +708,7 @@ export default function List({ data, activeItems }: ListProps) {
                         "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
                       {request.status === "CancelledByDispatcher" && "გამოძახება გააუქმა დისპეჩერმა"}
+                      {request.status === "CancelledByUser" && "გამოძახება გააუქმა მომხმარებელმა"}
                     </TableCell>
                     <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -810,7 +811,7 @@ export default function List({ data, activeItems }: ListProps) {
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                       {mainCircleMember?.name}
                     </TableCell>
-                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {/* <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                         {(request.status === "Rejected" ||
                           request.status === "RejectedByDispatcher") &&
@@ -836,7 +837,7 @@ export default function List({ data, activeItems }: ListProps) {
                           !request.parentRespondedTimestamp &&
                           t("home.table.acceptedBySystem")}
                       </TableCell>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}
                     </TableCell>
@@ -855,6 +856,7 @@ export default function List({ data, activeItems }: ListProps) {
                         "გამოძახება გააუქმა ოპერატორმა"}
                       {request.status === "Cancelled" && "გამოძახება გაუქმდა"}
                       {request.status === "CancelledByDispatcher" && "გამოძახება გააუქმა დისპეჩერმა"}
+                      {request.status === "CancelledByUser" && "გამოძახება გააუქმა მომხმარებელმა"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {dayjs(request.timestamp).format("DD/MM/YYYY HH:mm")}

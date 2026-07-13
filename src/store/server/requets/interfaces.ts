@@ -37,9 +37,11 @@ interface RequestMemberModel {
     | "SecurityDispatched"
     | "RejectedByDispatcher"
     | "CancelledByDispatcher"
+    | "CancelledByUser"
     | "Completed"
     | "Expired"
-    | "Cancelled";
+    | "Cancelled"
+    | "CancelledByUser";
     updatedTimestamp: string;
     expirationDate: string;
     dispatcherRespondedTimestamp: string | null;
