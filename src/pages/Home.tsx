@@ -190,7 +190,9 @@ const Home = () => {
                   value={status}
                   onChange={(value) => setStatus(value)}
                 /> */}
-                <Button loading={isDownloading} onClick={downloadStatisticsCSV} variant="outline" size="sm" className="w-max min-w-max">სტატისტიკა <DocsIcon className="size-5" /></Button>
+                {authdeUser.user?.userName?.toLowerCase() !== 'algani' && (
+                  <Button loading={isDownloading} onClick={downloadStatisticsCSV} variant="outline" size="sm" className="w-max min-w-max">სტატისტიკა <DocsIcon className="size-5" /></Button>
+                )}
                 <DatePicker
                   id="date-picker"
                   placeholder={t('home.table.filters.selectDate')}
