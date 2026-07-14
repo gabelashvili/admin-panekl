@@ -190,7 +190,7 @@ const Home = () => {
                   value={status}
                   onChange={(value) => setStatus(value)}
                 /> */}
-                {authdeUser.user?.userName?.toLowerCase() !== 'algani' && (
+                {!authdeUser.user?.userName?.toLowerCase()?.includes('algani') && (
                   <Button loading={isDownloading} onClick={downloadStatisticsCSV} variant="outline" size="sm" className="w-max min-w-max">სტატისტიკა <DocsIcon className="size-5" /></Button>
                 )}
                 <DatePicker
