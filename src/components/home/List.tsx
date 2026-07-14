@@ -57,6 +57,7 @@ const getUserAgeType = (age?: number | null) => {
 
 export default function List({ data, activeItems }: ListProps) {
   const user = useAuthedUserStore((state) => state.user);
+  const isRestrictedDispatcher = user?.userName === "algani_dispatcher";
   const { t } = useTranslation();
   const reqStatusChangeMutation = useRequestStatusChange();
   const reqStatusCompleteMutation = useRequestStatusComplete();
@@ -440,6 +441,7 @@ export default function List({ data, activeItems }: ListProps) {
               )}
               defaultValue={selectedStatus ?? ""}
               onChange={(value) => setSelectedStatus(value as any)}
+              disabled={isRestrictedDispatcher}
             />
           )}
 
@@ -722,7 +724,7 @@ export default function List({ data, activeItems }: ListProps) {
                         "SecurityDispatched",
                         "Accepted",
                         "AutoAccepted",
-                      ].includes(request.status) &&
+                      ].includes(request.status) && !isRestrictedDispatcher &&
                         user?.userType === "Dispatcher" && (
                           <Button
                             variant="outline"

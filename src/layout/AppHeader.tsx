@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Link, useNavigate, useSearchParams } from "react-router";
+import { Volume2, VolumeX } from "lucide-react";
 import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import NotificationDropdown from "../components/header/NotificationDropdown";
 import UserDropdown from "../components/header/UserDropdown";
 import LangDropdown from "../components/header/LangDropdown";
+import useSoundSettingsStore from "../store/client/useSoundSettingsStore";
 
 const AppHeader: React.FC = () => {
   const [URLSearchParams] = useSearchParams()
@@ -14,6 +16,8 @@ const AppHeader: React.FC = () => {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const soundEnabled = useSoundSettingsStore((state) => state.soundEnabled);
+  const toggleSound = useSoundSettingsStore((state) => state.toggleSound);
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -139,6 +143,18 @@ const AppHeader: React.FC = () => {
             {/* <!-- Dark Mode Toggler --> */}
             <ThemeToggleButton />
             {/* <!-- Dark Mode Toggler --> */}
+            <button
+              onClick={toggleSound}
+              aria-label={soundEnabled ? "Mute notification sound" : "Unmute notification sound"}
+              title={soundEnabled ? "ხმა ჩართულია" : "ხმა გამორთულია"}
+              className="flex items-center justify-center w-10 h-10 text-gray-500 border-gray-200 rounded-lg dark:border-gray-800 dark:text-gray-400 lg:h-11 lg:w-11 lg:border hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              {soundEnabled ? (
+                <Volume2 className="size-5" />
+              ) : (
+                <VolumeX className="size-5" />
+              )}
+            </button>
             {/* <NotificationDropdown /> */}
             {/* <!-- Notification Menu Area --> */}
           </div>

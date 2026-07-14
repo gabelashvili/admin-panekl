@@ -14,6 +14,7 @@ import Button from "../components/ui/button";
 import { DocsIcon } from "../icons";
 import requestsTags from "../store/server/requets/tags";
 import useAuthedUserStore from "../store/client/useAuthedUserStore";
+import useSoundSettingsStore from "../store/client/useSoundSettingsStore";
 
 dayjs.extend(isBetween);
 
@@ -78,6 +79,9 @@ const Home = () => {
     }
     interval.current = setTimeout(() => {
       try {
+        if(!useSoundSettingsStore.getState().soundEnabled) {
+          return;
+        }
         if(((lastAudioPlayTime.current && new Date().getTime() - lastAudioPlayTime.current.getTime() > 5000) || !lastAudioPlayTime.current)) {
           audioRef.current?.play()
           lastAudioPlayTime.current = new Date();
@@ -86,6 +90,11 @@ const Home = () => {
         console.error(error);
       }
     }, 700);
+  }, []);
+
+  useEffect(() => {
+    useSoundSettingsStore.getState().registerAudioElement(audioRef.current);
+    return () => useSoundSettingsStore.getState().registerAudioElement(null);
   }, []);
 
   useEffect(() => {
