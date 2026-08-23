@@ -31,6 +31,7 @@ interface RequestMemberModel {
     timestamp: string;
     parentRespondedTimestamp?: string | null;
     status: | "Pending"
+    | "PendingConfirmation"
     | "Rejected"
     | "Accepted"
     | "AutoAccepted"

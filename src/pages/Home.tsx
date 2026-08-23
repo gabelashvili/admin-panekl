@@ -149,8 +149,16 @@ const Home = () => {
       // Removed items → exist in previous but not in current
       const removed = previusActivItemsRef.current.helpRequests.filter((r) => !currIds.has(r.id));
   
+      // Ring only for requests that actually need the dispatcher's attention.
+      // A request that was hidden while "PendingConfirmation" shows up here as
+      // "added" once its status changes, so an id-only check would ring for
+      // requests the parent already accepted/rejected.
+      const addedPending = added.filter((r) => r.status === "Pending");
+  
       if (added.length > 0) {
-        ringBell()
+        if (addedPending.length > 0) {
+          ringBell()
+        }
         console.log("🟢 Added items:", added);
         queryClient.invalidateQueries({queryKey: [ requestsTags.requests ]})
       }

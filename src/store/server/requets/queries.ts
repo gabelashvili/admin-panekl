@@ -26,8 +26,9 @@ const useNewRequestsQuery = () => {
   return useQuery({
     queryKey: ['new-requests'],
     queryFn: async (): Promise<RequestResponseModel> => {
-      const { data } = await api.get(`help/active`, {params: {pageSize: 1000}})
-      return data
+      const { data } = await api.get<RequestResponseModel>(`help/active`, {params: {pageSize: 1000}})
+      const helpRequests = (data.helpRequests || []).filter((request) => request.status !== "PendingConfirmation")
+      return { ...data, helpRequests, totalCount: helpRequests.length }
     },
     refetchInterval: 2000,
     refetchIntervalInBackground: true
