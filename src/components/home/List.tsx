@@ -24,6 +24,7 @@ import useAuthedUserStore from "../../store/client/useAuthedUserStore";
 import CommentBox from "../comment";
 import { CopyIcon } from "lucide-react";
 import PrintCardModal from "../print-card/PrintCardModal";
+import { formatPhoneNumber } from "../../utils/phone";
 
 interface ListProps {
   data: RequestResponseModel["helpRequests"];
@@ -208,7 +209,7 @@ export default function List({ data, activeItems }: ListProps) {
                     },
                     phone: {
                       title: "ტელეფონის ნომერი",
-                      value: selectedItem?.requestingUser?.phoneNumber,
+                      value: formatPhoneNumber(selectedItem?.requestingUser?.phoneNumber),
                     },
                   },
                   {
@@ -219,7 +220,7 @@ export default function List({ data, activeItems }: ListProps) {
                     },
                     phone: {
                       title: "ტელეფონის ნომერი",
-                      value: selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.phoneNumber,
+                      value: formatPhoneNumber(selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.phoneNumber),
                     },
                   },
                   {
@@ -279,7 +280,7 @@ export default function List({ data, activeItems }: ListProps) {
                         {t("common.phoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {selectedItem?.requestingUser?.phoneNumber}
+                        {formatPhoneNumber(selectedItem?.requestingUser?.phoneNumber)}
                       </p>
                     </div>
                   </div>
@@ -313,7 +314,7 @@ export default function List({ data, activeItems }: ListProps) {
                             {t("common.phoneNumber")}
                           </p>
                           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                            {parent.phoneNumber}
+                            {formatPhoneNumber(parent.phoneNumber)}
                           </p>
                         </div>
                       );
@@ -637,7 +638,7 @@ export default function List({ data, activeItems }: ListProps) {
                           : "bg-[rgb(144,_10,_22)] text-white font-medium"
                       } `}
                     >
-                      {request?.requestingUser?.phoneNumber}
+                      {formatPhoneNumber(request?.requestingUser?.phoneNumber)}
                     </TableCell>
                     <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -808,7 +809,7 @@ export default function List({ data, activeItems }: ListProps) {
                       {getUserAgeType(request?.requestingUser?.age)}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                      {request?.requestingUser?.phoneNumber}
+                      {formatPhoneNumber(request?.requestingUser?.phoneNumber)}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                       {mainCircleMember?.name}

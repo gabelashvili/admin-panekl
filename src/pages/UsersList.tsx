@@ -16,6 +16,7 @@ import { UsersListUserModel } from "../store/server/requets/interfaces";
 import Input from "../components/form/input/InputField";
 import Checkbox from "../components/form/input/Checkbox";
 import api from "../utils/axios-config";
+import { formatPhoneNumber } from "../utils/phone";
 import { DownloadIcon } from "../icons";
 import dayjs from "dayjs";
 
@@ -342,7 +343,7 @@ const UsersList = () => {
                       {user.isMinor ? "არასრულწლოვანი" : "სრულწლოვანი"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {user.phoneNumber}
+                      {formatPhoneNumber(user.phoneNumber)}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user?.deviceInfo?.systemName}
@@ -360,8 +361,8 @@ const UsersList = () => {
                           setDetailModal({
                             title: `${user.name} - დეტალები`,
                             rows: [
-                              { label: "ტელეფონი", value: user.phoneNumber },
-                              { label: "წრის წევრის ნომერი", value: user.parentPhoneNumber || "—" },
+                              { label: "ტელეფონი", value: formatPhoneNumber(user.phoneNumber) },
+                              { label: "წრის წევრის ნომერი", value: formatPhoneNumber(user.parentPhoneNumber) || "—" },
                               { label: "ელ.ფოსტა", value: user.email || "—" },
                               { label: "პირადი ნომერი", value: user.personalNumber },
                               { label: "მომხმარებლის ტიპი", value: user.isMinor ? "არასრულწლოვანი" : "სრულწლოვანი" },

@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "../component
 import Button from "../components/ui/button";
 import DatePicker from "../components/form/date-picker";
 import Input from "../components/form/input/InputField";
+import { formatPhoneNumber } from "../utils/phone";
 
 const ratingOptions = [undefined, 1, 2, 3, 4, 5] as const;
 
@@ -214,7 +215,7 @@ const FeedbackPage = () => {
                     <CommentPreview text={item.comment} />
                   </TableCell>
                   <TableCell className="text-center px-4 py-3 text-theme-sm text-gray-700 dark:text-gray-200">{item.parentName}</TableCell>
-                  <TableCell className="text-center px-4 py-3 text-theme-sm text-gray-700 dark:text-gray-200">{item.parentPhoneNumber}</TableCell>
+                  <TableCell className="text-center px-4 py-3 text-theme-sm text-gray-700 dark:text-gray-200">{formatPhoneNumber(item.parentPhoneNumber)}</TableCell>
                   <TableCell className="text-center px-4 py-3 text-theme-sm  text-gray-700 dark:text-gray-200">
                       {item.helpRequestId}
                   </TableCell>
