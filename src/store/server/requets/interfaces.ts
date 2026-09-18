@@ -8,7 +8,7 @@ export interface RequestUser {
     address?: string | null;
   }
 
-interface RequestMemberModel {
+export interface RequestMemberModel {
     id: string;
     name: string;
     phoneNumber: string;
@@ -113,6 +113,7 @@ export interface UsersListUserModel {
     freeHelpRequests: number;
     paidHelpRequests: number;
     deviceInfo: DeviceInfoModel | null;
+    circleMembers: Array<RequestMemberModel> | null;
     attribution: {
         trackerToken: string | null;
         trackerName: string;

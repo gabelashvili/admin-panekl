@@ -12,13 +12,18 @@ import {
 import ComponentCard from "../components/common/ComponentCard";
 import { Modal } from "../components/ui/modal";
 import Button from "../components/ui/button";
-import { UsersListUserModel } from "../store/server/requets/interfaces";
+import { RequestMemberModel, UsersListUserModel } from "../store/server/requets/interfaces";
 import Input from "../components/form/input/InputField";
 import Checkbox from "../components/form/input/Checkbox";
 import api from "../utils/axios-config";
 import { formatPhoneNumber } from "../utils/phone";
 import { DownloadIcon } from "../icons";
 import dayjs from "dayjs";
+
+const getUserAgeType = (age?: number | null) => {
+  if (age === null || age === undefined) return "-";
+  return age >= 18 ? "სრულწლოვანი" : "არასრულწლოვანი";
+};
 
 const UsersList = () => {
   const CollapsibleSection = ({
@@ -57,6 +62,7 @@ const UsersList = () => {
     rows: { label: string; value: string | number | React.ReactNode }[];
     campaign?: UsersListUserModel["attribution"] | null;
     deviceInfo?: UsersListUserModel["deviceInfo"] | null;
+    circleMembers?: Array<RequestMemberModel>;
   } | null>(null);
 
   const { data: allData } = useUsersListQuery({
@@ -153,6 +159,53 @@ const UsersList = () => {
                     ))}
                 </div>
               </CollapsibleSection>
+
+              {!!detailModal.circleMembers?.length && (
+                <CollapsibleSection
+                  title={
+                    detailModal.circleMembers.length === 1
+                      ? "წრის წევრი"
+                      : "წრის წევრები"
+                  }
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {detailModal.circleMembers.map((member, index) => (
+                      <div
+                        key={member.id ?? index}
+                        className="relative p-3 rounded-xl border w-full border-gray-200 dark:border-gray-800"
+                      >
+                        <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                          სახელი, გვარი
+                        </p>
+                        <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                          {member.name || "—"}
+                        </p>
+
+                        <p className="mt-3 mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                          ტელეფონის ნომერი
+                        </p>
+                        <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                          {formatPhoneNumber(member.phoneNumber) || "—"}
+                        </p>
+
+                        <p className="mt-3 mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                          მომხმარებლის ტიპი
+                        </p>
+                        <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                          {getUserAgeType(member.age)}
+                        </p>
+
+                        <p className="mt-3 mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                          პირადი ნომერი
+                        </p>
+                        <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                          {member.personalNumber || "—"}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleSection>
+              )}
 
               <CollapsibleSection title="გამოძახების სტატისტიკა">
                 <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
@@ -379,6 +432,9 @@ const UsersList = () => {
                             ],
                             campaign: user.attribution || null,
                             deviceInfo: user?.deviceInfo || null,
+                            circleMembers: (user.circleMembers ?? []).filter(
+                              (member) => member.id !== user.userId
+                            ),
                           })
                         }
                       >
