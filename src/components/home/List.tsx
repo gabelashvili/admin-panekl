@@ -25,6 +25,7 @@ import CommentBox from "../comment";
 import { CopyIcon } from "lucide-react";
 import PrintCardModal from "../print-card/PrintCardModal";
 import { formatPhoneNumber } from "../../utils/phone";
+import PhoneLink from "../common/PhoneLink";
 
 interface ListProps {
   data: RequestResponseModel["helpRequests"];
@@ -280,7 +281,7 @@ export default function List({ data, activeItems }: ListProps) {
                         {t("common.phoneNumber")}
                       </p>
                       <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {formatPhoneNumber(selectedItem?.requestingUser?.phoneNumber)}
+                        <PhoneLink phoneNumber={selectedItem?.requestingUser?.phoneNumber} />
                       </p>
                     </div>
                   </div>
@@ -314,7 +315,7 @@ export default function List({ data, activeItems }: ListProps) {
                             {t("common.phoneNumber")}
                           </p>
                           <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                            {formatPhoneNumber(parent.phoneNumber)}
+                            <PhoneLink phoneNumber={parent.phoneNumber} />
                           </p>
                         </div>
                       );
@@ -638,7 +639,7 @@ export default function List({ data, activeItems }: ListProps) {
                           : "bg-[rgb(144,_10,_22)] text-white font-medium"
                       } `}
                     >
-                      {formatPhoneNumber(request?.requestingUser?.phoneNumber)}
+                      <PhoneLink phoneNumber={request?.requestingUser?.phoneNumber} />
                     </TableCell>
                     <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -809,7 +810,7 @@ export default function List({ data, activeItems }: ListProps) {
                       {getUserAgeType(request?.requestingUser?.age)}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                      {formatPhoneNumber(request?.requestingUser?.phoneNumber)}
+                      <PhoneLink phoneNumber={request?.requestingUser?.phoneNumber} />
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
                       {mainCircleMember?.name}

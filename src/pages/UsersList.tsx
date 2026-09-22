@@ -16,7 +16,7 @@ import { RequestMemberModel, UsersListUserModel } from "../store/server/requets/
 import Input from "../components/form/input/InputField";
 import Checkbox from "../components/form/input/Checkbox";
 import api from "../utils/axios-config";
-import { formatPhoneNumber } from "../utils/phone";
+import PhoneLink from "../components/common/PhoneLink";
 import { DownloadIcon } from "../icons";
 import dayjs from "dayjs";
 
@@ -185,7 +185,7 @@ const UsersList = () => {
                           ტელეფონის ნომერი
                         </p>
                         <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                          {formatPhoneNumber(member.phoneNumber) || "—"}
+                          <PhoneLink phoneNumber={member.phoneNumber} fallback="—" />
                         </p>
 
                         <p className="mt-3 mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
@@ -396,7 +396,7 @@ const UsersList = () => {
                       {user.isMinor ? "არასრულწლოვანი" : "სრულწლოვანი"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {formatPhoneNumber(user.phoneNumber)}
+                      <PhoneLink phoneNumber={user.phoneNumber} />
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       {user?.deviceInfo?.systemName}
@@ -414,8 +414,8 @@ const UsersList = () => {
                           setDetailModal({
                             title: `${user.name} - დეტალები`,
                             rows: [
-                              { label: "ტელეფონი", value: formatPhoneNumber(user.phoneNumber) },
-                              { label: "წრის წევრის ნომერი", value: formatPhoneNumber(user.parentPhoneNumber) || "—" },
+                              { label: "ტელეფონი", value: <PhoneLink phoneNumber={user.phoneNumber} fallback="—" /> },
+                              { label: "წრის წევრის ნომერი", value: <PhoneLink phoneNumber={user.parentPhoneNumber} fallback="—" /> },
                               { label: "ელ.ფოსტა", value: user.email || "—" },
                               { label: "პირადი ნომერი", value: user.personalNumber },
                               { label: "მომხმარებლის ტიპი", value: user.isMinor ? "არასრულწლოვანი" : "სრულწლოვანი" },
