@@ -26,6 +26,7 @@ import { CopyIcon } from "lucide-react";
 import PrintCardModal from "../print-card/PrintCardModal";
 import { formatPhoneNumber } from "../../utils/phone";
 import PhoneLink from "../common/PhoneLink";
+import { getParentInfo } from "../../utils/parent";
 
 interface ListProps {
   data: RequestResponseModel["helpRequests"];
@@ -55,6 +56,15 @@ type ClipboardSection = {
 const getUserAgeType = (age?: number | null) => {
   if (age === null || age === undefined) return "-";
   return age >= 18 ? "სრულწლოვანი" : "არასრულწლოვანი";
+};
+
+// Parent info is shown only for minors, and only when the API actually sent it.
+const getRequestParentInfo = (
+  request?: RequestResponseModel["helpRequests"][number] | null
+) => {
+  const age = request?.requestingUser?.age;
+  if (age === null || age === undefined || age >= 18) return null;
+  return getParentInfo(request?.requestingUser) ?? getParentInfo(request);
 };
 
 export default function List({ data, activeItems }: ListProps) {
@@ -167,6 +177,8 @@ export default function List({ data, activeItems }: ListProps) {
       .catch((err) => console.error("Failed to copy:", err));
   };
 
+  const selectedParentInfo = getRequestParentInfo(selectedItem);
+
   const openCardModal = (
     data: RequestResponseModel["helpRequests"][number]
   ) => {
@@ -213,6 +225,25 @@ export default function List({ data, activeItems }: ListProps) {
                       value: formatPhoneNumber(selectedItem?.requestingUser?.phoneNumber),
                     },
                   },
+                  ...(selectedParentInfo
+                    ? [
+                        {
+                          title: "მშობლის ინფორმაცია",
+                          name: {
+                            title: "სახელი, გვარი",
+                            value: selectedParentInfo.name,
+                          },
+                          personalNumber: {
+                            title: "პირადი ნომერი",
+                            value: selectedParentInfo.personalNumber,
+                          },
+                          phone: {
+                            title: "ტელეფონის ნომერი",
+                            value: formatPhoneNumber(selectedParentInfo.phoneNumber),
+                          },
+                        },
+                      ]
+                    : []),
                   {
                     title: t("home.requesetDetails.circleMemberInfo"),
                     name: {
@@ -288,6 +319,40 @@ export default function List({ data, activeItems }: ListProps) {
                 </div>
               </div>
             </div>
+            {selectedParentInfo && (
+              <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
+                  მშობლის ინფორმაცია
+                </h4>
+
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
+                  <div>
+                    <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                      სახელი, გვარი
+                    </p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                      {selectedParentInfo.name || "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                      პირადი ნომერი
+                    </p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                      {selectedParentInfo.personalNumber || "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                      {t("common.phoneNumber")}
+                    </p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                      <PhoneLink phoneNumber={selectedParentInfo.phoneNumber} fallback="—" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div className="w-full">
