@@ -19,6 +19,7 @@ import api from "../utils/axios-config";
 import PhoneLink from "../components/common/PhoneLink";
 import { DownloadIcon } from "../icons";
 import dayjs from "dayjs";
+import { getParentInfo, type ParentInfo } from "../utils/parent";
 
 const getUserAgeType = (age?: number | null) => {
   if (age === null || age === undefined) return "-";
@@ -63,6 +64,7 @@ const UsersList = () => {
     campaign?: UsersListUserModel["attribution"] | null;
     deviceInfo?: UsersListUserModel["deviceInfo"] | null;
     circleMembers?: Array<RequestMemberModel>;
+    parentInfo?: ParentInfo | null;
   } | null>(null);
 
   const { data: allData } = useUsersListQuery({
@@ -159,6 +161,26 @@ const UsersList = () => {
                     ))}
                 </div>
               </CollapsibleSection>
+
+              {detailModal.parentInfo && (
+                <CollapsibleSection title="მშობლის ინფორმაცია" defaultOpen>
+                  <div className="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                    {[
+                      { label: "სახელი, გვარი", value: detailModal.parentInfo.name || "—" },
+                      { label: "პირადი ნომერი", value: detailModal.parentInfo.personalNumber || "—" },
+                      { label: "ტელეფონი", value: <PhoneLink phoneNumber={detailModal.parentInfo.phoneNumber} fallback="—" /> },
+                    ].map((row) => (
+                      <div
+                        key={row.label}
+                        className="flex justify-between gap-4 px-4 py-3 bg-gray-50 dark:bg-gray-800/40 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      >
+                        <span className="text-sm text-gray-600 dark:text-gray-300">{row.label}</span>
+                        <span className="font-medium text-gray-900 dark:text-white text-right">{row.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleSection>
+              )}
 
               {!!detailModal.circleMembers?.length && (
                 <CollapsibleSection
@@ -435,6 +457,7 @@ const UsersList = () => {
                             circleMembers: (user.circleMembers ?? []).filter(
                               (member) => member.id !== user.userId
                             ),
+                            parentInfo: user.isMinor ? getParentInfo(user) : null,
                           })
                         }
                       >

@@ -8,7 +8,14 @@ export interface RequestUser {
     address?: string | null;
   }
 
-export interface RequestMemberModel {
+/** Parent details the API attaches to minors; absent/null when the user has none. */
+export interface ParentInfoFields {
+    parentName?: string | null;
+    parentPersonalNumber?: string | null;
+    parentPhoneNumber?: string | null;
+}
+
+export interface RequestMemberModel extends ParentInfoFields {
     id: string;
     name: string;
     phoneNumber: string;
@@ -21,7 +28,7 @@ export interface RequestMemberModel {
     age: number;
 }
 
- interface RequestModel {
+ interface RequestModel extends ParentInfoFields {
     id: string;
     requestingUser: RequestMemberModel;
     circleMembers: Array<RequestMemberModel>;
@@ -96,12 +103,11 @@ export interface DeviceInfoModel {
     fontScale: number;
 }
 
-export interface UsersListUserModel {
+export interface UsersListUserModel extends ParentInfoFields {
     userId: string;
     name: string;
     isMinor: boolean;
     phoneNumber: string;
-    parentPhoneNumber: string | null;
     personalNumber: string;
     email: string | null;
     birthdate: string;
