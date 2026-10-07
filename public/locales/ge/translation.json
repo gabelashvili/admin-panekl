@@ -18,7 +18,7 @@
             "requestId": "მოთხოვნის ID",
             "userName": "მომხმარებლის სახელი",
             "userPhoneNumber": "მომხმარებლის ნომერი",
-            "circleMemberName": "წრის წევრის სახელი",
+            "parentPhoneNumber": "მშობლის ტელეფონის ნომერი",
             "requestTime": "მოთხოვნის დრო",
             "status": "სტატუსი",
             "viewDetails": "დეტალების ნახვა",

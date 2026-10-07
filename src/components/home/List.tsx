@@ -616,7 +616,7 @@ export default function List({ data, activeItems }: ListProps) {
                   isHeader
                   className="px-5 py-3 text-start text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                 >
-                  {t("home.table.circleMemberName")}
+                  {t("home.table.parentPhoneNumber")}
                 </TableCell>
                 {/* <TableCell
                   isHeader
@@ -653,8 +653,7 @@ export default function List({ data, activeItems }: ListProps) {
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 cursor-pointer dark:divide-white/[0.05] [&>tr]:even:bg-gray-50 dark:[&>tr]:even:bg-gray-900/50 [&>tr]:hover:bg-gray-200 dark:[&>tr]:hover:bg-gray-900">
               {activeItems.map((request) => {
-                const nonRequestingMembers = request.circleMembers?.filter(m => m.id !== request.requestingUser.id) ?? [];
-                const mainCircleMember = nonRequestingMembers[0];
+                const parentInfo = getRequestParentInfo(request);
                 return (
                   <TableRow
                     key={request.id}
@@ -713,7 +712,7 @@ export default function List({ data, activeItems }: ListProps) {
                           : "bg-[rgb(144,_10,_22)] text-white font-medium"
                       } `}
                     >
-                      {mainCircleMember?.name}
+                      <PhoneLink phoneNumber={parentInfo?.phoneNumber} fallback="—" />
                     </TableCell>
                     {/* <TableCell
                       className={`px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400 ${
@@ -861,8 +860,7 @@ export default function List({ data, activeItems }: ListProps) {
                 )
               })}
               {tableData.map((request) => {
-                const nonRequestingMembers = request.circleMembers?.filter(m => m.id !== request.requestingUser.id) ?? [];
-                const mainCircleMember = nonRequestingMembers[0];
+                const parentInfo = getRequestParentInfo(request);
                 return (
                   <TableRow key={request.id}>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
@@ -878,7 +876,7 @@ export default function List({ data, activeItems }: ListProps) {
                       <PhoneLink phoneNumber={request?.requestingUser?.phoneNumber} />
                     </TableCell>
                     <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                      {mainCircleMember?.name}
+                      <PhoneLink phoneNumber={parentInfo?.phoneNumber} fallback="—" />
                     </TableCell>
                     {/* <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                       <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
