@@ -245,17 +245,6 @@ export default function List({ data, activeItems }: ListProps) {
                       ]
                     : []),
                   {
-                    title: t("home.requesetDetails.circleMemberInfo"),
-                    name: {
-                      title: "სახელი, გვარი",
-                      value: selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.name,
-                    },
-                    phone: {
-                      title: "ტელეფონის ნომერი",
-                      value: formatPhoneNumber(selectedItem?.circleMembers?.find(m => m.id !== selectedItem.requestingUser.id)?.phoneNumber),
-                    },
-                  },
-                  {
                     title: "მისამართი",
                     name: {
                       title: "Google Map",
