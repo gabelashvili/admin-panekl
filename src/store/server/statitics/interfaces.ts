@@ -8,6 +8,7 @@ export interface DailyStat {
 export interface StatisticsResponse {
   totalRegisteredUsers: number;
   activeSubscriptions: number;
+  activeSubscriptionsWithCoveragesCount: number;
   conversionRate: number;
   dailyStats: DailyStat[];
   totalDailyStats: number;
