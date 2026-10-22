@@ -13,6 +13,13 @@ import { useState } from "react";
 import Button from "../components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
+// The subscriber plus the number of extra users in the plan name
+// (e.g. "მე + 2 შვილი" -> 3); a name without a number counts as 1.
+const getUsersCount = (planName?: string) => {
+  const match = planName?.match(/\d+/);
+  return 1 + (match ? Number.parseInt(match[0], 10) : 0);
+};
+
 const PaymentPage = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -43,7 +50,7 @@ const PaymentPage = () => {
                   className="px-4 py-3 text-theme-sm font-medium text-gray-500 dark:text-gray-400"
                   align="center"
                 >
-                  გამოწერის გეგმა
+                  მომხმარებლების რაოდენობა
                 </TableCell>
                 <TableCell
                   isHeader
@@ -93,9 +100,9 @@ const PaymentPage = () => {
                       {user.name}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
-                      {user.subscription?.plan?.name.split(" ")[0]} შვილი
+                      {user.subscription?.plan ? getUsersCount(user.subscription.plan.name) : "-"}
                       <span className="ml-2 text-xs">
-                        ({user.subscription?.plan?.type === "Monthly" ? "თვიური" : "წლიური"})
+                        ({user.subscription?.plan?.type === "Monthly" ? "1 თვე" : "1 წელი"})
                       </span>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400" align="center">
